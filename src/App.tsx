@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import './App.css';
 
-import { mcuMovies } from './data/mcu';
-import type { RankItem } from './types';
+import { collections } from './data/collections';
+import type { RankCollection, RankItem } from './types';
 
 type RankingState = {
   ranked: RankItem[];
@@ -12,6 +12,60 @@ type RankingState = {
   high: number;
   comparisons: number;
 };
+
+type DebugPanelProps = {
+  collection: RankCollection | null;
+  rankingState: RankingState | null;
+  history: RankingState[];
+};
+
+function DebugPanel({
+  collection,
+  rankingState,
+  history,
+}: DebugPanelProps) {
+  if (!import.meta.env.DEV) {
+    return null;
+  }
+
+  return (
+    <details className="debug-panel">
+      <summary>Developer State</summary>
+
+      <pre>
+        {JSON.stringify(
+          {
+            collection: collection?.id ?? null,
+
+            ranked: rankingState?.ranked.map(
+              (item) => item.id,
+            ) ?? [],
+
+            remaining: rankingState?.remaining.map(
+              (item) => item.id,
+            ) ?? [],
+
+            current:
+              rankingState?.current?.id ?? null,
+
+            low:
+              rankingState?.low ?? null,
+
+            high:
+              rankingState?.high ?? null,
+
+            comparisons:
+              rankingState?.comparisons ?? null,
+
+            historyLength: history.length,
+          },
+          null,
+          2,
+        )}
+      </pre>
+    </details>
+  );
+}
 
 function createInitialState(items: RankItem[]): RankingState {
   if (items.length === 0) {
@@ -47,36 +101,60 @@ function createInitialState(items: RankItem[]): RankingState {
 }
 
 function App() {
-  const collection = mcuMovies;
+  const [collection, setCollection] =
+    useState<RankCollection | null>(null);
 
-  const [rankingState, setRankingState] = useState<RankingState>(() =>
-    createInitialState(collection.items),
-  );
+  const [rankingState, setRankingState] =
+    useState<RankingState | null>(null);
 
-  const [history, setHistory] = useState<RankingState[]>([]);
+  const [history, setHistory] =
+    useState<RankingState[]>([]);
 
-  const {
-    ranked,
-    remaining,
-    current,
-    low,
-    high,
-    comparisons,
-  } = rankingState;
+  function startCollection(selectedCollection: RankCollection) {
+    setCollection(selectedCollection);
+    setRankingState(
+      createInitialState(selectedCollection.items),
+    );
+    setHistory([]);
+  }
 
-  const comparisonIndex = current
-    ? Math.floor((low + high) / 2)
-    : null;
-
-  const opponent =
-    comparisonIndex !== null ? ranked[comparisonIndex] : null;
+  function returnToCollections() {
+    setCollection(null);
+    setRankingState(null);
+    setHistory([]);
+  }
 
   function choose(winner: RankItem) {
-    if (!current || !opponent || comparisonIndex === null) {
+    if (!rankingState) {
       return;
     }
 
-    setHistory((previous) => [...previous, rankingState]);
+    const {
+      ranked,
+      remaining,
+      current,
+      low,
+      high,
+      comparisons,
+    } = rankingState;
+
+    if (!current) {
+      return;
+    }
+
+    const comparisonIndex =
+      Math.floor((low + high) / 2);
+
+    const opponent = ranked[comparisonIndex];
+
+    if (!opponent) {
+      return;
+    }
+
+    setHistory((previous) => [
+      ...previous,
+      rankingState,
+    ]);
 
     let nextLow = low;
     let nextHigh = high;
@@ -87,15 +165,23 @@ function App() {
       nextLow = comparisonIndex + 1;
     }
 
-    const nextComparisonCount = comparisons + 1;
+    const nextComparisonCount =
+      comparisons + 1;
 
     if (nextLow >= nextHigh) {
       const newRanked = [...ranked];
 
-      newRanked.splice(nextLow, 0, current);
+      newRanked.splice(
+        nextLow,
+        0,
+        current,
+      );
 
-      const nextCurrent = remaining[0] ?? null;
-      const nextRemaining = remaining.slice(1);
+      const nextCurrent =
+        remaining[0] ?? null;
+
+      const nextRemaining =
+        remaining.slice(1);
 
       setRankingState({
         ranked: newRanked,
@@ -122,16 +208,75 @@ function App() {
       return;
     }
 
-    const previousState = history[history.length - 1];
+    const previousState =
+      history[history.length - 1];
 
     setRankingState(previousState);
-    setHistory((previous) => previous.slice(0, -1));
+
+    setHistory((previous) =>
+      previous.slice(0, -1),
+    );
   }
 
   function reset() {
-    setRankingState(createInitialState(collection.items));
+    if (!collection) {
+      return;
+    }
+
+    setRankingState(
+      createInitialState(collection.items),
+    );
     setHistory([]);
   }
+
+  if (!collection || !rankingState) {
+    return (
+      <main className="app">
+        <header className="header">
+          <h1>RankerUltimate</h1>
+          <p>Choose something to rank.</p>
+        </header>
+
+        <section className="collection-picker">
+          {collections.map((item) => (
+            <button
+              className="collection-card"
+              key={item.id}
+              onClick={() => startCollection(item)}
+            >
+              <span className="collection-name">
+                {item.name}
+              </span>
+
+              <span className="collection-count">
+                {item.items.length} items
+              </span>
+
+              {item.description && (
+                <span className="collection-description">
+                  {item.description}
+                </span>
+              )}
+            </button>
+          ))}
+        </section>
+        <DebugPanel
+  collection={collection}
+  rankingState={rankingState}
+  history={history}
+/>
+      </main>
+    );
+  }
+
+  const {
+    ranked,
+    remaining,
+    current,
+    low,
+    high,
+    comparisons,
+  } = rankingState;
 
   const completed = current === null;
 
@@ -147,7 +292,10 @@ function App() {
 
           <div className="ranking-list">
             {ranked.map((item, index) => (
-              <div className="ranking-row" key={item.id}>
+              <div
+                className="ranking-row"
+                key={item.id}
+              >
                 <span className="rank-number">
                   {index + 1}
                 </span>
@@ -166,30 +314,46 @@ function App() {
           </div>
 
           <div className="actions">
-            <button onClick={undo} disabled={history.length === 0}>
+            <button
+              onClick={undo}
+              disabled={history.length === 0}
+            >
               Undo
             </button>
 
             <button onClick={reset}>
               Rank Again
             </button>
+
+            <button onClick={returnToCollections}>
+              Choose Another List
+            </button>
           </div>
         </section>
+
+        <DebugPanel
+  collection={collection}
+  rankingState={rankingState}
+  history={history}
+/>
       </main>
     );
   }
 
-  if (!current || !opponent) {
+  const comparisonIndex =
+    Math.floor((low + high) / 2);
+
+  const opponent =
+    ranked[comparisonIndex];
+
+  if (!opponent) {
     return null;
   }
-
-  const itemsPlaced = ranked.length;
 
   return (
     <main className="app">
       <header className="header">
         <h1>RankerUltimate</h1>
-
         <p>{collection.name}</p>
       </header>
 
@@ -243,7 +407,7 @@ function App() {
 
       <section className="status">
         <div>
-          {itemsPlaced} of {collection.items.length} items placed
+          {ranked.length} of {collection.items.length} items placed
         </div>
 
         <div>
@@ -251,20 +415,26 @@ function App() {
         </div>
 
         <button
-          className="undo-button"
           onClick={undo}
           disabled={history.length === 0}
         >
           Undo
         </button>
 
-        <button
-          className="reset-button"
-          onClick={reset}
-        >
+        <button onClick={reset}>
           Restart
         </button>
+
+        <button onClick={returnToCollections}>
+          Collections
+        </button>
       </section>
+
+      <DebugPanel
+  collection={collection}
+  rankingState={rankingState}
+  history={history}
+/>
     </main>
   );
 }
