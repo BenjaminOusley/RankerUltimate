@@ -1,4 +1,4 @@
-import type { RankCollection } from '../../types';
+import type { RankCollection } from '../../models';
 
 export const pixarFeaturesMovies: RankCollection = {
   id: 'pixar-features-movies',

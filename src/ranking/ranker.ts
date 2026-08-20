@@ -1,5 +1,5 @@
-import type { RankItem } from '../types';
-import type { RankingState } from './types';
+import type { RankItem } from '../models';
+import type { RankingState } from './state';
 
 export function createInitialRankingState(items: RankItem[]): RankingState {
   if (items.length === 0) {

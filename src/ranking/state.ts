@@ -1,4 +1,4 @@
-import type { RankItem } from '../types';
+import type { RankItem } from '../models';
 
 export type RankingState = {
   ranked: RankItem[];

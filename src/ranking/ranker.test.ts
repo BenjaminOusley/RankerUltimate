@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { RankItem } from '../types';
+import type { RankItem } from '../models';
 import { chooseWinner, createInitialRankingState } from './ranker';
 
 const itemA: RankItem = {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { RankItem } from '../types';
+import type { RankItem } from '../models';
 
 type ItemCardProps = {
   item: RankItem;
