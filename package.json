@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "import:tmdb": "node --env-file=.env scripts/import-tmdb.mjs"
+    "import:tmdb": "node --env-file=.env scripts/import-tmdb.mjs",
+    "generate:tmdb": "node --env-file=.env scripts/generate-tmdb.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

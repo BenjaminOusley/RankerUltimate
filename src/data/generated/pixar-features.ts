@@ -1,0 +1,350 @@
+import type { RankCollection } from '../../types';
+
+export const pixarFeaturesMovies: RankCollection = {
+  "id": "pixar-features-movies",
+  "name": "Pixar Feature Films",
+  "description": "Feature films produced by Pixar.",
+  "items": [
+    {
+      "id": "toy-story-862",
+      "name": "Toy Story",
+      "subtitle": "1995",
+      "image": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "862",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "a-bug-s-life-9487",
+      "name": "A Bug's Life",
+      "subtitle": "1998",
+      "image": "https://image.tmdb.org/t/p/w500/Ah3J9OJVc2CNCuH2zMydXy9fmIC.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "9487",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "toy-story-2-863",
+      "name": "Toy Story 2",
+      "subtitle": "1999",
+      "image": "https://image.tmdb.org/t/p/w500/4rbcp3ng8n1MKHjpeqW0L7Fnpzz.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "863",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "monsters-inc-585",
+      "name": "Monsters, Inc.",
+      "subtitle": "2001",
+      "image": "https://image.tmdb.org/t/p/w500/wFSpyMsp7H0ttERbxY7Trlv8xry.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "585",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "finding-nemo-12",
+      "name": "Finding Nemo",
+      "subtitle": "2003",
+      "image": "https://image.tmdb.org/t/p/w500/eHuGQ10FUzK1mdOY69wF5pGgEf5.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "12",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "the-incredibles-9806",
+      "name": "The Incredibles",
+      "subtitle": "2004",
+      "image": "https://image.tmdb.org/t/p/w500/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "9806",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "cars-920",
+      "name": "Cars",
+      "subtitle": "2006",
+      "image": "https://image.tmdb.org/t/p/w500/2Touk3m5gzsqr1VsvxypdyHY5ci.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "920",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "ratatouille-2062",
+      "name": "Ratatouille",
+      "subtitle": "2007",
+      "image": "https://image.tmdb.org/t/p/w500/t3vaWRPSf6WjDSamIkKDs1iQWna.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "2062",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "wall-e-10681",
+      "name": "WALL·E",
+      "subtitle": "2008",
+      "image": "https://image.tmdb.org/t/p/w500/hbhFnRzzg6ZDmm8YAmxBnQpQIPh.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "10681",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "up-14160",
+      "name": "Up",
+      "subtitle": "2009",
+      "image": "https://image.tmdb.org/t/p/w500/mFvoEwSfLqbcWwFsDjQebn9bzFe.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "14160",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "toy-story-3-10193",
+      "name": "Toy Story 3",
+      "subtitle": "2010",
+      "image": "https://image.tmdb.org/t/p/w500/AbbXspMOwdvwWZgVN0nabZq03Ec.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "10193",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "cars-2-49013",
+      "name": "Cars 2",
+      "subtitle": "2011",
+      "image": "https://image.tmdb.org/t/p/w500/okIz1HyxeVOMzYwwHUjH2pHi74I.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "49013",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "brave-62177",
+      "name": "Brave",
+      "subtitle": "2012",
+      "image": "https://image.tmdb.org/t/p/w500/1XAuDtMWpL0sYSFK0R6EZate2Ux.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "62177",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "monsters-university-62211",
+      "name": "Monsters University",
+      "subtitle": "2013",
+      "image": "https://image.tmdb.org/t/p/w500/y7thwJ7z5Bplv6vwl6RI0yteaDD.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "62211",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "inside-out-150540",
+      "name": "Inside Out",
+      "subtitle": "2015",
+      "image": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "150540",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "the-good-dinosaur-105864",
+      "name": "The Good Dinosaur",
+      "subtitle": "2015",
+      "image": "https://image.tmdb.org/t/p/w500/8RSkxOO80btfKjyiC5ZiTaCHIT8.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "105864",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "finding-dory-127380",
+      "name": "Finding Dory",
+      "subtitle": "2016",
+      "image": "https://image.tmdb.org/t/p/w500/3UVe8NL1E2ZdUZ9EDlKGJY5UzE.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "127380",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "cars-3-260514",
+      "name": "Cars 3",
+      "subtitle": "2017",
+      "image": "https://image.tmdb.org/t/p/w500/zg5RDxvIIAKsucjuU2EZJIHEIvz.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "260514",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "coco-354912",
+      "name": "Coco",
+      "subtitle": "2017",
+      "image": "https://image.tmdb.org/t/p/w500/6Ryitt95xrO8KXuqRGm1fUuNwqF.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "354912",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "incredibles-2-260513",
+      "name": "Incredibles 2",
+      "subtitle": "2018",
+      "image": "https://image.tmdb.org/t/p/w500/9lFKBtaVIhP7E2Pk0IY1CwTKTMZ.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "260513",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "toy-story-4-301528",
+      "name": "Toy Story 4",
+      "subtitle": "2019",
+      "image": "https://image.tmdb.org/t/p/w500/w9kR8qbmQ01HwnvK4alvnQ2ca0L.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "301528",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "onward-508439",
+      "name": "Onward",
+      "subtitle": "2020",
+      "image": "https://image.tmdb.org/t/p/w500/f4aul3FyD3jv3v4bul1IrkWZvzq.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "508439",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "soul-508442",
+      "name": "Soul",
+      "subtitle": "2020",
+      "image": "https://image.tmdb.org/t/p/w500/hm58Jw4Lw8OIeECIq5qyPYhAeRJ.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "508442",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "luca-508943",
+      "name": "Luca",
+      "subtitle": "2021",
+      "image": "https://image.tmdb.org/t/p/w500/9x4i9uKGXt8IiiIF5Ey0DIoY738.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "508943",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "turning-red-508947",
+      "name": "Turning Red",
+      "subtitle": "2022",
+      "image": "https://image.tmdb.org/t/p/w500/qsdjk9oAKSQMWs0Vt5Pyfh6O4GZ.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "508947",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "lightyear-718789",
+      "name": "Lightyear",
+      "subtitle": "2022",
+      "image": "https://image.tmdb.org/t/p/w500/ox4goZd956BxqJH6iLwhWPL9ct4.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "718789",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "elemental-976573",
+      "name": "Elemental",
+      "subtitle": "2023",
+      "image": "https://image.tmdb.org/t/p/w500/4Y1WNkd88JXmGfhtWR7dmDAo1T2.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "976573",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "inside-out-2-1022789",
+      "name": "Inside Out 2",
+      "subtitle": "2024",
+      "image": "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "1022789",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "elio-1022787",
+      "name": "Elio",
+      "subtitle": "2025",
+      "image": "https://image.tmdb.org/t/p/w500/7z8jDiTZZco9moIKpTUImFtTy7o.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "1022787",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "hoppers-1327819",
+      "name": "Hoppers",
+      "subtitle": "2026",
+      "image": "https://image.tmdb.org/t/p/w500/xjtWQ2CL1mpmMNwuU5HeS4Iuwuu.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "1327819",
+        "type": "movie"
+      }
+    },
+    {
+      "id": "toy-story-5-1084244",
+      "name": "Toy Story 5",
+      "subtitle": "2026",
+      "image": "https://image.tmdb.org/t/p/w500/sfQtVlIHljToOwYjhe21KPGzZWK.jpg",
+      "source": {
+        "provider": "tmdb",
+        "id": "1084244",
+        "type": "movie"
+      }
+    }
+  ]
+};

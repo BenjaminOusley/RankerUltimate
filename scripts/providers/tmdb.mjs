@@ -80,8 +80,40 @@ export function createTmdbProvider(token) {
     });
   }
 
+  async function searchCompany(name) {
+    const data = await request('/search/company', {
+      query: name,
+      page: '1',
+    });
+
+    return data.results ?? [];
+  }
+
+  async function discoverMovies(filters = {}) {
+    const allResults = [];
+
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const data = await request('/discover/movie', {
+        ...filters,
+        page: String(page),
+      });
+
+      allResults.push(...(data.results ?? []));
+
+      totalPages = Math.min(data.total_pages ?? 1, 500);
+      page += 1;
+    } while (page <= totalPages);
+
+    return allResults;
+  }
+
   return {
     searchMovie,
     getMovieById,
+    searchCompany,
+    discoverMovies,
   };
 }
