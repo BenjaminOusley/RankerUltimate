@@ -89,8 +89,8 @@ export function createTmdbProvider(token) {
     return data.results ?? [];
   }
 
-  async function discoverMovies(filters = {}) {
-    const allResults = [];
+  async function discoverMovies(filters, limit = 250) {
+    const movies = [];
 
     let page = 1;
     let totalPages = 1;
@@ -101,13 +101,48 @@ export function createTmdbProvider(token) {
         page: String(page),
       });
 
-      allResults.push(...(data.results ?? []));
+      movies.push(...(data.results ?? []));
+
+      if (movies.length >= limit) {
+        break;
+      }
 
       totalPages = Math.min(data.total_pages ?? 1, 500);
       page += 1;
     } while (page <= totalPages);
 
-    return allResults;
+    return movies.slice(0, limit);
+  }
+
+  async function searchPerson(name) {
+    const data = await request('/search/person', {
+      query: name,
+      include_adult: 'false',
+      language: 'en-US',
+      page: '1',
+    });
+
+    return data.results ?? [];
+  }
+
+  async function getMovieGenres() {
+    const data = await request('/genre/movie/list', {
+      language: 'en-US',
+    });
+
+    return data.genres ?? [];
+  }
+
+  async function getPersonById(personId) {
+    return request(`/person/${personId}`, {
+      language: 'en-US',
+    });
+  }
+
+  async function getPersonMovieCredits(personId) {
+    return request(`/person/${personId}/movie_credits`, {
+      language: 'en-US',
+    });
   }
 
   return {
@@ -115,5 +150,9 @@ export function createTmdbProvider(token) {
     getMovieById,
     searchCompany,
     discoverMovies,
+    searchPerson,
+    getMovieGenres,
+    getPersonById,
+    getPersonMovieCredits,
   };
 }
