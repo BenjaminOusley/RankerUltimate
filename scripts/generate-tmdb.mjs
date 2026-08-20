@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { parseGenerationRequest } from './generation/request.mjs';
+
 import { createRankItem, createTmdbProvider, normalizeTitle } from './providers/tmdb.mjs';
 
 const token = process.env.TMDB_READ_ACCESS_TOKEN;
@@ -159,129 +161,33 @@ async function main() {
     return false;
   }
 
-  const [mode, query, collectionId, ...options] = process.argv.slice(2);
+  const parsedRequest = parseGenerationRequest(process.argv.slice(2));
 
-  function getOption(name) {
-    const index = options.indexOf(`--${name}`);
-
-    if (index === -1) {
-      return null;
-    }
-
-    return options[index + 1] ?? null;
-  }
-
-  function hasFlag(name) {
-    return options.includes(`--${name}`);
-  }
-
-  function getYearOption(name) {
-    const value = getOption(name);
-
-    if (value === null) {
-      return null;
-    }
-
-    const year = Number.parseInt(value, 10);
-
-    if (!Number.isInteger(year) || year < 1870 || year > 9999) {
-      return null;
-    }
-
-    return year;
-  }
-
-  const limitOption = getOption('limit');
-
-  const tmdbIdOption = getOption('tmdb-id');
-
-  let explicitTmdbId = null;
-
-  if (tmdbIdOption !== null) {
-    explicitTmdbId = Number.parseInt(tmdbIdOption, 10);
-
-    if (!Number.isInteger(explicitTmdbId) || explicitTmdbId < 1) {
-      console.error('--tmdb-id must be a positive integer.');
-
-      return false;
-    }
-  }
-
-  const limit = limitOption === null ? 250 : Number.parseInt(limitOption, 10);
-
-  if (!Number.isInteger(limit) || limit < 1) {
-    console.error('--limit must be a positive integer.');
-
-    process.exitCode = 1;
-  }
-
-  const fromOption = getOption('from');
-  const toOption = getOption('to');
-
-  const fromYear = getYearOption('from');
-  const toYear = getYearOption('to');
-
-  if (fromOption !== null && fromYear === null) {
-    console.error('--from must be a valid four-digit year.');
-
+  if (!parsedRequest.ok) {
+    console.error(parsedRequest.error);
     return false;
   }
 
-  if (toOption !== null && toYear === null) {
-    console.error('--to must be a valid four-digit year.');
+  const {
+    mode,
+    query,
+    collectionId,
+    limit,
+    tmdbId: explicitTmdbId,
+    fromYear,
+    toYear,
+    sort: sortOption,
+    minRuntime,
+    excludeDocumentaries,
+    includeAdult,
+    language,
+  } = parsedRequest.request;
 
-    return false;
-  }
-
-  if (fromYear !== null && toYear !== null && fromYear > toYear) {
-    console.error('--from cannot be later than --to.');
-
-    return false;
-  }
-
-  const sortOption = getOption('sort') ?? 'release-asc';
-
-  let discoverSortBy;
-
-  if (sortOption === 'release-asc') {
-    discoverSortBy = 'primary_release_date.asc';
-  } else if (sortOption === 'release-desc') {
-    discoverSortBy = 'primary_release_date.desc';
-  } else if (sortOption === 'popularity') {
-    discoverSortBy = 'popularity.desc';
-  } else {
-    console.error('--sort must be release-asc, release-desc, or popularity.');
-
-    return false;
-  }
-
-  const minRuntimeOption = getOption('min-runtime');
-
-  const minRuntime = minRuntimeOption === null ? null : Number.parseInt(minRuntimeOption, 10);
-
-  if (minRuntimeOption !== null && (!Number.isInteger(minRuntime) || minRuntime < 0)) {
-    console.error('--min-runtime must be a non-negative integer.');
-
-    return false;
-  }
-
-  const excludeDocumentaries = hasFlag('exclude-documentaries');
-
-  const includeAdult = hasFlag('include-adult');
-
-  if (!mode || !query || !collectionId) {
-    console.error('Missing arguments.');
-    console.error('Example: npm run generate:tmdb -- company "Pixar Animation Studios" pixar');
-    return false;
-  }
-
-  const supportedModes = ['company', 'company-features', 'director', 'actor', 'genre'];
-
-  if (!supportedModes.includes(mode)) {
-    console.error(`Unsupported generation mode: ${mode}`);
-    console.error(`Currently supported: ${supportedModes.join(', ')}`);
-    return false;
-  }
+  const discoverSortBy = {
+    'release-asc': 'primary_release_date.asc',
+    'release-desc': 'primary_release_date.desc',
+    popularity: 'popularity.desc',
+  }[sortOption];
 
   const tmdb = createTmdbProvider(token);
 
@@ -291,7 +197,7 @@ async function main() {
   const filters = {
     include_adult: String(includeAdult),
     include_video: 'false',
-    language: 'en-US',
+    language,
     sort_by: discoverSortBy,
   };
 
@@ -450,14 +356,10 @@ async function main() {
     if (sortOption === 'release-asc') {
       movies.sort((a, b) => a.release_date.localeCompare(b.release_date));
     } else if (sortOption === 'release-desc') {
-    } else if (sortOption === 'release-desc') {
-    } else if (sortOption === 'release-desc') {
       movies.sort((a, b) => b.release_date.localeCompare(a.release_date));
     } else if (sortOption === 'popularity') {
       movies.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
     }
-
-    movies = movies.slice(0, limit);
   } else {
     const yearRange =
       fromYear !== null || toYear !== null
@@ -499,10 +401,15 @@ async function main() {
     }
 
     canonicalMovies.push(details);
+
+    if (canonicalMovies.length >= limit) {
+      break;
+    }
   }
 
-  if (uniqueMovies.length === 0) {
-    console.error('No movies were found.');
+  if (canonicalMovies.length === 0) {
+    console.error('No movies passed validation.');
+
     return false;
   }
 
