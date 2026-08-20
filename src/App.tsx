@@ -225,7 +225,7 @@ function App() {
     );
   }
 
-  const { ranked, remaining, current, low, high, comparisons } = rankingState;
+  const { ranked, current, low, high, comparisons } = rankingState;
 
   const completed = current === null;
 

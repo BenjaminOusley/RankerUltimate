@@ -1,7 +1,4 @@
-import { mcuMovies } from './mcu';
+import { mcuMovies } from './generated/mcu';
 import { testGames } from './games';
 
-export const collections = [
-  mcuMovies,
-  testGames,
-];
+export const collections = [mcuMovies, testGames];

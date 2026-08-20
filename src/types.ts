@@ -3,6 +3,7 @@ export type RankItem = {
   name: string;
   subtitle?: string;
   image?: string;
+  tmdbId?: number;
 };
 
 export type RankCollection = {
