@@ -1,0 +1,87 @@
+const TMDB_API_BASE = 'https://api.themoviedb.org/3';
+const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+
+export function normalizeTitle(title) {
+  return title
+    .normalize('NFKD')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+export function getReleaseYear(movie) {
+  return movie.release_date?.slice(0, 4) || undefined;
+}
+
+export function createItemId(title, tmdbId) {
+  const slug = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return `${slug}-${tmdbId}`;
+}
+
+export function createRankItem(movie) {
+  const releaseYear = getReleaseYear(movie);
+
+  return {
+    id: createItemId(movie.title, movie.id),
+    name: movie.title,
+    subtitle: releaseYear,
+    image: movie.poster_path ? `${TMDB_IMAGE_BASE}${movie.poster_path}` : undefined,
+    source: {
+      provider: 'tmdb',
+      id: String(movie.id),
+      type: 'movie',
+    },
+  };
+}
+
+export function createTmdbProvider(token) {
+  async function request(endpoint, searchParams = {}) {
+    const url = new URL(`${TMDB_API_BASE}${endpoint}`);
+
+    for (const [key, value] of Object.entries(searchParams)) {
+      if (value !== undefined) {
+        url.searchParams.set(key, value);
+      }
+    }
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`TMDB returned ${response.status} ${response.statusText} for ${endpoint}`);
+    }
+
+    return response.json();
+  }
+
+  async function searchMovie(title, year) {
+    const data = await request('/search/movie', {
+      query: title,
+      language: 'en-US',
+      include_adult: 'false',
+      primary_release_year: year,
+    });
+
+    return data.results ?? [];
+  }
+
+  async function getMovieById(tmdbId) {
+    return request(`/movie/${tmdbId}`, {
+      language: 'en-US',
+    });
+  }
+
+  return {
+    searchMovie,
+    getMovieById,
+  };
+}

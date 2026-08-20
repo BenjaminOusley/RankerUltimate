@@ -1,8 +1,12 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const TMDB_API_BASE = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+import {
+  createRankItem,
+  createTmdbProvider,
+  getReleaseYear,
+  normalizeTitle,
+} from './providers/tmdb.mjs';
 
 const token = process.env.TMDB_READ_ACCESS_TOKEN;
 
@@ -11,6 +15,8 @@ if (!token) {
   console.error('Add it to your .env file.');
   process.exit(1);
 }
+
+const tmdb = createTmdbProvider(token);
 
 const inputArgument = process.argv[2];
 
@@ -25,68 +31,6 @@ const collectionId = inputArgument.toLowerCase();
 const inputPath = path.resolve('imports', `${collectionId}.txt`);
 const outputDirectory = path.resolve('src', 'data', 'generated');
 const outputPath = path.join(outputDirectory, `${collectionId}.ts`);
-
-function normalizeTitle(title) {
-  return title
-    .normalize('NFKD')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-    .replace(/\s+/g, ' ');
-}
-
-function getReleaseYear(movie) {
-  return movie.release_date?.slice(0, 4) || undefined;
-}
-
-function createItemId(title, tmdbId) {
-  const slug = title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-
-  return `${slug}-${tmdbId}`;
-}
-
-async function tmdbRequest(endpoint, searchParams = {}) {
-  const url = new URL(`${TMDB_API_BASE}${endpoint}`);
-
-  for (const [key, value] of Object.entries(searchParams)) {
-    if (value !== undefined) {
-      url.searchParams.set(key, value);
-    }
-  }
-
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`TMDB returned ${response.status} ${response.statusText} for ${endpoint}`);
-  }
-
-  return response.json();
-}
-
-async function searchMovie(title, year) {
-  const data = await tmdbRequest('/search/movie', {
-    query: title,
-    language: 'en-US',
-    include_adult: 'false',
-    primary_release_year: year,
-  });
-
-  return data.results ?? [];
-}
-
-async function getMovieById(tmdbId) {
-  return tmdbRequest(`/movie/${tmdbId}`, {
-    language: 'en-US',
-  });
-}
 
 function parseLine(line) {
   const [titlePart, yearPart, idPart] = line.split('|');
@@ -134,18 +78,6 @@ function findExactMatches(results, request) {
   });
 }
 
-function createRankItem(movie) {
-  const releaseYear = getReleaseYear(movie);
-
-  return {
-    id: createItemId(movie.title, movie.id),
-    name: movie.title,
-    subtitle: releaseYear,
-    image: movie.poster_path ? `${TMDB_IMAGE_BASE}${movie.poster_path}` : undefined,
-    tmdbId: movie.id,
-  };
-}
-
 function printSuggestions(results) {
   if (results.length === 0) {
     console.log('  No TMDB results were returned.');
@@ -179,7 +111,7 @@ for (const request of requests) {
 
   if (request.tmdbId) {
     try {
-      const movie = await getMovieById(request.tmdbId);
+      const movie = await tmdb.getMovieById(request.tmdbId);
 
       console.log(
         `  ✓ Explicit TMDB ID: ${movie.title} (${getReleaseYear(movie) ?? 'unknown'}) [TMDB ${movie.id}]`,
@@ -203,7 +135,7 @@ for (const request of requests) {
     continue;
   }
 
-  const results = await searchMovie(request.title, request.year);
+  const results = await tmdb.searchMovie(request.title, request.year);
 
   const exactMatches = findExactMatches(results, request);
 

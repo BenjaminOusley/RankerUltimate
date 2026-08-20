@@ -1,9 +1,15 @@
+export type ItemSource = {
+  provider: string;
+  id: string;
+  type?: string;
+};
+
 export type RankItem = {
   id: string;
   name: string;
   subtitle?: string;
   image?: string;
-  tmdbId?: number;
+  source?: ItemSource;
 };
 
 export type RankCollection = {

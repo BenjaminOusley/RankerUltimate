@@ -48,6 +48,8 @@ function DebugPanel({ collection, rankingState, history }: DebugPanelProps) {
             comparisons: rankingState?.comparisons ?? null,
 
             historyLength: history.length,
+
+            currentSource: rankingState?.current?.source ?? null,
           },
           null,
           2,
