@@ -4,16 +4,10 @@ import './App.css';
 import { collections } from './data/collections';
 import type { RankCollection, RankItem } from './types';
 
-import ItemCard from './components/ItemCard';
+import { chooseWinner, createInitialRankingState } from './ranking/ranker';
+import type { RankingState } from './ranking/types';
 
-type RankingState = {
-  ranked: RankItem[];
-  remaining: RankItem[];
-  current: RankItem | null;
-  low: number;
-  high: number;
-  comparisons: number;
-};
+import ItemCard from './components/ItemCard';
 
 type DebugPanelProps = {
   collection: RankCollection | null;
@@ -61,39 +55,6 @@ function DebugPanel({ collection, rankingState, history }: DebugPanelProps) {
   );
 }
 
-function createInitialState(items: RankItem[]): RankingState {
-  if (items.length === 0) {
-    return {
-      ranked: [],
-      remaining: [],
-      current: null,
-      low: 0,
-      high: 0,
-      comparisons: 0,
-    };
-  }
-
-  if (items.length === 1) {
-    return {
-      ranked: [items[0]],
-      remaining: [],
-      current: null,
-      low: 0,
-      high: 1,
-      comparisons: 0,
-    };
-  }
-
-  return {
-    ranked: [items[0]],
-    current: items[1],
-    remaining: items.slice(2),
-    low: 0,
-    high: 1,
-    comparisons: 0,
-  };
-}
-
 function App() {
   const [collection, setCollection] = useState<RankCollection | null>(null);
 
@@ -126,7 +87,7 @@ function App() {
       return;
     }
 
-    setRankingState(createInitialState(selectedItems));
+    setRankingState(createInitialRankingState(selectedItems));
 
     setHistory([]);
     setScreen('ranking');
@@ -171,60 +132,12 @@ function App() {
       return;
     }
 
-    const { ranked, remaining, current, low, high, comparisons } = rankingState;
+    const previousState = rankingState;
+    const nextState = chooseWinner(previousState, winner);
 
-    if (!current) {
-      return;
-    }
+    setHistory((previous) => [...previous, previousState]);
 
-    const comparisonIndex = Math.floor((low + high) / 2);
-
-    const opponent = ranked[comparisonIndex];
-
-    if (!opponent) {
-      return;
-    }
-
-    setHistory((previous) => [...previous, rankingState]);
-
-    let nextLow = low;
-    let nextHigh = high;
-
-    if (winner.id === current.id) {
-      nextHigh = comparisonIndex;
-    } else {
-      nextLow = comparisonIndex + 1;
-    }
-
-    const nextComparisonCount = comparisons + 1;
-
-    if (nextLow >= nextHigh) {
-      const newRanked = [...ranked];
-
-      newRanked.splice(nextLow, 0, current);
-
-      const nextCurrent = remaining[0] ?? null;
-
-      const nextRemaining = remaining.slice(1);
-
-      setRankingState({
-        ranked: newRanked,
-        remaining: nextRemaining,
-        current: nextCurrent,
-        low: 0,
-        high: newRanked.length,
-        comparisons: nextComparisonCount,
-      });
-
-      return;
-    }
-
-    setRankingState({
-      ...rankingState,
-      low: nextLow,
-      high: nextHigh,
-      comparisons: nextComparisonCount,
-    });
+    setRankingState(nextState);
   }
 
   function undo() {
@@ -250,7 +163,7 @@ function App() {
       return;
     }
 
-    setRankingState(createInitialState(selectedItems));
+    setRankingState(createInitialRankingState(selectedItems));
     setHistory([]);
   }
 
