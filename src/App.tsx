@@ -21,6 +21,8 @@ type DebugPanelProps = {
   history: RankingState[];
 };
 
+type AppScreen = 'collections' | 'review' | 'ranking';
+
 function DebugPanel({ collection, rankingState, history }: DebugPanelProps) {
   if (!import.meta.env.DEV) {
     return null;
@@ -99,16 +101,69 @@ function App() {
 
   const [history, setHistory] = useState<RankingState[]>([]);
 
-  function startCollection(selectedCollection: RankCollection) {
+  const [screen, setScreen] = useState<AppScreen>('collections');
+
+  const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
+
+  function selectCollection(selectedCollection: RankCollection) {
     setCollection(selectedCollection);
-    setRankingState(createInitialState(selectedCollection.items));
+
+    setSelectedItemIds(new Set(selectedCollection.items.map((item) => item.id)));
+
+    setRankingState(null);
     setHistory([]);
+    setScreen('review');
+  }
+
+  function startRanking() {
+    if (!collection) {
+      return;
+    }
+
+    const selectedItems = collection.items.filter((item) => selectedItemIds.has(item.id));
+
+    if (selectedItems.length < 2) {
+      return;
+    }
+
+    setRankingState(createInitialState(selectedItems));
+
+    setHistory([]);
+    setScreen('ranking');
+  }
+
+  function toggleItem(itemId: string) {
+    setSelectedItemIds((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+
+      return next;
+    });
+  }
+
+  function selectAllItems() {
+    if (!collection) {
+      return;
+    }
+
+    setSelectedItemIds(new Set(collection.items.map((item) => item.id)));
+  }
+
+  function clearAllItems() {
+    setSelectedItemIds(new Set());
   }
 
   function returnToCollections() {
     setCollection(null);
     setRankingState(null);
+    setSelectedItemIds(new Set());
     setHistory([]);
+    setScreen('collections');
   }
 
   function choose(winner: RankItem) {
@@ -189,11 +244,17 @@ function App() {
       return;
     }
 
-    setRankingState(createInitialState(collection.items));
+    const selectedItems = collection.items.filter((item) => selectedItemIds.has(item.id));
+
+    if (selectedItems.length < 2) {
+      return;
+    }
+
+    setRankingState(createInitialState(selectedItems));
     setHistory([]);
   }
 
-  if (!collection || !rankingState) {
+  if (screen === 'collections') {
     return (
       <main className="app">
         <header className="header">
@@ -206,7 +267,7 @@ function App() {
             <button
               className="collection-card"
               key={item.id}
-              onClick={() => startCollection(item)}
+              onClick={() => selectCollection(item)}
             >
               <span className="collection-name">{item.name}</span>
 
@@ -225,6 +286,90 @@ function App() {
         />
       </main>
     );
+  }
+
+  if (screen === 'review' && collection) {
+    return (
+      <main className="app">
+        <header className="header">
+          <h1>{collection.name}</h1>
+
+          <p>Choose which items you want to rank.</p>
+        </header>
+
+        <section className="review">
+          <div className="review-toolbar">
+            <strong>
+              {selectedItemIds.size} of {collection.items.length} selected
+            </strong>
+
+            <div className="review-actions">
+              <button onClick={selectAllItems}>Select All</button>
+
+              <button onClick={clearAllItems}>Clear All</button>
+            </div>
+          </div>
+
+          <div className="review-grid">
+            {collection.items.map((item) => {
+              const selected = selectedItemIds.has(item.id);
+
+              return (
+                <label
+                  className={`review-item ${selected ? 'review-item-selected' : ''}`}
+                  key={item.id}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={() => toggleItem(item.id)}
+                  />
+
+                  <div className="review-image-wrapper">
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt=""
+                        className="review-image"
+                      />
+                    ) : (
+                      <div className="review-placeholder">{item.name.charAt(0)}</div>
+                    )}
+                  </div>
+
+                  <div className="review-item-info">
+                    <strong>{item.name}</strong>
+
+                    {item.subtitle && <span>{item.subtitle}</span>}
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+
+          <div className="actions">
+            <button onClick={returnToCollections}>Back</button>
+
+            <button
+              onClick={startRanking}
+              disabled={selectedItemIds.size < 2}
+            >
+              Rank {selectedItemIds.size} Items
+            </button>
+          </div>
+        </section>
+
+        <DebugPanel
+          collection={collection}
+          rankingState={rankingState}
+          history={history}
+        />
+      </main>
+    );
+  }
+
+  if (!rankingState || !collection) {
+    return null;
   }
 
   const { ranked, current, low, high, comparisons } = rankingState;
@@ -316,7 +461,7 @@ function App() {
 
       <section className="status">
         <div>
-          {ranked.length} of {collection.items.length} items placed
+          {ranked.length} of {selectedItemIds.size} items placed
         </div>
 
         <div>{comparisons} comparisons</div>
