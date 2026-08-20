@@ -4,6 +4,8 @@ import './App.css';
 import { collections } from './data/collections';
 import type { RankCollection, RankItem } from './types';
 
+import ItemCard from './components/ItemCard';
+
 type RankingState = {
   ranked: RankItem[];
   remaining: RankItem[];
@@ -19,11 +21,7 @@ type DebugPanelProps = {
   history: RankingState[];
 };
 
-function DebugPanel({
-  collection,
-  rankingState,
-  history,
-}: DebugPanelProps) {
+function DebugPanel({ collection, rankingState, history }: DebugPanelProps) {
   if (!import.meta.env.DEV) {
     return null;
   }
@@ -37,25 +35,17 @@ function DebugPanel({
           {
             collection: collection?.id ?? null,
 
-            ranked: rankingState?.ranked.map(
-              (item) => item.id,
-            ) ?? [],
+            ranked: rankingState?.ranked.map((item) => item.id) ?? [],
 
-            remaining: rankingState?.remaining.map(
-              (item) => item.id,
-            ) ?? [],
+            remaining: rankingState?.remaining.map((item) => item.id) ?? [],
 
-            current:
-              rankingState?.current?.id ?? null,
+            current: rankingState?.current?.id ?? null,
 
-            low:
-              rankingState?.low ?? null,
+            low: rankingState?.low ?? null,
 
-            high:
-              rankingState?.high ?? null,
+            high: rankingState?.high ?? null,
 
-            comparisons:
-              rankingState?.comparisons ?? null,
+            comparisons: rankingState?.comparisons ?? null,
 
             historyLength: history.length,
           },
@@ -101,20 +91,15 @@ function createInitialState(items: RankItem[]): RankingState {
 }
 
 function App() {
-  const [collection, setCollection] =
-    useState<RankCollection | null>(null);
+  const [collection, setCollection] = useState<RankCollection | null>(null);
 
-  const [rankingState, setRankingState] =
-    useState<RankingState | null>(null);
+  const [rankingState, setRankingState] = useState<RankingState | null>(null);
 
-  const [history, setHistory] =
-    useState<RankingState[]>([]);
+  const [history, setHistory] = useState<RankingState[]>([]);
 
   function startCollection(selectedCollection: RankCollection) {
     setCollection(selectedCollection);
-    setRankingState(
-      createInitialState(selectedCollection.items),
-    );
+    setRankingState(createInitialState(selectedCollection.items));
     setHistory([]);
   }
 
@@ -129,21 +114,13 @@ function App() {
       return;
     }
 
-    const {
-      ranked,
-      remaining,
-      current,
-      low,
-      high,
-      comparisons,
-    } = rankingState;
+    const { ranked, remaining, current, low, high, comparisons } = rankingState;
 
     if (!current) {
       return;
     }
 
-    const comparisonIndex =
-      Math.floor((low + high) / 2);
+    const comparisonIndex = Math.floor((low + high) / 2);
 
     const opponent = ranked[comparisonIndex];
 
@@ -151,10 +128,7 @@ function App() {
       return;
     }
 
-    setHistory((previous) => [
-      ...previous,
-      rankingState,
-    ]);
+    setHistory((previous) => [...previous, rankingState]);
 
     let nextLow = low;
     let nextHigh = high;
@@ -165,23 +139,16 @@ function App() {
       nextLow = comparisonIndex + 1;
     }
 
-    const nextComparisonCount =
-      comparisons + 1;
+    const nextComparisonCount = comparisons + 1;
 
     if (nextLow >= nextHigh) {
       const newRanked = [...ranked];
 
-      newRanked.splice(
-        nextLow,
-        0,
-        current,
-      );
+      newRanked.splice(nextLow, 0, current);
 
-      const nextCurrent =
-        remaining[0] ?? null;
+      const nextCurrent = remaining[0] ?? null;
 
-      const nextRemaining =
-        remaining.slice(1);
+      const nextRemaining = remaining.slice(1);
 
       setRankingState({
         ranked: newRanked,
@@ -208,14 +175,11 @@ function App() {
       return;
     }
 
-    const previousState =
-      history[history.length - 1];
+    const previousState = history[history.length - 1];
 
     setRankingState(previousState);
 
-    setHistory((previous) =>
-      previous.slice(0, -1),
-    );
+    setHistory((previous) => previous.slice(0, -1));
   }
 
   function reset() {
@@ -223,9 +187,7 @@ function App() {
       return;
     }
 
-    setRankingState(
-      createInitialState(collection.items),
-    );
+    setRankingState(createInitialState(collection.items));
     setHistory([]);
   }
 
@@ -244,39 +206,26 @@ function App() {
               key={item.id}
               onClick={() => startCollection(item)}
             >
-              <span className="collection-name">
-                {item.name}
-              </span>
+              <span className="collection-name">{item.name}</span>
 
-              <span className="collection-count">
-                {item.items.length} items
-              </span>
+              <span className="collection-count">{item.items.length} items</span>
 
               {item.description && (
-                <span className="collection-description">
-                  {item.description}
-                </span>
+                <span className="collection-description">{item.description}</span>
               )}
             </button>
           ))}
         </section>
         <DebugPanel
-  collection={collection}
-  rankingState={rankingState}
-  history={history}
-/>
+          collection={collection}
+          rankingState={rankingState}
+          history={history}
+        />
       </main>
     );
   }
 
-  const {
-    ranked,
-    remaining,
-    current,
-    low,
-    high,
-    comparisons,
-  } = rankingState;
+  const { ranked, remaining, current, low, high, comparisons } = rankingState;
 
   const completed = current === null;
 
@@ -286,9 +235,7 @@ function App() {
         <section className="results">
           <h1>{collection.name}</h1>
 
-          <p className="subtitle">
-            Ranking complete after {comparisons} comparisons.
-          </p>
+          <p className="subtitle">Ranking complete after {comparisons} comparisons.</p>
 
           <div className="ranking-list">
             {ranked.map((item, index) => (
@@ -296,18 +243,12 @@ function App() {
                 className="ranking-row"
                 key={item.id}
               >
-                <span className="rank-number">
-                  {index + 1}
-                </span>
+                <span className="rank-number">{index + 1}</span>
 
                 <div>
                   <strong>{item.name}</strong>
 
-                  {item.subtitle && (
-                    <div className="item-subtitle">
-                      {item.subtitle}
-                    </div>
-                  )}
+                  {item.subtitle && <div className="item-subtitle">{item.subtitle}</div>}
                 </div>
               </div>
             ))}
@@ -321,30 +262,24 @@ function App() {
               Undo
             </button>
 
-            <button onClick={reset}>
-              Rank Again
-            </button>
+            <button onClick={reset}>Rank Again</button>
 
-            <button onClick={returnToCollections}>
-              Choose Another List
-            </button>
+            <button onClick={returnToCollections}>Choose Another List</button>
           </div>
         </section>
 
         <DebugPanel
-  collection={collection}
-  rankingState={rankingState}
-  history={history}
-/>
+          collection={collection}
+          rankingState={rankingState}
+          history={history}
+        />
       </main>
     );
   }
 
-  const comparisonIndex =
-    Math.floor((low + high) / 2);
+  const comparisonIndex = Math.floor((low + high) / 2);
 
-  const opponent =
-    ranked[comparisonIndex];
+  const opponent = ranked[comparisonIndex];
 
   if (!opponent) {
     return null;
@@ -361,47 +296,19 @@ function App() {
         <h2>Which do you prefer?</h2>
 
         <div className="cards">
-          <button
-            className="item-card"
+          <ItemCard
+            key={current.id}
+            item={current}
             onClick={() => choose(current)}
-          >
-            <div className="poster-placeholder">
-              {current.name.charAt(0)}
-            </div>
+          />
 
-            <span className="item-name">
-              {current.name}
-            </span>
+          <div className="versus">VS</div>
 
-            {current.subtitle && (
-              <span className="item-subtitle">
-                {current.subtitle}
-              </span>
-            )}
-          </button>
-
-          <div className="versus">
-            VS
-          </div>
-
-          <button
-            className="item-card"
+          <ItemCard
+            key={opponent.id}
+            item={opponent}
             onClick={() => choose(opponent)}
-          >
-            <div className="poster-placeholder">
-              {opponent.name.charAt(0)}
-            </div>
-
-            <span className="item-name">
-              {opponent.name}
-            </span>
-
-            {opponent.subtitle && (
-              <span className="item-subtitle">
-                {opponent.subtitle}
-              </span>
-            )}
-          </button>
+          />
         </div>
       </section>
 
@@ -410,9 +317,7 @@ function App() {
           {ranked.length} of {collection.items.length} items placed
         </div>
 
-        <div>
-          {comparisons} comparisons
-        </div>
+        <div>{comparisons} comparisons</div>
 
         <button
           onClick={undo}
@@ -421,20 +326,16 @@ function App() {
           Undo
         </button>
 
-        <button onClick={reset}>
-          Restart
-        </button>
+        <button onClick={reset}>Restart</button>
 
-        <button onClick={returnToCollections}>
-          Collections
-        </button>
+        <button onClick={returnToCollections}>Collections</button>
       </section>
 
       <DebugPanel
-  collection={collection}
-  rankingState={rankingState}
-  history={history}
-/>
+        collection={collection}
+        rankingState={rankingState}
+        history={history}
+      />
     </main>
   );
 }

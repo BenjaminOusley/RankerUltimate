@@ -9,6 +9,7 @@ export const mcuMovies: RankCollection = {
       id: 'iron-man',
       name: 'Iron Man',
       subtitle: '2008',
+      image: '/images/test/test.jpg',
     },
     {
       id: 'incredible-hulk',
