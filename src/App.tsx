@@ -22,6 +22,8 @@ import type { RankingState } from './ranking/state';
 
 type AppScreen = 'collections' | 'create' | 'review' | 'ranking';
 
+type ReviewBackScreen = 'collections' | 'create';
+
 function App() {
   const [collection, setCollection] = useState<RankCollection | null>(null);
 
@@ -30,27 +32,43 @@ function App() {
   const [history, setHistory] = useState<RankingState[]>([]);
 
   const [screen, setScreen] = useState<AppScreen>('collections');
+  const [reviewBackScreen, setReviewBackScreen] = useState<ReviewBackScreen>('collections');
+
+  const [lastGenerationRequest, setLastGenerationRequest] = useState<GenerationRequest | null>(
+    null,
+  );
 
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
 
-  function selectCollection(selectedCollection: RankCollection) {
+  function selectCollection(
+    selectedCollection: RankCollection,
+    backScreen: ReviewBackScreen = 'collections',
+  ) {
     setCollection(selectedCollection);
 
     setSelectedItemIds(new Set(selectedCollection.items.map((item) => item.id)));
 
     setRankingState(null);
     setHistory([]);
+    setReviewBackScreen(backScreen);
     setScreen('review');
   }
 
   function openCollectionGenerator() {
+    setLastGenerationRequest(null);
+
     setScreen('create');
   }
 
   async function generateRequestedCollection(request: GenerationRequest) {
     const generatedCollection = await generateCollection(request);
 
-    selectCollection(generatedCollection);
+    setLastGenerationRequest({
+      ...request,
+      tmdbId: null,
+    });
+
+    selectCollection(generatedCollection, 'create');
   }
 
   function startRanking() {
@@ -96,7 +114,26 @@ function App() {
     setSelectedItemIds(new Set());
   }
 
+  function returnFromReview() {
+    if (reviewBackScreen === 'create') {
+      setCollection(null);
+      setRankingState(null);
+
+      setSelectedItemIds(new Set());
+
+      setHistory([]);
+      setScreen('create');
+
+      return;
+    }
+
+    returnToCollections();
+  }
+
   function returnToCollections() {
+    setReviewBackScreen('collections');
+
+    setLastGenerationRequest(null);
     setCollection(null);
     setRankingState(null);
 
@@ -170,6 +207,7 @@ function App() {
     return (
       <main className="app">
         <CollectionGenerator
+          initialRequest={lastGenerationRequest}
           onGenerate={generateRequestedCollection}
           onSearchPeople={searchPeople}
           onBack={returnToCollections}
@@ -197,7 +235,7 @@ function App() {
           onToggleItem={toggleItem}
           onSelectAll={selectAllItems}
           onClearAll={clearAllItems}
-          onBack={returnToCollections}
+          onBack={returnFromReview}
           onStart={startRanking}
         />
 

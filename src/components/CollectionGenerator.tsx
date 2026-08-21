@@ -9,6 +9,8 @@ import type {
 } from '../models';
 
 type CollectionGeneratorProps = {
+  initialRequest: GenerationRequest | null;
+
   onGenerate: (request: GenerationRequest) => Promise<void>;
 
   onSearchPeople: (mode: PersonGenerationMode, query: string) => Promise<PersonMatch[]>;
@@ -80,24 +82,43 @@ function parseOptionalInteger(value: string) {
   return Number(value);
 }
 
-function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionGeneratorProps) {
-  const [mode, setMode] = useState<GenerationMode>('genre');
+function CollectionGenerator({
+  initialRequest,
+  onGenerate,
+  onSearchPeople,
+  onBack,
+}: CollectionGeneratorProps) {
+  const [mode, setMode] = useState<GenerationMode>(initialRequest?.mode ?? 'genre');
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialRequest?.query ?? '');
 
-  const [fromYear, setFromYear] = useState('');
+  const [fromYear, setFromYear] = useState(
+    initialRequest?.fromYear === null || initialRequest?.fromYear === undefined
+      ? ''
+      : String(initialRequest.fromYear),
+  );
 
-  const [toYear, setToYear] = useState('');
+  const [toYear, setToYear] = useState(
+    initialRequest?.toYear === null || initialRequest?.toYear === undefined
+      ? ''
+      : String(initialRequest.toYear),
+  );
 
-  const [sort, setSort] = useState<GenerationSort>('popularity');
+  const [sort, setSort] = useState<GenerationSort>(initialRequest?.sort ?? 'popularity');
 
-  const [limit, setLimit] = useState('50');
+  const [limit, setLimit] = useState(String(initialRequest?.limit ?? 50));
 
-  const [minRuntime, setMinRuntime] = useState('');
+  const [minRuntime, setMinRuntime] = useState(
+    initialRequest?.minRuntime === null || initialRequest?.minRuntime === undefined
+      ? ''
+      : String(initialRequest.minRuntime),
+  );
 
-  const [excludeDocumentaries, setExcludeDocumentaries] = useState(false);
+  const [excludeDocumentaries, setExcludeDocumentaries] = useState(
+    initialRequest?.excludeDocumentaries ?? false,
+  );
 
-  const [includeAdult, setIncludeAdult] = useState(false);
+  const [includeAdult, setIncludeAdult] = useState(initialRequest?.includeAdult ?? false);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -105,7 +126,9 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
 
   const [personMatches, setPersonMatches] = useState<PersonMatch[]>([]);
 
-  const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
+  const [selectedPersonId, setSelectedPersonId] = useState<number | null>(
+    initialRequest?.tmdbId ?? null,
+  );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -165,6 +188,16 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
       return;
     }
 
+    if (
+      (mode === 'actor' || mode === 'director') &&
+      personMatches.length > 1 &&
+      selectedPersonId === null
+    ) {
+      setError('Select a person before generating the collection.');
+
+      return;
+    }
+
     setError(null);
     setIsGenerating(true);
 
@@ -183,10 +216,8 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
 
           if (matches.length > 1) {
             setPersonMatches(matches);
-
-            setError(
-              'Multiple people matched. Choose the correct person below, then generate again.',
-            );
+            setSelectedPersonId(null);
+            setError(null);
 
             return;
           }
@@ -231,6 +262,11 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
       setIsGenerating(false);
     }
   }
+
+  const needsPersonSelection =
+    (mode === 'actor' || mode === 'director') &&
+    personMatches.length > 1 &&
+    selectedPersonId === null;
 
   return (
     <>
@@ -387,9 +423,11 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
 
           {personMatches.length > 1 && (
             <section className="person-matches">
-              <h2>Choose Person</h2>
+              <div className="person-matches-heading">
+                <h2>Choose Person</h2>
 
-              <p>TMDB found multiple people matching your search.</p>
+                <p>Multiple TMDB profiles matched "{query}". Select the correct person.</p>
+              </div>
 
               <div className="person-match-list">
                 {personMatches.map((person) => (
@@ -411,10 +449,12 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
                     <span className="person-match-info">
                       <strong>{person.name}</strong>
 
-                      <span>{person.department}</span>
+                      <span className="person-match-department">{person.department}</span>
 
                       {person.knownFor.length > 0 && (
-                        <span>Known for: {person.knownFor.join(', ')}</span>
+                        <span className="person-match-known-for">
+                          {person.knownFor.join(' • ')}
+                        </span>
                       )}
                     </span>
                   </label>
@@ -440,9 +480,13 @@ function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionG
 
             <button
               type="submit"
-              disabled={isGenerating}
+              disabled={isGenerating || needsPersonSelection}
             >
-              {isGenerating ? 'Generating...' : 'Generate Collection'}
+              {isGenerating
+                ? 'Generating...'
+                : needsPersonSelection
+                  ? 'Select a Person'
+                  : 'Generate Collection'}
             </button>
           </div>
         </form>
