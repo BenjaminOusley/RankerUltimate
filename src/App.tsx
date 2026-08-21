@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import './App.css';
 
+import CollectionGenerator from './components/CollectionGenerator';
 import CollectionPicker from './components/CollectionPicker';
 import CollectionReview from './components/CollectionReview';
 import DebugPanel from './components/DebugPanel';
@@ -10,13 +11,13 @@ import ResultsScreen from './components/ResultsScreen';
 
 import { collections } from './data/collections';
 
-import type { RankCollection, RankItem } from './models';
+import type { GenerationRequest, RankCollection, RankItem } from './models';
 
 import { chooseWinner, createInitialRankingState } from './ranking/ranker';
 
 import type { RankingState } from './ranking/state';
 
-type AppScreen = 'collections' | 'review' | 'ranking';
+type AppScreen = 'collections' | 'create' | 'review' | 'ranking';
 
 function App() {
   const [collection, setCollection] = useState<RankCollection | null>(null);
@@ -29,6 +30,9 @@ function App() {
 
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
 
+  const [preparedGenerationRequest, setPreparedGenerationRequest] =
+    useState<GenerationRequest | null>(null);
+
   function selectCollection(selectedCollection: RankCollection) {
     setCollection(selectedCollection);
 
@@ -37,6 +41,16 @@ function App() {
     setRankingState(null);
     setHistory([]);
     setScreen('review');
+  }
+
+  function openCollectionGenerator() {
+    setPreparedGenerationRequest(null);
+
+    setScreen('create');
+  }
+
+  function prepareGenerationRequest(request: GenerationRequest) {
+    setPreparedGenerationRequest(request);
   }
 
   function startRanking() {
@@ -85,7 +99,11 @@ function App() {
   function returnToCollections() {
     setCollection(null);
     setRankingState(null);
+
     setSelectedItemIds(new Set());
+
+    setPreparedGenerationRequest(null);
+
     setHistory([]);
     setScreen('collections');
   }
@@ -138,6 +156,25 @@ function App() {
         <CollectionPicker
           collections={collections}
           onSelect={selectCollection}
+          onCreate={openCollectionGenerator}
+        />
+
+        <DebugPanel
+          collection={collection}
+          rankingState={rankingState}
+          history={history}
+        />
+      </main>
+    );
+  }
+
+  if (screen === 'create') {
+    return (
+      <main className="app">
+        <CollectionGenerator
+          preparedRequest={preparedGenerationRequest}
+          onPrepare={prepareGenerationRequest}
+          onBack={returnToCollections}
         />
 
         <DebugPanel

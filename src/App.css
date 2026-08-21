@@ -376,3 +376,87 @@
     grid-template-columns: 1fr;
   }
 }
+
+.collection-generator {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.generation-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.generation-field {
+  display: grid;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.generation-field > span {
+  font-weight: 600;
+}
+
+.generation-field input,
+.generation-field select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.75rem;
+  font: inherit;
+}
+
+.generation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.generation-checks {
+  display: grid;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.generation-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.generation-checkbox input {
+  width: auto;
+}
+
+.generation-note {
+  margin: 0;
+  opacity: 0.75;
+  text-align: left;
+}
+
+.generation-error {
+  margin: 0;
+  font-weight: 600;
+  text-align: left;
+}
+
+.generation-request-preview {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.generation-request-preview pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .generation-grid {
+    grid-template-columns: 1fr;
+  }
+}
