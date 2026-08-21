@@ -1,9 +1,17 @@
 import { useState } from 'react';
 
-import type { GenerationMode, GenerationRequest, GenerationSort } from '../models';
+import type {
+  GenerationMode,
+  GenerationRequest,
+  GenerationSort,
+  PersonGenerationMode,
+  PersonMatch,
+} from '../models';
 
 type CollectionGeneratorProps = {
   onGenerate: (request: GenerationRequest) => Promise<void>;
+
+  onSearchPeople: (mode: PersonGenerationMode, query: string) => Promise<PersonMatch[]>;
 
   onBack: () => void;
 };
@@ -72,7 +80,7 @@ function parseOptionalInteger(value: string) {
   return Number(value);
 }
 
-function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
+function CollectionGenerator({ onGenerate, onSearchPeople, onBack }: CollectionGeneratorProps) {
   const [mode, setMode] = useState<GenerationMode>('genre');
 
   const [query, setQuery] = useState('');
@@ -94,6 +102,10 @@ function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const [personMatches, setPersonMatches] = useState<PersonMatch[]>([]);
+
+  const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -153,25 +165,61 @@ function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
       return;
     }
 
-    const request: GenerationRequest = {
-      mode,
-      query: trimmedQuery,
-      collectionId: createCollectionId(trimmedQuery, mode),
-      limit: parsedLimit,
-      tmdbId: null,
-      fromYear: parsedFromYear,
-      toYear: parsedToYear,
-      sort,
-      minRuntime: parsedMinRuntime,
-      excludeDocumentaries,
-      includeAdult,
-      language: 'en-US',
-    };
-
     setError(null);
     setIsGenerating(true);
 
     try {
+      let tmdbId = selectedPersonId;
+
+      if (mode === 'actor' || mode === 'director') {
+        if (tmdbId === null) {
+          const matches = await onSearchPeople(mode, trimmedQuery);
+
+          if (matches.length === 0) {
+            setPersonMatches([]);
+
+            throw new Error('No matching people were found.');
+          }
+
+          if (matches.length > 1) {
+            setPersonMatches(matches);
+
+            setError(
+              'Multiple people matched. Choose the correct person below, then generate again.',
+            );
+
+            return;
+          }
+
+          tmdbId = matches[0].id;
+
+          setPersonMatches(matches);
+
+          setSelectedPersonId(tmdbId);
+        }
+      } else {
+        tmdbId = null;
+      }
+
+      const request: GenerationRequest = {
+        mode,
+        query: trimmedQuery,
+
+        collectionId: createCollectionId(trimmedQuery, mode),
+
+        limit: parsedLimit,
+        tmdbId,
+        fromYear: parsedFromYear,
+        toYear: parsedToYear,
+        sort,
+
+        minRuntime: parsedMinRuntime,
+
+        excludeDocumentaries,
+        includeAdult,
+        language: 'en-US',
+      };
+
       await onGenerate(request);
     } catch (generationError) {
       setError(
@@ -202,7 +250,12 @@ function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
 
             <select
               value={mode}
-              onChange={(event) => setMode(event.target.value as GenerationMode)}
+              onChange={(event) => {
+                setMode(event.target.value as GenerationMode);
+
+                setPersonMatches([]);
+                setSelectedPersonId(null);
+              }}
             >
               {generationModes.map((option) => (
                 <option
@@ -221,7 +274,12 @@ function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
             <input
               type="text"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+
+                setPersonMatches([]);
+                setSelectedPersonId(null);
+              }}
               placeholder={
                 mode === 'genre'
                   ? 'Horror'
@@ -326,6 +384,44 @@ function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
               <span>Include adult titles</span>
             </label>
           </div>
+
+          {personMatches.length > 1 && (
+            <section className="person-matches">
+              <h2>Choose Person</h2>
+
+              <p>TMDB found multiple people matching your search.</p>
+
+              <div className="person-match-list">
+                {personMatches.map((person) => (
+                  <label
+                    className={
+                      selectedPersonId === person.id
+                        ? 'person-match person-match-selected'
+                        : 'person-match'
+                    }
+                    key={person.id}
+                  >
+                    <input
+                      type="radio"
+                      name="person-match"
+                      checked={selectedPersonId === person.id}
+                      onChange={() => setSelectedPersonId(person.id)}
+                    />
+
+                    <span className="person-match-info">
+                      <strong>{person.name}</strong>
+
+                      <span>{person.department}</span>
+
+                      {person.knownFor.length > 0 && (
+                        <span>Known for: {person.knownFor.join(', ')}</span>
+                      )}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </section>
+          )}
 
           <p className="generation-note">
             Only released titles are currently included. TMDB metadata is requested in English (US).

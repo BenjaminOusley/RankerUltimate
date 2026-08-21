@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './App.css';
 
 import { generateCollection } from './api/generateCollection';
+import { searchPeople } from './api/searchpeople';
 
 import CollectionGenerator from './components/CollectionGenerator';
 import CollectionPicker from './components/CollectionPicker';
@@ -170,6 +171,7 @@ function App() {
       <main className="app">
         <CollectionGenerator
           onGenerate={generateRequestedCollection}
+          onSearchPeople={searchPeople}
           onBack={returnToCollections}
         />
 

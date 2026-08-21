@@ -37,3 +37,12 @@ export type GenerationRequest = {
   includeAdult: boolean;
   language: string;
 };
+
+export type PersonGenerationMode = 'director' | 'actor';
+
+export type PersonMatch = {
+  id: number;
+  name: string;
+  department: string;
+  knownFor: string[];
+};

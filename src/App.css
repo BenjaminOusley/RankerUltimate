@@ -446,3 +446,46 @@
     grid-template-columns: 1fr;
   }
 }
+
+.person-matches {
+  display: grid;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.person-matches h2,
+.person-matches p {
+  margin: 0;
+}
+
+.person-match-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.person-match {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.person-match-selected {
+  border-color: currentColor;
+}
+
+.person-match input {
+  margin-top: 0.25rem;
+}
+
+.person-match-info {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.person-match-info span {
+  opacity: 0.8;
+}
