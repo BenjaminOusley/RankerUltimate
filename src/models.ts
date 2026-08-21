@@ -46,3 +46,12 @@ export type PersonMatch = {
   department: string;
   knownFor: string[];
 };
+
+export type CompanyGenerationMode = 'company' | 'company-features';
+
+export type CompanyMatch = {
+  id: number;
+  name: string;
+  originCountry: string | null;
+  logo: string | null;
+};

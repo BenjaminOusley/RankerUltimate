@@ -536,4 +536,56 @@ describe('generateTmdbCollection', () => {
 
     expect(included.collection.items).toHaveLength(1);
   });
+
+  it('uses an explicit company TMDB ID', async () => {
+    let searchedForCompany = false;
+
+    const tmdb = {
+      async getCompanyById() {
+        return {
+          id: 3,
+          name: 'Pixar',
+        };
+      },
+
+      async searchCompany() {
+        searchedForCompany = true;
+        return [];
+      },
+
+      async discoverMovies(filters) {
+        expect(filters.with_companies).toBe('3');
+
+        return [
+          {
+            id: 1,
+          },
+        ];
+      },
+
+      async getMovieById() {
+        return movie({
+          id: 1,
+          title: 'Test Movie',
+          releaseDate: '2000-01-01',
+        });
+      },
+    };
+
+    const result = await generateTmdbCollection({
+      request: createRequest({
+        mode: 'company',
+        query: 'Pixar',
+        collectionId: 'pixar-test',
+        tmdbId: 3,
+      }),
+      tmdb,
+      today: '2026-08-21',
+      logger: silentLogger,
+    });
+
+    expect(searchedForCompany).toBe(false);
+
+    expect(result.collection.name).toBe('Pixar Movies');
+  });
 });

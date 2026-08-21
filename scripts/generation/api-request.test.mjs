@@ -63,7 +63,20 @@ describe('validateGenerationRequest', () => {
 
     expect(result).toEqual({
       ok: false,
-      error: 'TMDB ID can only be used with actor or director mode.',
+      error: 'TMDB ID can only be used with company, company-features, actor, or director mode.',
     });
+  });
+
+  it('accepts a TMDB ID for company mode', () => {
+    const result = validateGenerationRequest(
+      createRequest({
+        mode: 'company',
+        query: 'Pixar',
+        collectionId: 'pixar',
+        tmdbId: 3,
+      }),
+    );
+
+    expect(result.ok).toBe(true);
   });
 });

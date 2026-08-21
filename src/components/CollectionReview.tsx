@@ -6,7 +6,7 @@ type CollectionReviewProps = {
   onToggleItem: (itemId: string) => void;
   onSelectAll: () => void;
   onClearAll: () => void;
-  onBack: () => void;
+  onBack?: () => void;
   onStart: () => void;
 };
 
@@ -88,12 +88,14 @@ function CollectionReview({
         </div>
 
         <div className="actions">
-          <button
-            type="button"
-            onClick={onBack}
-          >
-            Back
-          </button>
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+            >
+              Back
+            </button>
+          )}
 
           <button
             type="button"

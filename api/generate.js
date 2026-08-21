@@ -72,8 +72,16 @@ export function validateGenerationRequest(value) {
     return failure('Invalid TMDB ID.');
   }
 
-  if (tmdbId !== null && mode !== 'actor' && mode !== 'director') {
-    return failure('TMDB ID can only be used with actor or director mode.');
+  if (
+    tmdbId !== null &&
+    mode !== 'company' &&
+    mode !== 'company-features' &&
+    mode !== 'actor' &&
+    mode !== 'director'
+  ) {
+    return failure(
+      'TMDB ID can only be used with company, company-features, actor, or director mode.',
+    );
   }
 
   if (!isOptionalInteger(fromYear, 1870, 9999)) {

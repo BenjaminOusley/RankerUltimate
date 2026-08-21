@@ -294,15 +294,25 @@ export async function generateTmdbCollection({
   let resolvedEntity = null;
 
   if (request.mode === 'company' || request.mode === 'company-features') {
-    const company = await resolveCompany(tmdb, request.query, logger);
+    let company;
 
-    if (!company) {
-      throw new Error('Generation cancelled.');
+    if (request.tmdbId !== null) {
+      logger.log(`Loading company by TMDB ID ${request.tmdbId}...\n`);
+
+      company = await tmdb.getCompanyById(request.tmdbId);
+
+      logger.log(`✓ Company: ${company.name} [TMDB ${company.id}]`);
+    } else {
+      company = await resolveCompany(tmdb, request.query, logger);
+
+      if (!company) {
+        throw new Error('Generation cancelled.');
+      }
+
+      logger.log(`✓ Company: ${company.name} [TMDB ${company.id}]`);
     }
 
     resolvedEntity = company;
-
-    logger.log(`✓ Company: ${company.name} [TMDB ${company.id}]`);
 
     filters.with_companies = String(company.id);
   }

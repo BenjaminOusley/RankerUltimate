@@ -7,7 +7,6 @@ type ResultsScreenProps = {
   historyLength: number;
   onUndo: () => void;
   onRankAgain: () => void;
-  onChooseAnotherList: () => void;
 };
 
 function ResultsScreen({
@@ -16,7 +15,6 @@ function ResultsScreen({
   historyLength,
   onUndo,
   onRankAgain,
-  onChooseAnotherList,
 }: ResultsScreenProps) {
   const { ranked, comparisons } = rankingState;
 
@@ -57,13 +55,6 @@ function ResultsScreen({
           onClick={onRankAgain}
         >
           Rank Again
-        </button>
-
-        <button
-          type="button"
-          onClick={onChooseAnotherList}
-        >
-          Choose Another List
         </button>
       </div>
     </section>

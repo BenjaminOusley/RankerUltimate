@@ -133,8 +133,16 @@ export function parseGenerationRequest(args) {
     return failure('--tmdb-id must be a positive integer.');
   }
 
-  if (tmdbId !== null && mode !== 'actor' && mode !== 'director') {
-    return failure('--tmdb-id can only be used with actor or director mode.');
+  if (
+    tmdbId !== null &&
+    mode !== 'company' &&
+    mode !== 'company-features' &&
+    mode !== 'actor' &&
+    mode !== 'director'
+  ) {
+    return failure(
+      '--tmdb-id can only be used with company, company-features, actor, or director mode.',
+    );
   }
 
   const fromValue = values.get('from');

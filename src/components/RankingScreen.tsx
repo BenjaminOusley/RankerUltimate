@@ -12,7 +12,7 @@ type RankingScreenProps = {
   onChoose: (winner: RankItem) => void;
   onUndo: () => void;
   onRestart: () => void;
-  onCollections: () => void;
+  onBack: () => void;
 };
 
 function RankingScreen({
@@ -23,7 +23,7 @@ function RankingScreen({
   onChoose,
   onUndo,
   onRestart,
-  onCollections,
+  onBack,
 }: RankingScreenProps) {
   const { ranked, current, low, high, comparisons } = rankingState;
 
@@ -75,6 +75,13 @@ function RankingScreen({
 
         <button
           type="button"
+          onClick={onBack}
+        >
+          Back
+        </button>
+
+        <button
+          type="button"
           onClick={onUndo}
           disabled={historyLength === 0}
         >
@@ -86,13 +93,6 @@ function RankingScreen({
           onClick={onRestart}
         >
           Restart
-        </button>
-
-        <button
-          type="button"
-          onClick={onCollections}
-        >
-          Collections
         </button>
       </section>
     </>

@@ -109,7 +109,7 @@ describe('parseGenerationRequest', () => {
 
     expect(result).toEqual({
       ok: false,
-      error: '--tmdb-id can only be used with actor or director mode.',
+      error: '--tmdb-id can only be used with company, company-features, actor, or director mode.',
     });
   });
 
@@ -164,5 +164,15 @@ describe('parseGenerationRequest', () => {
       ok: false,
       error: '--limit requires a value.',
     });
+  });
+
+  it('accepts a TMDB ID for company mode', () => {
+    const result = parseGenerationRequest(['company', 'Pixar', 'pixar', '--tmdb-id', '3']);
+
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(result.request.tmdbId).toBe(3);
+    }
   });
 });

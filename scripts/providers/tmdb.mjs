@@ -89,6 +89,10 @@ export function createTmdbProvider(token) {
     return data.results ?? [];
   }
 
+  async function getCompanyById(companyId) {
+    return request(`/company/${companyId}`);
+  }
+
   async function discoverMovies(filters, limit = 250) {
     const movies = [];
 
@@ -149,6 +153,7 @@ export function createTmdbProvider(token) {
     searchMovie,
     getMovieById,
     searchCompany,
+    getCompanyById,
     discoverMovies,
     searchPerson,
     getMovieGenres,

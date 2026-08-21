@@ -4,6 +4,7 @@ import './App.css';
 
 import { generateCollection } from './api/generateCollection';
 import { searchPeople } from './api/searchpeople';
+import { searchCompanies } from './api/searchCompanies';
 
 import CollectionGenerator from './components/CollectionGenerator';
 import CollectionPicker from './components/CollectionPicker';
@@ -11,6 +12,7 @@ import CollectionReview from './components/CollectionReview';
 import DebugPanel from './components/DebugPanel';
 import RankingScreen from './components/RankingScreen';
 import ResultsScreen from './components/ResultsScreen';
+import MainMenuButton from './components/MainMenuButton';
 
 import { collections } from './data/collections';
 
@@ -114,6 +116,12 @@ function App() {
     setSelectedItemIds(new Set());
   }
 
+  function returnFromRanking() {
+    setRankingState(null);
+    setHistory([]);
+    setScreen('review');
+  }
+
   function returnFromReview() {
     if (reviewBackScreen === 'create') {
       setCollection(null);
@@ -206,11 +214,13 @@ function App() {
   if (screen === 'create') {
     return (
       <main className="app">
+        <MainMenuButton onClick={returnToCollections} />
+
         <CollectionGenerator
           initialRequest={lastGenerationRequest}
           onGenerate={generateRequestedCollection}
           onSearchPeople={searchPeople}
-          onBack={returnToCollections}
+          onSearchCompanies={searchCompanies}
         />
 
         <DebugPanel
@@ -229,13 +239,15 @@ function App() {
   if (screen === 'review') {
     return (
       <main className="app">
+        <MainMenuButton onClick={returnToCollections} />
+
         <CollectionReview
           collection={collection}
           selectedItemIds={selectedItemIds}
           onToggleItem={toggleItem}
           onSelectAll={selectAllItems}
           onClearAll={clearAllItems}
-          onBack={returnFromReview}
+          onBack={reviewBackScreen === 'create' ? returnFromReview : undefined}
           onStart={startRanking}
         />
 
@@ -256,6 +268,8 @@ function App() {
 
   return (
     <main className="app">
+      <MainMenuButton onClick={returnToCollections} />
+
       {completed ? (
         <ResultsScreen
           collection={collection}
@@ -263,7 +277,6 @@ function App() {
           historyLength={history.length}
           onUndo={undo}
           onRankAgain={reset}
-          onChooseAnotherList={returnToCollections}
         />
       ) : (
         <RankingScreen
@@ -272,9 +285,9 @@ function App() {
           selectedCount={selectedItemIds.size}
           historyLength={history.length}
           onChoose={choose}
+          onBack={returnFromRanking}
           onUndo={undo}
           onRestart={reset}
-          onCollections={returnToCollections}
         />
       )}
 

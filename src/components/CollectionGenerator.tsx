@@ -6,6 +6,8 @@ import type {
   GenerationSort,
   PersonGenerationMode,
   PersonMatch,
+  CompanyGenerationMode,
+  CompanyMatch,
 } from '../models';
 
 type CollectionGeneratorProps = {
@@ -15,7 +17,7 @@ type CollectionGeneratorProps = {
 
   onSearchPeople: (mode: PersonGenerationMode, query: string) => Promise<PersonMatch[]>;
 
-  onBack: () => void;
+  onSearchCompanies: (mode: CompanyGenerationMode, query: string) => Promise<CompanyMatch[]>;
 };
 
 const generationModes: {
@@ -86,7 +88,7 @@ function CollectionGenerator({
   initialRequest,
   onGenerate,
   onSearchPeople,
-  onBack,
+  onSearchCompanies,
 }: CollectionGeneratorProps) {
   const [mode, setMode] = useState<GenerationMode>(initialRequest?.mode ?? 'genre');
 
@@ -127,7 +129,18 @@ function CollectionGenerator({
   const [personMatches, setPersonMatches] = useState<PersonMatch[]>([]);
 
   const [selectedPersonId, setSelectedPersonId] = useState<number | null>(
-    initialRequest?.tmdbId ?? null,
+    initialRequest && (initialRequest.mode === 'actor' || initialRequest.mode === 'director')
+      ? initialRequest.tmdbId
+      : null,
+  );
+
+  const [companyMatches, setCompanyMatches] = useState<CompanyMatch[]>([]);
+
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
+    initialRequest &&
+      (initialRequest.mode === 'company' || initialRequest.mode === 'company-features')
+      ? initialRequest.tmdbId
+      : null,
   );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -198,13 +211,25 @@ function CollectionGenerator({
       return;
     }
 
+    if (
+      (mode === 'company' || mode === 'company-features') &&
+      companyMatches.length > 1 &&
+      selectedCompanyId === null
+    ) {
+      setError('Select a company before generating the collection.');
+
+      return;
+    }
+
     setError(null);
     setIsGenerating(true);
 
     try {
-      let tmdbId = selectedPersonId;
+      let tmdbId: number | null = null;
 
       if (mode === 'actor' || mode === 'director') {
+        tmdbId = selectedPersonId;
+
         if (tmdbId === null) {
           const matches = await onSearchPeople(mode, trimmedQuery);
 
@@ -228,8 +253,32 @@ function CollectionGenerator({
 
           setSelectedPersonId(tmdbId);
         }
-      } else {
-        tmdbId = null;
+      } else if (mode === 'company' || mode === 'company-features') {
+        tmdbId = selectedCompanyId;
+
+        if (tmdbId === null) {
+          const matches = await onSearchCompanies(mode, trimmedQuery);
+
+          if (matches.length === 0) {
+            setCompanyMatches([]);
+
+            throw new Error('No matching companies were found.');
+          }
+
+          if (matches.length > 1) {
+            setCompanyMatches(matches);
+            setSelectedCompanyId(null);
+            setError(null);
+
+            return;
+          }
+
+          tmdbId = matches[0].id;
+
+          setCompanyMatches(matches);
+
+          setSelectedCompanyId(tmdbId);
+        }
       }
 
       const request: GenerationRequest = {
@@ -268,6 +317,11 @@ function CollectionGenerator({
     personMatches.length > 1 &&
     selectedPersonId === null;
 
+  const needsCompanySelection =
+    (mode === 'company' || mode === 'company-features') &&
+    companyMatches.length > 1 &&
+    selectedCompanyId === null;
+
   return (
     <>
       <header className="header">
@@ -291,6 +345,8 @@ function CollectionGenerator({
 
                 setPersonMatches([]);
                 setSelectedPersonId(null);
+                setCompanyMatches([]);
+                setSelectedCompanyId(null);
               }}
             >
               {generationModes.map((option) => (
@@ -463,6 +519,50 @@ function CollectionGenerator({
             </section>
           )}
 
+          {companyMatches.length > 1 && (
+            <section className="company-matches">
+              <div className="company-matches-heading">
+                <h2>Choose Company</h2>
+
+                <p>Multiple TMDB companies matched "{query}". Select the correct company.</p>
+              </div>
+
+              <div className="company-match-list">
+                {companyMatches.map((company) => (
+                  <label
+                    className={
+                      selectedCompanyId === company.id
+                        ? 'company-match company-match-selected'
+                        : 'company-match'
+                    }
+                    key={company.id}
+                  >
+                    <input
+                      type="radio"
+                      name="company-match"
+                      checked={selectedCompanyId === company.id}
+                      onChange={() => setSelectedCompanyId(company.id)}
+                    />
+
+                    {company.logo && (
+                      <img
+                        className="company-match-logo"
+                        src={company.logo}
+                        alt=""
+                      />
+                    )}
+
+                    <span className="company-match-info">
+                      <strong>{company.name}</strong>
+
+                      {company.originCountry && <span>{company.originCountry}</span>}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </section>
+          )}
+
           <p className="generation-note">
             Only released titles are currently included. TMDB metadata is requested in English (US).
           </p>
@@ -471,22 +571,16 @@ function CollectionGenerator({
 
           <div className="actions">
             <button
-              type="button"
-              onClick={onBack}
-              disabled={isGenerating}
-            >
-              Back
-            </button>
-
-            <button
               type="submit"
-              disabled={isGenerating || needsPersonSelection}
+              disabled={isGenerating || needsPersonSelection || needsCompanySelection}
             >
               {isGenerating
                 ? 'Generating...'
                 : needsPersonSelection
                   ? 'Select a Person'
-                  : 'Generate Collection'}
+                  : needsCompanySelection
+                    ? 'Select a Company'
+                    : 'Generate Collection'}
             </button>
           </div>
         </form>
