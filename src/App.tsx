@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import './App.css';
 
+import { generateCollection } from './api/generateCollection';
+
 import CollectionGenerator from './components/CollectionGenerator';
 import CollectionPicker from './components/CollectionPicker';
 import CollectionReview from './components/CollectionReview';
@@ -30,9 +32,6 @@ function App() {
 
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
 
-  const [preparedGenerationRequest, setPreparedGenerationRequest] =
-    useState<GenerationRequest | null>(null);
-
   function selectCollection(selectedCollection: RankCollection) {
     setCollection(selectedCollection);
 
@@ -44,13 +43,13 @@ function App() {
   }
 
   function openCollectionGenerator() {
-    setPreparedGenerationRequest(null);
-
     setScreen('create');
   }
 
-  function prepareGenerationRequest(request: GenerationRequest) {
-    setPreparedGenerationRequest(request);
+  async function generateRequestedCollection(request: GenerationRequest) {
+    const generatedCollection = await generateCollection(request);
+
+    selectCollection(generatedCollection);
   }
 
   function startRanking() {
@@ -101,8 +100,6 @@ function App() {
     setRankingState(null);
 
     setSelectedItemIds(new Set());
-
-    setPreparedGenerationRequest(null);
 
     setHistory([]);
     setScreen('collections');
@@ -172,8 +169,7 @@ function App() {
     return (
       <main className="app">
         <CollectionGenerator
-          preparedRequest={preparedGenerationRequest}
-          onPrepare={prepareGenerationRequest}
+          onGenerate={generateRequestedCollection}
           onBack={returnToCollections}
         />
 

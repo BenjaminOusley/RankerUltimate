@@ -3,8 +3,8 @@ import { useState } from 'react';
 import type { GenerationMode, GenerationRequest, GenerationSort } from '../models';
 
 type CollectionGeneratorProps = {
-  preparedRequest: GenerationRequest | null;
-  onPrepare: (request: GenerationRequest) => void;
+  onGenerate: (request: GenerationRequest) => Promise<void>;
+
   onBack: () => void;
 };
 
@@ -72,7 +72,7 @@ function parseOptionalInteger(value: string) {
   return Number(value);
 }
 
-function CollectionGenerator({ preparedRequest, onPrepare, onBack }: CollectionGeneratorProps) {
+function CollectionGenerator({ onGenerate, onBack }: CollectionGeneratorProps) {
   const [mode, setMode] = useState<GenerationMode>('genre');
 
   const [query, setQuery] = useState('');
@@ -93,7 +93,9 @@ function CollectionGenerator({ preparedRequest, onPrepare, onBack }: CollectionG
 
   const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedQuery = query.trim();
@@ -167,7 +169,19 @@ function CollectionGenerator({ preparedRequest, onPrepare, onBack }: CollectionG
     };
 
     setError(null);
-    onPrepare(request);
+    setIsGenerating(true);
+
+    try {
+      await onGenerate(request);
+    } catch (generationError) {
+      setError(
+        generationError instanceof Error
+          ? generationError.message
+          : 'Collection generation failed.',
+      );
+    } finally {
+      setIsGenerating(false);
+    }
   }
 
   return (
@@ -323,26 +337,19 @@ function CollectionGenerator({ preparedRequest, onPrepare, onBack }: CollectionG
             <button
               type="button"
               onClick={onBack}
+              disabled={isGenerating}
             >
               Back
             </button>
 
-            <button type="submit">Prepare Generation Request</button>
+            <button
+              type="submit"
+              disabled={isGenerating}
+            >
+              {isGenerating ? 'Generating...' : 'Generate Collection'}
+            </button>
           </div>
         </form>
-
-        {preparedRequest && (
-          <section className="generation-request-preview">
-            <h2>Generation Request</h2>
-
-            <p>
-              The form successfully created the request object that will be sent to our backend in
-              the next milestone.
-            </p>
-
-            <pre>{JSON.stringify(preparedRequest, null, 2)}</pre>
-          </section>
-        )}
       </section>
     </>
   );

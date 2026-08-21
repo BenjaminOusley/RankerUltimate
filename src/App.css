@@ -441,20 +441,6 @@
   text-align: left;
 }
 
-.generation-request-preview {
-  margin-top: 2rem;
-  text-align: left;
-}
-
-.generation-request-preview pre {
-  overflow-x: auto;
-  padding: 1rem;
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 8px;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 @media (max-width: 640px) {
   .generation-grid {
     grid-template-columns: 1fr;
