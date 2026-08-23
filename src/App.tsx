@@ -20,6 +20,7 @@ import {
 type AppScreen =
   | 'home'
   | 'collections'
+  | 'manageCollections'
   | 'review'
   | 'ranking'
   | 'rankingComplete'
@@ -29,6 +30,8 @@ type AppScreen =
   | 'results';
 
 type ResultsTab = 'ranking' | 'summary';
+
+type CollectionSort = 'nameAsc' | 'nameDesc' | 'itemsDesc' | 'itemsAsc';
 
 type PersonalRatingRecord = {
   value: number;
@@ -184,6 +187,33 @@ function Poster({ item, className = '' }: { item: RankItem; className?: string }
   }
 
   return <div className={`poster poster-placeholder ${className}`}>{item.name.charAt(0)}</div>;
+}
+
+function CollectionArtwork({ collection }: { collection: RankCollection }) {
+  const artworkItems = collection.items.filter((item) => item.image).slice(0, 3);
+
+  if (artworkItems.length === 0) {
+    return (
+      <div className="collection-artwork collection-artwork-placeholder">
+        {collection.name.charAt(0)}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="collection-artwork"
+      aria-hidden="true"
+    >
+      {artworkItems.map((item) => (
+        <img
+          key={item.id}
+          src={item.image}
+          alt=""
+        />
+      ))}
+    </div>
+  );
 }
 
 function AppHeader({ onMainMenu }: { onMainMenu?: () => void }) {
@@ -353,6 +383,7 @@ function App() {
   const [exitConfirm, setExitConfirm] = useState(false);
   const [resultsTab, setResultsTab] = useState<ResultsTab>('ranking');
   const [collectionSearch, setCollectionSearch] = useState('');
+  const [collectionSort, setCollectionSort] = useState<CollectionSort>('nameAsc');
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * menuQuotes.length));
 
   const activeRecoveryScreen =
@@ -701,7 +732,7 @@ function App() {
             </button>
             <button
               className="menu-button"
-              onClick={() => setScreen('collections')}
+              onClick={() => setScreen('manageCollections')}
             >
               <span>▣</span>
               <strong>Collections</strong>
@@ -731,6 +762,114 @@ function App() {
           >
             “{menuQuotes[quoteIndex]}”
           </button>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === 'manageCollections') {
+    const managedCollections = [...collections].sort((first, second) => {
+      switch (collectionSort) {
+        case 'nameDesc':
+          return second.name.localeCompare(first.name);
+
+        case 'itemsDesc':
+          return second.items.length - first.items.length;
+
+        case 'itemsAsc':
+          return first.items.length - second.items.length;
+
+        case 'nameAsc':
+        default:
+          return first.name.localeCompare(second.name);
+      }
+    });
+
+    return (
+      <main className="app-shell">
+        <AppHeader onMainMenu={requestMainMenu} />
+
+        <section className="scene-panel collection-manager-scene">
+          <div className="scene-heading collection-manager-heading">
+            <div>
+              <h1>My Collections</h1>
+              <p>Create and manage your collections.</p>
+            </div>
+
+            <button
+              className="button button-primary"
+              disabled
+              title="Collection creation will be added in the next management pass."
+            >
+              ＋ Create Collection
+            </button>
+          </div>
+
+          <div className="collection-manager-toolbar">
+            <strong>
+              ▤ {collections.length} {collections.length === 1 ? 'Collection' : 'Collections'}
+            </strong>
+
+            <label className="collection-sort-control">
+              <span>Sort by:</span>
+
+              <select
+                className="collection-sort-select"
+                value={collectionSort}
+                onChange={(event) => setCollectionSort(event.target.value as CollectionSort)}
+              >
+                <option value="nameAsc">Name (A–Z)</option>
+                <option value="nameDesc">Name (Z–A)</option>
+                <option value="itemsDesc">Most Items</option>
+                <option value="itemsAsc">Fewest Items</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="scroll-panel collection-manager-list">
+            {managedCollections.map((item) => (
+              <article
+                className="collection-manager-row"
+                key={item.id}
+              >
+                <CollectionArtwork collection={item} />
+
+                <div className="collection-manager-copy">
+                  <strong
+                    className="collection-manager-name"
+                    title={item.name}
+                  >
+                    {item.name}
+                  </strong>
+
+                  {item.description && <p>{item.description}</p>}
+
+                  <span className="collection-manager-count">
+                    ▤ {item.items.length} {item.items.length === 1 ? 'item' : 'items'}
+                  </span>
+                </div>
+
+                <div className="collection-manager-actions">
+                  <button
+                    className="button"
+                    disabled
+                    title="Collection editing will be added in the next management pass."
+                  >
+                    ✎ Edit
+                  </button>
+
+                  <button
+                    className="button collection-overflow-button"
+                    disabled
+                    aria-label={`More options for ${item.name}`}
+                    title="More collection actions will be added in the next management pass."
+                  >
+                    •••
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
       </main>
     );
