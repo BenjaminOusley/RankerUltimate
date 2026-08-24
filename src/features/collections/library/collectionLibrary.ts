@@ -1,4 +1,4 @@
-import type { RankCollection, RankItem } from './models';
+import type { RankCollection, RankItem } from '@/models';
 
 type CollectionOverride = {
   name?: string;
@@ -141,8 +141,8 @@ export function createCustomCollection(
   state: CollectionLibraryState,
   name: string,
   description: string,
+  id = `custom:${crypto.randomUUID()}`,
 ) {
-  const id = `custom:${crypto.randomUUID()}`;
   const trimmedDescription = description.trim();
 
   const collection: CustomCollectionRecord = {

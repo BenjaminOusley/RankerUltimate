@@ -6,17 +6,11 @@ import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
 import { Logo } from '@/shared/components/Logo/Logo';
 import { Poster } from '@/shared/components/Poster/Poster';
 import { collections } from '@/data/collections';
+import { useCollectionLibrary } from '@/features/collections/hooks/useCollectionLibrary';
+import { CollectionPickerScreen } from '@/features/collections/screens/CollectionPickerScreen/CollectionPickerScreen';
+import { CollectionReviewScreen } from '@/features/collections/screens/CollectionReviewScreen/CollectionReviewScreen';
+import { CollectionsScreen } from '@/features/collections/screens/CollectionsScreen/CollectionsScreen';
 import type { RankCollection, RankItem } from '@/models';
-import {
-  buildCollectionItemLibrary,
-  createCustomCollection,
-  deleteCollectionFromLibrary,
-  getCollectionLibraryItemKey,
-  loadCollectionLibraryState,
-  materializeCollections,
-  saveCollectionLibraryState,
-  updateCollectionInLibrary,
-} from '@/collectionLibrary';
 import {
   applyRefinementChoice,
   buildRefinementPairs,
@@ -45,7 +39,6 @@ type AppScreen =
 
 type ResultsTab = 'ranking' | 'summary';
 
-type CollectionSort = 'nameAsc' | 'nameDesc' | 'itemsDesc' | 'itemsAsc';
 
 type PersonalRatingRecord = {
   value: number;
@@ -175,33 +168,6 @@ function getDistribution(values: readonly number[]) {
   const total = values.length;
 
   return buckets.map((count) => (total === 0 ? 0 : count / total));
-}
-
-function CollectionArtwork({ collection }: { collection: RankCollection }) {
-  const artworkItems = collection.items.filter((item) => item.image).slice(0, 3);
-
-  if (artworkItems.length === 0) {
-    return (
-      <div className="collection-artwork collection-artwork-placeholder">
-        {collection.name.charAt(0)}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="collection-artwork"
-      aria-hidden="true"
-    >
-      {artworkItems.map((item) => (
-        <img
-          key={item.id}
-          src={item.image}
-          alt=""
-        />
-      ))}
-    </div>
-  );
 }
 
 function ComparisonCard({ item, onChoose }: { item: RankItem; onChoose: () => void }) {
@@ -353,55 +319,15 @@ function App() {
   const [resumePrompt, setResumePrompt] = useState<RecoveryPayload | null>(() => loadRecovery());
   const [exitConfirm, setExitConfirm] = useState(false);
   const [resultsTab, setResultsTab] = useState<ResultsTab>('ranking');
-  const [collectionSearch, setCollectionSearch] = useState('');
-  const [collectionSort, setCollectionSort] = useState<CollectionSort>('nameAsc');
-  const [collectionLibrary, setCollectionLibrary] = useState(() => loadCollectionLibraryState());
-
-  const [collectionEditorMode, setCollectionEditorMode] = useState<'create' | 'edit' | null>(null);
-
-  const [collectionEditorTab, setCollectionEditorTab] = useState<'details' | 'items'>('details');
-
-  const [editingCollectionId, setEditingCollectionId] = useState<string | null>(null);
-
-  const [collectionDraftName, setCollectionDraftName] = useState('');
-  const [collectionDraftDescription, setCollectionDraftDescription] = useState('');
-
-  const [collectionDraftItemKeys, setCollectionDraftItemKeys] = useState<Set<string>>(new Set());
-
-  const [collectionItemsDirty, setCollectionItemsDirty] = useState(false);
-  const [collectionItemSearch, setCollectionItemSearch] = useState('');
-  const [openCollectionMenuId, setOpenCollectionMenuId] = useState<string | null>(null);
-  const [deleteCollectionId, setDeleteCollectionId] = useState<string | null>(null);
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * menuQuotes.length));
 
-  const availableCollections = useMemo(
-    () => materializeCollections(collections, collectionLibrary),
-    [collectionLibrary],
-  );
-
-  const collectionItemLibrary = useMemo(() => buildCollectionItemLibrary(collections), []);
-
-  const filteredCollectionEditorItems = useMemo(() => {
-    const query = collectionItemSearch.trim().toLowerCase();
-
-    if (!query) {
-      return collectionItemLibrary;
-    }
-
-    return collectionItemLibrary.filter((item) =>
-      `${item.name} ${item.subtitle ?? ''}`.toLowerCase().includes(query),
-    );
-  }, [collectionItemLibrary, collectionItemSearch]);
-
-  const normalizedCollectionDraftName = collectionDraftName.trim().toLowerCase();
-
-  const collectionNameConflict =
-    normalizedCollectionDraftName.length > 0 &&
-    availableCollections.some(
-      (item) =>
-        item.id !== editingCollectionId &&
-        item.name.trim().toLowerCase() === normalizedCollectionDraftName,
-    );
+  const {
+    availableCollections,
+    itemLibrary: collectionItemLibrary,
+    createCollection,
+    updateCollection,
+    deleteCollection,
+  } = useCollectionLibrary(collections);
 
   const activeRecoveryScreen =
     screen === 'ranking' ||
@@ -444,9 +370,6 @@ function App() {
     ratingBackScreen,
   ]);
 
-  useEffect(() => {
-    saveCollectionLibraryState(collectionLibrary);
-  }, [collectionLibrary]);
 
   const preferenceScores = useMemo(() => {
     if (!rankingState) {
@@ -463,132 +386,6 @@ function App() {
 
     return buildRefinementPairs(rankingState.ranked, rankingState.outcomes);
   }, [rankingState]);
-
-  function closeCollectionEditor() {
-    setCollectionEditorMode(null);
-    setCollectionEditorTab('details');
-    setEditingCollectionId(null);
-    setCollectionDraftName('');
-    setCollectionDraftDescription('');
-    setCollectionDraftItemKeys(new Set());
-    setCollectionItemsDirty(false);
-    setCollectionItemSearch('');
-  }
-
-  function openCreateCollection() {
-    setOpenCollectionMenuId(null);
-    setCollectionEditorMode('create');
-    setCollectionEditorTab('details');
-    setEditingCollectionId(null);
-    setCollectionDraftName('');
-    setCollectionDraftDescription('');
-    setCollectionDraftItemKeys(new Set());
-    setCollectionItemsDirty(false);
-    setCollectionItemSearch('');
-  }
-
-  function openEditCollection(target: RankCollection) {
-    setOpenCollectionMenuId(null);
-    setCollectionEditorMode('edit');
-    setCollectionEditorTab('details');
-    setEditingCollectionId(target.id);
-    setCollectionDraftName(target.name);
-    setCollectionDraftDescription(target.description ?? '');
-    setCollectionDraftItemKeys(new Set(target.items.map(getCollectionLibraryItemKey)));
-    setCollectionItemsDirty(false);
-    setCollectionItemSearch('');
-  }
-
-  function toggleCollectionDraftItem(item: RankItem) {
-    const key = getCollectionLibraryItemKey(item);
-
-    setCollectionDraftItemKeys((previous) => {
-      const next = new Set(previous);
-
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-
-      return next;
-    });
-
-    setCollectionItemsDirty(true);
-  }
-
-  function saveCollectionEditor() {
-    const name = collectionDraftName.trim();
-
-    if (!name || collectionNameConflict || !collectionEditorMode) {
-      return;
-    }
-
-    const description = collectionDraftDescription.trim();
-
-    if (collectionEditorMode === 'create') {
-      const created = createCustomCollection(collectionLibrary, name, description);
-
-      setCollectionLibrary(created.state);
-
-      /*
-       * Creation itself stays quick. Once it exists, move directly
-       * into the Items tab so the user can populate it.
-       */
-      setCollectionEditorMode('edit');
-      setEditingCollectionId(created.collectionId);
-      setCollectionEditorTab('items');
-      setCollectionDraftItemKeys(new Set());
-      setCollectionItemsDirty(false);
-
-      return;
-    }
-
-    if (!editingCollectionId) {
-      return;
-    }
-
-    const existingCollection = availableCollections.find((item) => item.id === editingCollectionId);
-
-    if (!existingCollection) {
-      closeCollectionEditor();
-      return;
-    }
-
-    const selectedItems = collectionItemLibrary.filter((item) =>
-      collectionDraftItemKeys.has(getCollectionLibraryItemKey(item)),
-    );
-
-    const updatedCollection: RankCollection = {
-      ...existingCollection,
-      name,
-      description: description || undefined,
-      items: selectedItems,
-    };
-
-    setCollectionLibrary((previous) =>
-      updateCollectionInLibrary(previous, collections, updatedCollection, collectionItemsDirty),
-    );
-
-    closeCollectionEditor();
-  }
-
-  function confirmDeleteCollection() {
-    if (!deleteCollectionId) {
-      return;
-    }
-
-    setCollectionLibrary((previous) =>
-      deleteCollectionFromLibrary(previous, collections, deleteCollectionId),
-    );
-
-    if (collection?.id === deleteCollectionId) {
-      clearSession();
-    }
-
-    setOpenCollectionMenuId(null);
-    setDeleteCollectionId(null);
-  }
 
   function clearSession() {
     setCollection(null);
@@ -919,475 +716,44 @@ function App() {
   }
 
   if (screen === 'manageCollections') {
-    const managedCollections = [...availableCollections].sort((first, second) => {
-      switch (collectionSort) {
-        case 'nameDesc':
-          return second.name.localeCompare(first.name);
-
-        case 'itemsDesc':
-          return second.items.length - first.items.length;
-
-        case 'itemsAsc':
-          return first.items.length - second.items.length;
-
-        case 'nameAsc':
-        default:
-          return first.name.localeCompare(second.name);
-      }
-    });
-
-    const deleteTarget = deleteCollectionId
-      ? (availableCollections.find((item) => item.id === deleteCollectionId) ?? null)
-      : null;
-
     return (
-      <AppShell>
-        <AppHeader onMainMenu={requestMainMenu} />
+      <CollectionsScreen
+        collections={availableCollections}
+        itemLibrary={collectionItemLibrary}
+        onCreate={createCollection}
+        onUpdate={updateCollection}
+        onDelete={(collectionId) => {
+          deleteCollection(collectionId);
 
-        <section className="scene-panel collection-manager-scene">
-          <div className="scene-heading collection-manager-heading">
-            <div>
-              <h1>My Collections</h1>
-              <p>Create and manage your collections.</p>
-            </div>
-
-            <button
-              className="button button-primary"
-              onClick={openCreateCollection}
-            >
-              ＋ Create Collection
-            </button>
-          </div>
-
-          <div className="collection-manager-toolbar">
-            <strong>
-              ▤ {availableCollections.length}{' '}
-              {availableCollections.length === 1 ? 'Collection' : 'Collections'}
-            </strong>
-
-            <label className="collection-sort-control">
-              <span>Sort by:</span>
-
-              <select
-                className="collection-sort-select"
-                value={collectionSort}
-                onChange={(event) => setCollectionSort(event.target.value as CollectionSort)}
-              >
-                <option value="nameAsc">Name (A–Z)</option>
-                <option value="nameDesc">Name (Z–A)</option>
-                <option value="itemsDesc">Most Items</option>
-                <option value="itemsAsc">Fewest Items</option>
-              </select>
-            </label>
-          </div>
-
-          <div className="scroll-panel collection-manager-list">
-            {managedCollections.map((item) => (
-              <article
-                className="collection-manager-row"
-                key={item.id}
-              >
-                <CollectionArtwork collection={item} />
-
-                <div className="collection-manager-copy">
-                  <strong
-                    className="collection-manager-name"
-                    title={item.name}
-                  >
-                    {item.name}
-                  </strong>
-
-                  {item.description && <p>{item.description}</p>}
-
-                  <span className="collection-manager-count">
-                    ▤ {item.items.length} {item.items.length === 1 ? 'item' : 'items'}
-                  </span>
-                </div>
-
-                <div className="collection-manager-actions">
-                  <button
-                    className="button"
-                    onClick={() => openEditCollection(item)}
-                  >
-                    ✎ Edit
-                  </button>
-
-                  <div className="collection-menu-wrap">
-                    <button
-                      className="button collection-overflow-button"
-                      aria-label={`More options for ${item.name}`}
-                      aria-expanded={openCollectionMenuId === item.id}
-                      onClick={() =>
-                        setOpenCollectionMenuId((previous) =>
-                          previous === item.id ? null : item.id,
-                        )
-                      }
-                    >
-                      •••
-                    </button>
-
-                    {openCollectionMenuId === item.id && (
-                      <div
-                        className="collection-action-menu"
-                        role="menu"
-                      >
-                        <button
-                          className="collection-delete-action"
-                          role="menuitem"
-                          onClick={() => {
-                            setDeleteCollectionId(item.id);
-                            setOpenCollectionMenuId(null);
-                          }}
-                        >
-                          🗑 Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        {collectionEditorMode && (
-          <div className="modal-backdrop">
-            <section
-              className="modal-card collection-editor-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="collection-editor-title"
-            >
-              <div className="collection-editor-header">
-                <div>
-                  <h2 id="collection-editor-title">
-                    {collectionEditorMode === 'create' ? 'Create Collection' : 'Edit Collection'}
-                  </h2>
-
-                  {collectionEditorMode === 'edit' && (
-                    <span>
-                      {collectionDraftItemKeys.size}{' '}
-                      {collectionDraftItemKeys.size === 1 ? 'item' : 'items'}
-                    </span>
-                  )}
-                </div>
-
-                <button
-                  className="collection-editor-close"
-                  aria-label="Close"
-                  onClick={closeCollectionEditor}
-                >
-                  ×
-                </button>
-              </div>
-
-              {collectionEditorMode === 'edit' && (
-                <div className="collection-editor-tabs">
-                  <button
-                    className={
-                      collectionEditorTab === 'details' ? 'collection-editor-tab-active' : ''
-                    }
-                    onClick={() => setCollectionEditorTab('details')}
-                  >
-                    Details
-                  </button>
-
-                  <button
-                    className={
-                      collectionEditorTab === 'items' ? 'collection-editor-tab-active' : ''
-                    }
-                    onClick={() => setCollectionEditorTab('items')}
-                  >
-                    Items
-                  </button>
-                </div>
-              )}
-
-              <div className="collection-editor-body">
-                {collectionEditorMode === 'create' || collectionEditorTab === 'details' ? (
-                  <div className="collection-editor-fields">
-                    <label>
-                      <span>Name</span>
-
-                      <input
-                        className="collection-editor-input"
-                        value={collectionDraftName}
-                        onChange={(event) => setCollectionDraftName(event.target.value)}
-                        placeholder="e.g. My Favorite Things"
-                        autoFocus
-                      />
-                    </label>
-
-                    <label>
-                      <span>
-                        Description <em>(optional)</em>
-                      </span>
-
-                      <textarea
-                        className="collection-editor-textarea"
-                        value={collectionDraftDescription}
-                        onChange={(event) => setCollectionDraftDescription(event.target.value)}
-                        placeholder="Add a short description…"
-                      />
-                    </label>
-
-                    {collectionNameConflict && (
-                      <p className="collection-editor-error">
-                        You already have a collection with that name.
-                      </p>
-                    )}
-
-                    {collectionEditorMode === 'create' && (
-                      <p className="collection-editor-help">
-                        After creating it, you’ll choose which items belong in the collection.
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="collection-items-editor">
-                    <input
-                      className="search-input"
-                      value={collectionItemSearch}
-                      onChange={(event) => setCollectionItemSearch(event.target.value)}
-                      placeholder="Search items…"
-                    />
-
-                    <div className="scroll-panel collection-editor-item-list">
-                      {filteredCollectionEditorItems.map((item) => {
-                        const key = getCollectionLibraryItemKey(item);
-
-                        const selected = collectionDraftItemKeys.has(key);
-
-                        return (
-                          <label
-                            className={`collection-editor-item ${
-                              selected ? 'collection-editor-item-selected' : ''
-                            }`}
-                            key={key}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selected}
-                              onChange={() => toggleCollectionDraftItem(item)}
-                            />
-
-                            <Poster item={item} />
-
-                            <div className="collection-editor-item-copy">
-                              <strong title={item.name}>{item.name}</strong>
-
-                              {item.subtitle && <span>{item.subtitle}</span>}
-                            </div>
-                          </label>
-                        );
-                      })}
-
-                      {filteredCollectionEditorItems.length === 0 && (
-                        <div className="empty-state">No matching items.</div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  className="button"
-                  onClick={closeCollectionEditor}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  className="button button-primary"
-                  disabled={!collectionDraftName.trim() || collectionNameConflict}
-                  onClick={saveCollectionEditor}
-                >
-                  {collectionEditorMode === 'create' ? 'Create' : 'Save Collection'}
-                </button>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {deleteTarget && (
-          <div className="modal-backdrop">
-            <section
-              className="modal-card"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="delete-collection-title"
-            >
-              <h2 id="delete-collection-title">Delete Collection?</h2>
-
-              <p>
-                Are you sure you want to delete <strong>{deleteTarget.name}</strong>?
-              </p>
-
-              <p>This deletes the collection only. Your Personal Ratings are not affected.</p>
-
-              <div className="modal-actions">
-                <button
-                  className="button"
-                  onClick={() => setDeleteCollectionId(null)}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  className="button button-danger"
-                  onClick={confirmDeleteCollection}
-                >
-                  Delete
-                </button>
-              </div>
-            </section>
-          </div>
-        )}
-      </AppShell>
+          if (collection?.id === collectionId) {
+            clearSession();
+          }
+        }}
+        onMainMenu={requestMainMenu}
+      />
     );
   }
 
   if (screen === 'collections') {
-    const query = collectionSearch.trim().toLowerCase();
-    const visibleCollections = availableCollections.filter((item) =>
-      query ? `${item.name} ${item.description ?? ''}`.toLowerCase().includes(query) : true,
-    );
-
     return (
-      <AppShell>
-        <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="scene-panel collection-scene">
-          <div className="scene-heading">
-            <div>
-              <h1>Select a Collection</h1>
-              <p>Pick the list you want to rank.</p>
-            </div>
-          </div>
-
-          <input
-            className="search-input"
-            value={collectionSearch}
-            onChange={(event) => setCollectionSearch(event.target.value)}
-            placeholder="Search collections…"
-          />
-
-          <div className="scroll-panel collection-list">
-            {visibleCollections.map((item) => (
-              <button
-                className="collection-row"
-                key={item.id}
-                onClick={() => selectCollection(item)}
-                disabled={item.items.length < 2}
-                title={
-                  item.items.length < 2
-                    ? 'Add at least 2 items before ranking this collection.'
-                    : undefined
-                }
-              >
-                <div className="collection-row-icon">{item.name.charAt(0)}</div>
-                <div className="collection-row-copy">
-                  <strong>{item.name}</strong>
-                  <span>{item.items.length} items</span>
-                </div>
-                <span className="row-chevron">›</span>
-              </button>
-            ))}
-          </div>
-        </section>
-      </AppShell>
+      <CollectionPickerScreen
+        collections={availableCollections}
+        onSelect={selectCollection}
+        onMainMenu={requestMainMenu}
+      />
     );
   }
 
   if (screen === 'review' && collection) {
     return (
-      <AppShell>
-        <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="scene-panel review-scene">
-          <div className="scene-heading review-heading">
-            <div>
-              <h1>{collection.name}</h1>
-              <p>Choose which items belong in this ranking.</p>
-            </div>
-
-            <strong>{selectedItemIds.size} selected</strong>
-          </div>
-
-          <div className="toolbar-row">
-            <button
-              className="button button-small"
-              onClick={() => setSelectedItemIds(new Set(collection.items.map((item) => item.id)))}
-            >
-              Select All
-            </button>
-            <button
-              className="button button-small"
-              onClick={() => setSelectedItemIds(new Set())}
-            >
-              Clear All
-            </button>
-          </div>
-
-          <div
-            className={`scroll-panel review-grid ${
-              collection.items.length <= 5
-                ? 'review-grid-spacious review-grid-single-row'
-                : collection.items.length <= 15
-                  ? 'review-grid-spacious'
-                  : 'review-grid-dense'
-            }`}
-          >
-            {collection.items.map((item) => {
-              const selected = selectedItemIds.has(item.id);
-
-              return (
-                <label
-                  className={`review-item ${selected ? 'review-item-selected' : ''}`}
-                  key={item.id}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selected}
-                    onChange={() => {
-                      setSelectedItemIds((previous) => {
-                        const next = new Set(previous);
-
-                        if (next.has(item.id)) next.delete(item.id);
-                        else next.add(item.id);
-
-                        return next;
-                      });
-                    }}
-                  />
-                  <Poster item={item} />
-                  <span className="review-item-copy">
-                    <strong title={item.name}>{item.name}</strong>
-                    {item.subtitle && <small title={item.subtitle}>{item.subtitle}</small>}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-
-          <div className="footer-actions">
-            <button
-              className="button"
-              onClick={() => setScreen('collections')}
-            >
-              Back
-            </button>
-            <button
-              className="button button-primary"
-              onClick={startRanking}
-              disabled={selectedItemIds.size < 2}
-            >
-              Rank {selectedItemIds.size} Items
-            </button>
-          </div>
-        </section>
-      </AppShell>
+      <CollectionReviewScreen
+        collection={collection}
+        selectedItemIds={selectedItemIds}
+        onSelectedItemIdsChange={setSelectedItemIds}
+        onBack={() => setScreen('collections')}
+        onStartRanking={startRanking}
+        onMainMenu={requestMainMenu}
+      />
     );
   }
 
@@ -1815,7 +1181,6 @@ function App() {
                 className="button button-small button-primary"
                 onClick={() => {
                   clearSession();
-                  setCollectionSearch('');
                   setResultsTab('ranking');
                   setScreen('collections');
                 }}

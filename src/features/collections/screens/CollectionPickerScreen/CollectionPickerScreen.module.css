@@ -1,0 +1,97 @@
+.scene {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.search {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(9, 13, 22, 0.75);
+  color: #fff;
+}
+
+.search::placeholder {
+  color: #737b8f;
+}
+
+.list {
+  min-height: 0;
+  padding-right: 4px;
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.list::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background: rgba(139, 112, 196, 0.5);
+  background-clip: padding-box;
+}
+
+.row {
+  min-height: 70px;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: rgba(26, 32, 47, 0.72);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:hover:not(:disabled) {
+  border-color: rgba(154, 107, 255, 0.5);
+  background: rgba(34, 40, 58, 0.82);
+}
+
+.row:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--purple-soft);
+  color: #d8caff;
+  font-weight: 800;
+}
+
+.copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.chevron {
+  color: #777f92;
+  font-size: 1.5rem;
+}
