@@ -1,4 +1,4 @@
-import type { CompanyGenerationMode, CompanyMatch } from '../models';
+import type { CompanyGenerationMode, CompanyMatch } from '../../../models';
 
 type CompanySearchResponse = {
   matches?: CompanyMatch[];

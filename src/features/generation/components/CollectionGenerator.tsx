@@ -8,7 +8,7 @@ import type {
   PersonMatch,
   CompanyGenerationMode,
   CompanyMatch,
-} from '../models';
+} from '../../../models';
 
 type CollectionGeneratorProps = {
   initialRequest: GenerationRequest | null;

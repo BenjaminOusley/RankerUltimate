@@ -1,4 +1,4 @@
-import type { PersonGenerationMode, PersonMatch } from '../models';
+import type { PersonGenerationMode, PersonMatch } from '../../../models';
 
 type PersonSearchResponse = {
   matches?: PersonMatch[];
