@@ -4,6 +4,16 @@ import './App.css';
 import { collections } from './data/collections';
 import type { RankCollection, RankItem } from './models';
 import {
+  buildCollectionItemLibrary,
+  createCustomCollection,
+  deleteCollectionFromLibrary,
+  getCollectionLibraryItemKey,
+  loadCollectionLibraryState,
+  materializeCollections,
+  saveCollectionLibraryState,
+  updateCollectionInLibrary,
+} from './collectionLibrary';
+import {
   applyRefinementChoice,
   buildRefinementPairs,
   calculatePreferenceScores,
@@ -384,7 +394,53 @@ function App() {
   const [resultsTab, setResultsTab] = useState<ResultsTab>('ranking');
   const [collectionSearch, setCollectionSearch] = useState('');
   const [collectionSort, setCollectionSort] = useState<CollectionSort>('nameAsc');
+  const [collectionLibrary, setCollectionLibrary] = useState(() => loadCollectionLibraryState());
+
+  const [collectionEditorMode, setCollectionEditorMode] = useState<'create' | 'edit' | null>(null);
+
+  const [collectionEditorTab, setCollectionEditorTab] = useState<'details' | 'items'>('details');
+
+  const [editingCollectionId, setEditingCollectionId] = useState<string | null>(null);
+
+  const [collectionDraftName, setCollectionDraftName] = useState('');
+  const [collectionDraftDescription, setCollectionDraftDescription] = useState('');
+
+  const [collectionDraftItemKeys, setCollectionDraftItemKeys] = useState<Set<string>>(new Set());
+
+  const [collectionItemsDirty, setCollectionItemsDirty] = useState(false);
+  const [collectionItemSearch, setCollectionItemSearch] = useState('');
+  const [openCollectionMenuId, setOpenCollectionMenuId] = useState<string | null>(null);
+  const [deleteCollectionId, setDeleteCollectionId] = useState<string | null>(null);
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * menuQuotes.length));
+
+  const availableCollections = useMemo(
+    () => materializeCollections(collections, collectionLibrary),
+    [collectionLibrary],
+  );
+
+  const collectionItemLibrary = useMemo(() => buildCollectionItemLibrary(collections), []);
+
+  const filteredCollectionEditorItems = useMemo(() => {
+    const query = collectionItemSearch.trim().toLowerCase();
+
+    if (!query) {
+      return collectionItemLibrary;
+    }
+
+    return collectionItemLibrary.filter((item) =>
+      `${item.name} ${item.subtitle ?? ''}`.toLowerCase().includes(query),
+    );
+  }, [collectionItemLibrary, collectionItemSearch]);
+
+  const normalizedCollectionDraftName = collectionDraftName.trim().toLowerCase();
+
+  const collectionNameConflict =
+    normalizedCollectionDraftName.length > 0 &&
+    availableCollections.some(
+      (item) =>
+        item.id !== editingCollectionId &&
+        item.name.trim().toLowerCase() === normalizedCollectionDraftName,
+    );
 
   const activeRecoveryScreen =
     screen === 'ranking' ||
@@ -427,6 +483,10 @@ function App() {
     ratingBackScreen,
   ]);
 
+  useEffect(() => {
+    saveCollectionLibraryState(collectionLibrary);
+  }, [collectionLibrary]);
+
   const preferenceScores = useMemo(() => {
     if (!rankingState) {
       return {};
@@ -442,6 +502,132 @@ function App() {
 
     return buildRefinementPairs(rankingState.ranked, rankingState.outcomes);
   }, [rankingState]);
+
+  function closeCollectionEditor() {
+    setCollectionEditorMode(null);
+    setCollectionEditorTab('details');
+    setEditingCollectionId(null);
+    setCollectionDraftName('');
+    setCollectionDraftDescription('');
+    setCollectionDraftItemKeys(new Set());
+    setCollectionItemsDirty(false);
+    setCollectionItemSearch('');
+  }
+
+  function openCreateCollection() {
+    setOpenCollectionMenuId(null);
+    setCollectionEditorMode('create');
+    setCollectionEditorTab('details');
+    setEditingCollectionId(null);
+    setCollectionDraftName('');
+    setCollectionDraftDescription('');
+    setCollectionDraftItemKeys(new Set());
+    setCollectionItemsDirty(false);
+    setCollectionItemSearch('');
+  }
+
+  function openEditCollection(target: RankCollection) {
+    setOpenCollectionMenuId(null);
+    setCollectionEditorMode('edit');
+    setCollectionEditorTab('details');
+    setEditingCollectionId(target.id);
+    setCollectionDraftName(target.name);
+    setCollectionDraftDescription(target.description ?? '');
+    setCollectionDraftItemKeys(new Set(target.items.map(getCollectionLibraryItemKey)));
+    setCollectionItemsDirty(false);
+    setCollectionItemSearch('');
+  }
+
+  function toggleCollectionDraftItem(item: RankItem) {
+    const key = getCollectionLibraryItemKey(item);
+
+    setCollectionDraftItemKeys((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+
+      return next;
+    });
+
+    setCollectionItemsDirty(true);
+  }
+
+  function saveCollectionEditor() {
+    const name = collectionDraftName.trim();
+
+    if (!name || collectionNameConflict || !collectionEditorMode) {
+      return;
+    }
+
+    const description = collectionDraftDescription.trim();
+
+    if (collectionEditorMode === 'create') {
+      const created = createCustomCollection(collectionLibrary, name, description);
+
+      setCollectionLibrary(created.state);
+
+      /*
+       * Creation itself stays quick. Once it exists, move directly
+       * into the Items tab so the user can populate it.
+       */
+      setCollectionEditorMode('edit');
+      setEditingCollectionId(created.collectionId);
+      setCollectionEditorTab('items');
+      setCollectionDraftItemKeys(new Set());
+      setCollectionItemsDirty(false);
+
+      return;
+    }
+
+    if (!editingCollectionId) {
+      return;
+    }
+
+    const existingCollection = availableCollections.find((item) => item.id === editingCollectionId);
+
+    if (!existingCollection) {
+      closeCollectionEditor();
+      return;
+    }
+
+    const selectedItems = collectionItemLibrary.filter((item) =>
+      collectionDraftItemKeys.has(getCollectionLibraryItemKey(item)),
+    );
+
+    const updatedCollection: RankCollection = {
+      ...existingCollection,
+      name,
+      description: description || undefined,
+      items: selectedItems,
+    };
+
+    setCollectionLibrary((previous) =>
+      updateCollectionInLibrary(previous, collections, updatedCollection, collectionItemsDirty),
+    );
+
+    closeCollectionEditor();
+  }
+
+  function confirmDeleteCollection() {
+    if (!deleteCollectionId) {
+      return;
+    }
+
+    setCollectionLibrary((previous) =>
+      deleteCollectionFromLibrary(previous, collections, deleteCollectionId),
+    );
+
+    if (collection?.id === deleteCollectionId) {
+      clearSession();
+    }
+
+    setOpenCollectionMenuId(null);
+    setDeleteCollectionId(null);
+  }
 
   function clearSession() {
     setCollection(null);
@@ -633,7 +819,9 @@ function App() {
       return;
     }
 
-    const restoredCollection = collections.find((item) => item.id === resumePrompt.collectionId);
+    const restoredCollection = availableCollections.find(
+      (item) => item.id === resumePrompt.collectionId,
+    );
 
     if (!restoredCollection) {
       clearRecovery();
@@ -668,7 +856,9 @@ function App() {
   }
 
   if (resumePrompt) {
-    const resumeCollection = collections.find((item) => item.id === resumePrompt.collectionId);
+    const resumeCollection = availableCollections.find(
+      (item) => item.id === resumePrompt.collectionId,
+    );
 
     return (
       <main className="app-shell resume-shell">
@@ -768,7 +958,7 @@ function App() {
   }
 
   if (screen === 'manageCollections') {
-    const managedCollections = [...collections].sort((first, second) => {
+    const managedCollections = [...availableCollections].sort((first, second) => {
       switch (collectionSort) {
         case 'nameDesc':
           return second.name.localeCompare(first.name);
@@ -785,6 +975,10 @@ function App() {
       }
     });
 
+    const deleteTarget = deleteCollectionId
+      ? (availableCollections.find((item) => item.id === deleteCollectionId) ?? null)
+      : null;
+
     return (
       <main className="app-shell">
         <AppHeader onMainMenu={requestMainMenu} />
@@ -798,8 +992,7 @@ function App() {
 
             <button
               className="button button-primary"
-              disabled
-              title="Collection creation will be added in the next management pass."
+              onClick={openCreateCollection}
             >
               ＋ Create Collection
             </button>
@@ -807,7 +1000,8 @@ function App() {
 
           <div className="collection-manager-toolbar">
             <strong>
-              ▤ {collections.length} {collections.length === 1 ? 'Collection' : 'Collections'}
+              ▤ {availableCollections.length}{' '}
+              {availableCollections.length === 1 ? 'Collection' : 'Collections'}
             </strong>
 
             <label className="collection-sort-control">
@@ -852,32 +1046,250 @@ function App() {
                 <div className="collection-manager-actions">
                   <button
                     className="button"
-                    disabled
-                    title="Collection editing will be added in the next management pass."
+                    onClick={() => openEditCollection(item)}
                   >
                     ✎ Edit
                   </button>
 
-                  <button
-                    className="button collection-overflow-button"
-                    disabled
-                    aria-label={`More options for ${item.name}`}
-                    title="More collection actions will be added in the next management pass."
-                  >
-                    •••
-                  </button>
+                  <div className="collection-menu-wrap">
+                    <button
+                      className="button collection-overflow-button"
+                      aria-label={`More options for ${item.name}`}
+                      aria-expanded={openCollectionMenuId === item.id}
+                      onClick={() =>
+                        setOpenCollectionMenuId((previous) =>
+                          previous === item.id ? null : item.id,
+                        )
+                      }
+                    >
+                      •••
+                    </button>
+
+                    {openCollectionMenuId === item.id && (
+                      <div
+                        className="collection-action-menu"
+                        role="menu"
+                      >
+                        <button
+                          className="collection-delete-action"
+                          role="menuitem"
+                          onClick={() => {
+                            setDeleteCollectionId(item.id);
+                            setOpenCollectionMenuId(null);
+                          }}
+                        >
+                          🗑 Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </article>
             ))}
           </div>
         </section>
+
+        {collectionEditorMode && (
+          <div className="modal-backdrop">
+            <section
+              className="modal-card collection-editor-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="collection-editor-title"
+            >
+              <div className="collection-editor-header">
+                <div>
+                  <h2 id="collection-editor-title">
+                    {collectionEditorMode === 'create' ? 'Create Collection' : 'Edit Collection'}
+                  </h2>
+
+                  {collectionEditorMode === 'edit' && (
+                    <span>
+                      {collectionDraftItemKeys.size}{' '}
+                      {collectionDraftItemKeys.size === 1 ? 'item' : 'items'}
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  className="collection-editor-close"
+                  aria-label="Close"
+                  onClick={closeCollectionEditor}
+                >
+                  ×
+                </button>
+              </div>
+
+              {collectionEditorMode === 'edit' && (
+                <div className="collection-editor-tabs">
+                  <button
+                    className={
+                      collectionEditorTab === 'details' ? 'collection-editor-tab-active' : ''
+                    }
+                    onClick={() => setCollectionEditorTab('details')}
+                  >
+                    Details
+                  </button>
+
+                  <button
+                    className={
+                      collectionEditorTab === 'items' ? 'collection-editor-tab-active' : ''
+                    }
+                    onClick={() => setCollectionEditorTab('items')}
+                  >
+                    Items
+                  </button>
+                </div>
+              )}
+
+              <div className="collection-editor-body">
+                {collectionEditorMode === 'create' || collectionEditorTab === 'details' ? (
+                  <div className="collection-editor-fields">
+                    <label>
+                      <span>Name</span>
+
+                      <input
+                        className="collection-editor-input"
+                        value={collectionDraftName}
+                        onChange={(event) => setCollectionDraftName(event.target.value)}
+                        placeholder="e.g. My Favorite Things"
+                        autoFocus
+                      />
+                    </label>
+
+                    <label>
+                      <span>
+                        Description <em>(optional)</em>
+                      </span>
+
+                      <textarea
+                        className="collection-editor-textarea"
+                        value={collectionDraftDescription}
+                        onChange={(event) => setCollectionDraftDescription(event.target.value)}
+                        placeholder="Add a short description…"
+                      />
+                    </label>
+
+                    {collectionNameConflict && (
+                      <p className="collection-editor-error">
+                        You already have a collection with that name.
+                      </p>
+                    )}
+
+                    {collectionEditorMode === 'create' && (
+                      <p className="collection-editor-help">
+                        After creating it, you’ll choose which items belong in the collection.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="collection-items-editor">
+                    <input
+                      className="search-input"
+                      value={collectionItemSearch}
+                      onChange={(event) => setCollectionItemSearch(event.target.value)}
+                      placeholder="Search items…"
+                    />
+
+                    <div className="scroll-panel collection-editor-item-list">
+                      {filteredCollectionEditorItems.map((item) => {
+                        const key = getCollectionLibraryItemKey(item);
+
+                        const selected = collectionDraftItemKeys.has(key);
+
+                        return (
+                          <label
+                            className={`collection-editor-item ${
+                              selected ? 'collection-editor-item-selected' : ''
+                            }`}
+                            key={key}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selected}
+                              onChange={() => toggleCollectionDraftItem(item)}
+                            />
+
+                            <Poster item={item} />
+
+                            <div className="collection-editor-item-copy">
+                              <strong title={item.name}>{item.name}</strong>
+
+                              {item.subtitle && <span>{item.subtitle}</span>}
+                            </div>
+                          </label>
+                        );
+                      })}
+
+                      {filteredCollectionEditorItems.length === 0 && (
+                        <div className="empty-state">No matching items.</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="modal-actions">
+                <button
+                  className="button"
+                  onClick={closeCollectionEditor}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  className="button button-primary"
+                  disabled={!collectionDraftName.trim() || collectionNameConflict}
+                  onClick={saveCollectionEditor}
+                >
+                  {collectionEditorMode === 'create' ? 'Create' : 'Save Collection'}
+                </button>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {deleteTarget && (
+          <div className="modal-backdrop">
+            <section
+              className="modal-card"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-collection-title"
+            >
+              <h2 id="delete-collection-title">Delete Collection?</h2>
+
+              <p>
+                Are you sure you want to delete <strong>{deleteTarget.name}</strong>?
+              </p>
+
+              <p>This deletes the collection only. Your Personal Ratings are not affected.</p>
+
+              <div className="modal-actions">
+                <button
+                  className="button"
+                  onClick={() => setDeleteCollectionId(null)}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  className="button button-danger"
+                  onClick={confirmDeleteCollection}
+                >
+                  Delete
+                </button>
+              </div>
+            </section>
+          </div>
+        )}
       </main>
     );
   }
 
   if (screen === 'collections') {
     const query = collectionSearch.trim().toLowerCase();
-    const visibleCollections = collections.filter((item) =>
+    const visibleCollections = availableCollections.filter((item) =>
       query ? `${item.name} ${item.description ?? ''}`.toLowerCase().includes(query) : true,
     );
 
@@ -906,6 +1318,12 @@ function App() {
                 className="collection-row"
                 key={item.id}
                 onClick={() => selectCollection(item)}
+                disabled={item.items.length < 2}
+                title={
+                  item.items.length < 2
+                    ? 'Add at least 2 items before ranking this collection.'
+                    : undefined
+                }
               >
                 <div className="collection-row-icon">{item.name.charAt(0)}</div>
                 <div className="collection-row-copy">
@@ -953,7 +1371,11 @@ function App() {
 
           <div
             className={`scroll-panel review-grid ${
-              collection.items.length <= 15 ? 'review-grid-spacious' : 'review-grid-dense'
+              collection.items.length <= 5
+                ? 'review-grid-spacious review-grid-single-row'
+                : collection.items.length <= 15
+                  ? 'review-grid-spacious'
+                  : 'review-grid-dense'
             }`}
           >
             {collection.items.map((item) => {
