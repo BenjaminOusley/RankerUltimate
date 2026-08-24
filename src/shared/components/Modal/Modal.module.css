@@ -1,0 +1,19 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(3, 5, 10, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.card {
+  width: min(440px, 100%);
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #121827;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+}

@@ -1,0 +1,30 @@
+.shell {
+  height: 100dvh;
+  min-height: 0;
+  padding: 18px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+  background:
+    radial-gradient(circle at 80% 0%, rgba(123, 66, 246, 0.13), transparent 34%),
+    linear-gradient(145deg, #080b13 0%, #0a0f19 55%, #090b13 100%);
+}
+
+.centered {
+  place-items: center;
+  grid-template-rows: 1fr;
+}
+
+@media (max-width: 760px) {
+  .shell {
+    padding: 10px;
+    gap: 8px;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 761px) {
+  .shell {
+    padding-block: 8px;
+    gap: 6px;
+  }
+}

@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import './App.css';
+import './legacy.css';
 
-import { collections } from './data/collections';
-import type { RankCollection, RankItem } from './models';
+import { AppShell } from './AppShell';
+import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
+import { Logo } from '@/shared/components/Logo/Logo';
+import { Poster } from '@/shared/components/Poster/Poster';
+import { collections } from '@/data/collections';
+import type { RankCollection, RankItem } from '@/models';
 import {
   buildCollectionItemLibrary,
   createCustomCollection,
@@ -12,7 +16,7 @@ import {
   materializeCollections,
   saveCollectionLibraryState,
   updateCollectionInLibrary,
-} from './collectionLibrary';
+} from '@/collectionLibrary';
 import {
   applyRefinementChoice,
   buildRefinementPairs,
@@ -25,7 +29,7 @@ import {
   type ComparisonOutcome,
   type RankingState,
   type RefinementPair,
-} from './ranking';
+} from '@/ranking';
 
 type AppScreen =
   | 'home'
@@ -173,32 +177,6 @@ function getDistribution(values: readonly number[]) {
   return buckets.map((count) => (total === 0 ? 0 : count / total));
 }
 
-function Logo() {
-  return (
-    <div
-      className="logo"
-      aria-label="RankerUltimate"
-    >
-      <span>Ranker</span>
-      <strong>Ultimate</strong>
-    </div>
-  );
-}
-
-function Poster({ item, className = '' }: { item: RankItem; className?: string }) {
-  if (item.image) {
-    return (
-      <img
-        className={`poster ${className}`}
-        src={item.image}
-        alt=""
-      />
-    );
-  }
-
-  return <div className={`poster poster-placeholder ${className}`}>{item.name.charAt(0)}</div>;
-}
-
 function CollectionArtwork({ collection }: { collection: RankCollection }) {
   const artworkItems = collection.items.filter((item) => item.image).slice(0, 3);
 
@@ -223,23 +201,6 @@ function CollectionArtwork({ collection }: { collection: RankCollection }) {
         />
       ))}
     </div>
-  );
-}
-
-function AppHeader({ onMainMenu }: { onMainMenu?: () => void }) {
-  return (
-    <header className="app-header">
-      <Logo />
-
-      {onMainMenu && (
-        <button
-          className="button button-quiet"
-          onClick={onMainMenu}
-        >
-          ⌂ Main Menu
-        </button>
-      )}
-    </header>
   );
 }
 
@@ -861,7 +822,7 @@ function App() {
     );
 
     return (
-      <main className="app-shell resume-shell">
+      <AppShell centered>
         <section className="center-card resume-card">
           <div className="resume-icon">↻</div>
           <h1>You have an unfinished ranking</h1>
@@ -886,13 +847,13 @@ function App() {
             </button>
           </div>
         </section>
-      </main>
+      </AppShell>
     );
   }
 
   if (screen === 'home') {
     return (
-      <main className="app-shell">
+      <AppShell>
         <section className="main-menu-card">
           <div className="main-menu-topline">
             <Logo />
@@ -953,7 +914,7 @@ function App() {
             “{menuQuotes[quoteIndex]}”
           </button>
         </section>
-      </main>
+      </AppShell>
     );
   }
 
@@ -980,7 +941,7 @@ function App() {
       : null;
 
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel collection-manager-scene">
@@ -1283,7 +1244,7 @@ function App() {
             </section>
           </div>
         )}
-      </main>
+      </AppShell>
     );
   }
 
@@ -1294,7 +1255,7 @@ function App() {
     );
 
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel collection-scene">
@@ -1335,13 +1296,13 @@ function App() {
             ))}
           </div>
         </section>
-      </main>
+      </AppShell>
     );
   }
 
   if (screen === 'review' && collection) {
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel review-scene">
@@ -1426,7 +1387,7 @@ function App() {
             </button>
           </div>
         </section>
-      </main>
+      </AppShell>
     );
   }
 
@@ -1441,7 +1402,7 @@ function App() {
       const lastOutcome = rankingState.outcomes[rankingState.outcomes.length - 1] ?? null;
 
       return (
-        <main className="app-shell">
+        <AppShell>
           <AppHeader onMainMenu={requestMainMenu} />
           <FinalChoiceCheckpoint
             title="Normal ranking complete"
@@ -1456,7 +1417,7 @@ function App() {
             onStay={() => setExitConfirm(false)}
             onExit={goHomeNow}
           />
-        </main>
+        </AppShell>
       );
     }
 
@@ -1472,7 +1433,7 @@ function App() {
         : rankingState.ranked.length;
 
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel comparison-scene">
@@ -1523,13 +1484,13 @@ function App() {
           onStay={() => setExitConfirm(false)}
           onExit={goHomeNow}
         />
-      </main>
+      </AppShell>
     );
   }
 
   if (screen === 'rankingComplete') {
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="center-card completion-card">
@@ -1576,7 +1537,7 @@ function App() {
           onStay={() => setExitConfirm(false)}
           onExit={goHomeNow}
         />
-      </main>
+      </AppShell>
     );
   }
 
@@ -1595,7 +1556,7 @@ function App() {
         null;
 
       return (
-        <main className="app-shell">
+        <AppShell>
           <AppHeader onMainMenu={requestMainMenu} />
           <FinalChoiceCheckpoint
             title="Refinement choices complete"
@@ -1610,7 +1571,7 @@ function App() {
             onStay={() => setExitConfirm(false)}
             onExit={goHomeNow}
           />
-        </main>
+        </AppShell>
       );
     }
 
@@ -1623,7 +1584,7 @@ function App() {
     }
 
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel comparison-scene">
@@ -1671,13 +1632,13 @@ function App() {
           onStay={() => setExitConfirm(false)}
           onExit={goHomeNow}
         />
-      </main>
+      </AppShell>
     );
   }
 
   if (screen === 'refinementComplete') {
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="center-card completion-card">
@@ -1709,7 +1670,7 @@ function App() {
           onStay={() => setExitConfirm(false)}
           onExit={goHomeNow}
         />
-      </main>
+      </AppShell>
     );
   }
 
@@ -1719,7 +1680,7 @@ function App() {
       : ratingOrder;
 
     return (
-      <main className="app-shell">
+      <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel ratings-scene">
@@ -1806,7 +1767,7 @@ function App() {
           onStay={() => setExitConfirm(false)}
           onExit={goHomeNow}
         />
-      </main>
+      </AppShell>
     );
   }
 
@@ -1837,7 +1798,7 @@ function App() {
       .slice(0, 3);
 
     return (
-      <main className="app-shell results-shell">
+      <AppShell className="results-shell">
         <AppHeader onMainMenu={requestMainMenu} />
 
         <section className="scene-panel results-scene">
@@ -2061,7 +2022,7 @@ function App() {
           onStay={() => setExitConfirm(false)}
           onExit={goHomeNow}
         />
-      </main>
+      </AppShell>
     );
   }
 

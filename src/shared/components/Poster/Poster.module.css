@@ -1,0 +1,14 @@
+.poster {
+  display: block;
+  object-fit: cover;
+  background: #111827;
+}
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #252c42, #131827);
+  color: #c9b8ff;
+  font-size: 1.6rem;
+  font-weight: 800;
+}

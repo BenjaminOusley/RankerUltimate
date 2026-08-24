@@ -1,0 +1,11 @@
+.logo {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.logo strong {
+  color: var(--purple-bright);
+}
