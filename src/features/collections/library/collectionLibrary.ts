@@ -1,3 +1,4 @@
+import { getCanonicalItemKey, getLegacyItemKeys } from '@/domain/itemIdentity';
 import type { RankCollection, RankItem } from '@/domain/models';
 
 type CollectionOverride = {
@@ -53,25 +54,7 @@ function createEmptyState(): CollectionLibraryState {
 }
 
 export function getCollectionLibraryItemKey(item: RankItem) {
-  if (item.source) {
-    return `${item.source.provider}:${item.source.type ?? 'item'}:${item.source.id}`;
-  }
-
-  return `local:${item.id}`;
-}
-
-function getLegacyItemKeys(item: RankItem) {
-  const aliases = new Set<string>([item.id]);
-
-  if (item.source) {
-    aliases.add(`${String(item.source)}:${item.id}`);
-    aliases.add(`${item.source.provider}:${item.id}`);
-    aliases.add(`${item.source.provider}:${item.source.type ?? 'item'}:${item.source.id}`);
-  }
-
-  aliases.add(getCollectionLibraryItemKey(item));
-
-  return aliases;
+  return getCanonicalItemKey(item);
 }
 
 function buildItemCatalog(baseCollections: readonly RankCollection[]) {

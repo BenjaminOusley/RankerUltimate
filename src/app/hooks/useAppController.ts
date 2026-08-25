@@ -29,7 +29,7 @@ export function useAppController() {
   const [exitConfirm, setExitConfirm] = useState(false);
 
   const collectionLibrary = useCollectionLibrary(collections);
-  const ratings = usePersonalRatings();
+  const ratings = usePersonalRatings(collectionLibrary.itemLibrary);
   const session = useRankingSession();
 
   const activeRecoveryScreen = recoverableScreens.has(screen);

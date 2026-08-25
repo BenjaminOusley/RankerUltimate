@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+
 import type { RankItem } from '@/domain/models';
 import {
   loadPersonalRatings,
@@ -6,8 +7,8 @@ import {
   updatePersonalRatingMap,
 } from '../personalRatings';
 
-export function usePersonalRatings() {
-  const [personalRatings, setPersonalRatings] = useState(loadPersonalRatings);
+export function usePersonalRatings(items: readonly RankItem[] = []) {
+  const [personalRatings, setPersonalRatings] = useState(() => loadPersonalRatings(items));
 
   const updatePersonalRating = useCallback((item: RankItem, value: number | null) => {
     setPersonalRatings((previous) => {
