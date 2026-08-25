@@ -1,4 +1,4 @@
-import type { RankCollection } from '@/models';
+import type { RankCollection } from '@/domain/models';
 import styles from './CollectionArtwork.module.css';
 
 type CollectionArtworkProps = {

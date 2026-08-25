@@ -1,8 +1,9 @@
 import { AppShell } from '@/app/AppShell';
-import type { RankCollection } from '@/models';
+import type { RankCollection } from '@/domain/models';
 import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
 import { Button } from '@/shared/components/Button/Button';
 import { Poster } from '@/shared/components/Poster/Poster';
+import { SceneHeading, ScenePanel } from '@/shared/components/Scene/Scene';
 import styles from './CollectionReviewScreen.module.css';
 
 type CollectionReviewScreenProps = {
@@ -45,15 +46,15 @@ export function CollectionReviewScreen({
     <AppShell>
       <AppHeader onMainMenu={onMainMenu} />
 
-      <section className={`scene-panel ${styles.scene}`}>
-        <div className={`scene-heading ${styles.heading}`}>
+      <ScenePanel className={styles.scene}>
+        <SceneHeading className={styles.heading}>
           <div>
             <h1>{collection.name}</h1>
             <p>Choose which items belong in this ranking.</p>
           </div>
 
           <strong>{selectedItemIds.size} selected</strong>
-        </div>
+        </SceneHeading>
 
         <div className={styles.toolbar}>
           <Button
@@ -109,7 +110,7 @@ export function CollectionReviewScreen({
             Rank {selectedItemIds.size} Items
           </Button>
         </div>
-      </section>
+      </ScenePanel>
     </AppShell>
   );
 }

@@ -1,4 +1,4 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 
 export type PersonalRatingRecord = {
   value: number;

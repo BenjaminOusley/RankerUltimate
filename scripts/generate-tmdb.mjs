@@ -45,7 +45,7 @@ async function main() {
 
   const exportName = `${toCamelCase(request.collectionId)}Movies`;
 
-  const output = `import type { RankCollection } from '../../models';
+  const output = `import type { RankCollection } from '../../domain/models';
 
 export const ${exportName}: RankCollection = ${JSON.stringify(result.collection, null, 2)};
 `;

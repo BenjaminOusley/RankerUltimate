@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import {
   loadPersonalRatings,
   savePersonalRatings,

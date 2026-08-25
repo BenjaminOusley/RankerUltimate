@@ -1,4 +1,5 @@
-import type { GenerationRequest, RankCollection } from '../../../models';
+import type { RankCollection } from '@/domain/models';
+import type { GenerationRequest } from '../types';
 
 type GenerationResponse = {
   collection?: RankCollection;

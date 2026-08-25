@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import type { RankCollection } from '@/models';
+import type { RankCollection } from '@/domain/models';
 import type { RankingState } from '@/features/ranking/engine';
 import type { PersonalRatingMap } from '@/features/ratings/personalRatings';
 import { Button } from '@/shared/components/Button/Button';
 import { RankedList } from '../../components/RankedList/RankedList';
 import { ResultsSummary } from '../../components/ResultsSummary/ResultsSummary';
+import { SceneHeading, ScenePanel } from '@/shared/components/Scene/Scene';
 import styles from './ResultsScreen.module.css';
 
 type ResultsTab = 'ranking' | 'summary';
@@ -27,8 +28,8 @@ export function ResultsScreen({
   const [tab, setTab] = useState<ResultsTab>('ranking');
 
   return (
-    <section className={`scene-panel ${styles.scene}`}>
-      <div className={`scene-heading ${styles.heading}`}>
+    <ScenePanel className={styles.scene}>
+      <SceneHeading className={styles.heading}>
         <div>
           <h1>{collection.name}</h1>
           <p>
@@ -57,7 +58,7 @@ export function ResultsScreen({
             Export
           </Button>
         </div>
-      </div>
+      </SceneHeading>
 
       <div className={styles.tabs}>
         <button
@@ -89,6 +90,6 @@ export function ResultsScreen({
           personalRatings={personalRatings}
         />
       )}
-    </section>
+    </ScenePanel>
   );
 }

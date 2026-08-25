@@ -1,4 +1,4 @@
-import type { RankCollection, RankItem } from '@/models';
+import type { RankCollection, RankItem } from '@/domain/models';
 
 type CollectionOverride = {
   name?: string;

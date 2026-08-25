@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { AppShell } from '@/app/AppShell';
-import type { RankCollection, RankItem } from '@/models';
+import type { RankCollection, RankItem } from '@/domain/models';
 import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
 import { Button } from '@/shared/components/Button/Button';
 import { Modal } from '@/shared/components/Modal/Modal';
@@ -10,6 +10,7 @@ import {
   CollectionEditor,
   type CollectionEditorMode,
 } from '../../components/CollectionEditor/CollectionEditor';
+import { SceneHeading, ScenePanel } from '@/shared/components/Scene/Scene';
 import styles from './CollectionsScreen.module.css';
 
 type CollectionSort = 'nameAsc' | 'nameDesc' | 'itemsDesc' | 'itemsAsc';
@@ -69,8 +70,8 @@ export function CollectionsScreen({
     <AppShell>
       <AppHeader onMainMenu={onMainMenu} />
 
-      <section className={`scene-panel ${styles.scene}`}>
-        <div className={`scene-heading ${styles.heading}`}>
+      <ScenePanel className={styles.scene}>
+        <SceneHeading className={styles.heading}>
           <div>
             <h1>My Collections</h1>
             <p>Create and manage your collections.</p>
@@ -82,7 +83,7 @@ export function CollectionsScreen({
           >
             ＋ Create Collection
           </Button>
-        </div>
+        </SceneHeading>
 
         <div className={styles.toolbar}>
           <strong>
@@ -173,7 +174,7 @@ export function CollectionsScreen({
             </article>
           ))}
         </div>
-      </section>
+      </ScenePanel>
 
       {editor && (
         <CollectionEditor

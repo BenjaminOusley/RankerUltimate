@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { RankCollection } from '@/models';
+import type { RankCollection } from '@/domain/models';
 import {
   buildCollectionItemLibrary,
   createCustomCollection,

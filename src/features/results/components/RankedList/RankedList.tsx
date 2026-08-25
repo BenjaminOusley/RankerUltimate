@@ -1,8 +1,9 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import { getPersonalRating, type PersonalRatingMap } from '@/features/ratings/personalRatings';
 import { formatPersonalRating } from '@/features/ratings/personalRating';
 import { Poster } from '@/shared/components/Poster/Poster';
 import { formatPreferenceScore, getRankAdornment, getRankStyle } from '../../model/results';
+import { ScrollPanel } from '@/shared/components/Scene/Scene';
 import styles from './RankedList.module.css';
 
 type RankedListProps = {
@@ -19,7 +20,7 @@ function getRowClass(rankStyle: ReturnType<typeof getRankStyle>) {
 
 export function RankedList({ items, preferenceScores, personalRatings }: RankedListProps) {
   return (
-    <div className={`scroll-panel ${styles.tableWrap}`}>
+    <ScrollPanel className={styles.tableWrap}>
       <div className={`${styles.table} ${styles.tableHeader}`}>
         <span>Rank</span>
         <span>Item</span>
@@ -86,6 +87,6 @@ export function RankedList({ items, preferenceScores, personalRatings }: RankedL
           </div>
         );
       })}
-    </div>
+    </ScrollPanel>
   );
 }

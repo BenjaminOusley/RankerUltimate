@@ -212,7 +212,7 @@ await fs.mkdir(outputDirectory, {
 
 const collectionName = collectionId === 'mcu' ? 'MCU Movies' : collectionId;
 
-const output = `import type { RankCollection } from '../../models';
+const output = `import type { RankCollection } from '../../domain/models';
 
 export const ${collectionId}Movies: RankCollection = ${JSON.stringify(
   {

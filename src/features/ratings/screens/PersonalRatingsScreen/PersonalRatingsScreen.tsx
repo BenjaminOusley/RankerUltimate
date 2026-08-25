@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import { Button } from '@/shared/components/Button/Button';
 import { Poster } from '@/shared/components/Poster/Poster';
 import { formatPersonalRating } from '../../personalRating';
 import { getPersonalRating, type PersonalRatingMap } from '../../personalRatings';
+import { SceneHeading, ScenePanel, ScrollPanel } from '@/shared/components/Scene/Scene';
 import styles from './PersonalRatingsScreen.module.css';
 
 type PersonalRatingsScreenProps = {
@@ -32,8 +33,8 @@ export function PersonalRatingsScreen({
   );
 
   return (
-    <section className={`scene-panel ${styles.scene}`}>
-      <div className={`scene-heading ${styles.heading}`}>
+    <ScenePanel className={styles.scene}>
+      <SceneHeading className={styles.heading}>
         <div>
           <h1>
             Rate the items <span className={styles.optionalLabel}>(optional)</span>
@@ -51,9 +52,9 @@ export function PersonalRatingsScreen({
           />
           Hide rated items
         </label>
-      </div>
+      </SceneHeading>
 
-      <div className={`scroll-panel ${styles.grid}`}>
+      <ScrollPanel className={styles.grid}>
         {visibleItems.map((item) => {
           const rating = getPersonalRating(personalRatings, item);
 
@@ -96,7 +97,7 @@ export function PersonalRatingsScreen({
         {visibleItems.length === 0 && (
           <div className={styles.emptyState}>Everything here already has a rating.</div>
         )}
-      </div>
+      </ScrollPanel>
 
       <div className={styles.footerActions}>
         <Button onClick={onBack}>Back</Button>
@@ -107,6 +108,6 @@ export function PersonalRatingsScreen({
           Continue to Results
         </Button>
       </div>
-    </section>
+    </ScenePanel>
   );
 }

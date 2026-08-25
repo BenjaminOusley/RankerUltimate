@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import type { RankCollection, RankItem } from '@/models';
+import type { RankCollection, RankItem } from '@/domain/models';
 import { Button } from '@/shared/components/Button/Button';
 import { Modal } from '@/shared/components/Modal/Modal';
 import { Poster } from '@/shared/components/Poster/Poster';

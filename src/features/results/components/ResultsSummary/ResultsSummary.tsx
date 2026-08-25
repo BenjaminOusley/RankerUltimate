@@ -1,9 +1,10 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import type { ComparisonOutcome } from '@/features/ranking/engine';
 import { formatPersonalRating } from '@/features/ratings/personalRating';
 import { getPersonalRating, type PersonalRatingMap } from '@/features/ratings/personalRatings';
 import { Poster } from '@/shared/components/Poster/Poster';
 import { formatPreferenceScore, getDistribution } from '../../model/results';
+import { ScrollPanel } from '@/shared/components/Scene/Scene';
 import styles from './ResultsSummary.module.css';
 
 type ResultsSummaryProps = {
@@ -45,7 +46,7 @@ export function ResultsSummary({
     .slice(0, 3);
 
   return (
-    <div className={`scroll-panel ${styles.panel}`}>
+    <ScrollPanel className={styles.panel}>
       <section className={styles.section}>
         <div className={styles.sectionHeading}>
           <div>
@@ -139,6 +140,6 @@ export function ResultsSummary({
           </div>
         </section>
       )}
-    </div>
+    </ScrollPanel>
   );
 }

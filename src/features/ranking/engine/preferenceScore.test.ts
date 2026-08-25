@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 
 import { calculatePreferenceScores } from './preferenceScore';
 import { chooseRankingWinner, createInitialRankingState, getCurrentOpponent } from './ranker';

@@ -1,4 +1,4 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import { Poster } from '@/shared/components/Poster/Poster';
 
 import styles from './ComparisonCard.module.css';

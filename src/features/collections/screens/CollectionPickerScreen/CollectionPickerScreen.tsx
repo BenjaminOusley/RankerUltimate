@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 
 import { AppShell } from '@/app/AppShell';
-import type { RankCollection } from '@/models';
+import type { RankCollection } from '@/domain/models';
 import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
+import { SceneHeading, ScenePanel } from '@/shared/components/Scene/Scene';
 import styles from './CollectionPickerScreen.module.css';
 
 type CollectionPickerScreenProps = {
@@ -32,13 +33,13 @@ export function CollectionPickerScreen({
     <AppShell>
       <AppHeader onMainMenu={onMainMenu} />
 
-      <section className={`scene-panel ${styles.scene}`}>
-        <div className="scene-heading">
+      <ScenePanel className={styles.scene}>
+        <SceneHeading>
           <div>
             <h1>Select a Collection</h1>
             <p>Pick the list you want to rank.</p>
           </div>
-        </div>
+        </SceneHeading>
 
         <input
           className={styles.search}
@@ -69,7 +70,7 @@ export function CollectionPickerScreen({
             </button>
           ))}
         </div>
-      </section>
+      </ScenePanel>
     </AppShell>
   );
 }

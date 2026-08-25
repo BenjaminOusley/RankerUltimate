@@ -1,4 +1,4 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import styles from './Poster.module.css';
 
 type PosterProps = {

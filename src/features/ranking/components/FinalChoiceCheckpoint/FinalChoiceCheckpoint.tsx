@@ -1,4 +1,4 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import { Button } from '@/shared/components/Button/Button';
 import { Poster } from '@/shared/components/Poster/Poster';
 

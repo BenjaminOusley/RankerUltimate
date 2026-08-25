@@ -1,7 +1,8 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import { Button } from '@/shared/components/Button/Button';
 
 import { ComparisonCard } from '../ComparisonCard/ComparisonCard';
+import { ScenePanel } from '@/shared/components/Scene/Scene';
 import styles from './ComparisonScene.module.css';
 
 type ComparisonSceneProps = {
@@ -26,7 +27,7 @@ export function ComparisonScene({
   onUndo,
 }: ComparisonSceneProps) {
   return (
-    <section className={`scene-panel ${styles.scene}`}>
+    <ScenePanel className={styles.scene}>
       <div className={styles.progressRow}>
         <div className={styles.progressTrack}>
           <div
@@ -61,6 +62,6 @@ export function ComparisonScene({
 
         {footerText && <span className={styles.footerText}>{footerText}</span>}
       </div>
-    </section>
+    </ScenePanel>
   );
 }

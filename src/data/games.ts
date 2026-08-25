@@ -1,4 +1,4 @@
-import type { RankCollection } from '../models';
+import type { RankCollection } from '@/domain/models';
 
 export const testGames: RankCollection = {
   id: 'test-games',

@@ -1,4 +1,4 @@
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 
 import { fitBradleyTerry, sigmoid } from './model';
 import type { ComparisonOutcome } from './types';

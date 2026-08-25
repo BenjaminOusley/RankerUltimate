@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { RankItem } from '@/models';
+import type { RankItem } from '@/domain/models';
 import { getPersonalRating, updatePersonalRatingMap } from './personalRatings';
 
 const item: RankItem = {
