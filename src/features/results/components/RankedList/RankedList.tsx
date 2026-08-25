@@ -28,7 +28,7 @@ export function RankedList({ items, preferenceScores, personalRatings }: RankedL
           Preference
           <button
             className={styles.infoTooltip}
-            title="Calculated from how this item performed against others in this ranking. Rank sets the order; comparison evidence adjusts the spacing."
+            title="Shows how strongly this item performed relative to the others based on your choices."
             aria-label="About Preference Score"
           >
             ?

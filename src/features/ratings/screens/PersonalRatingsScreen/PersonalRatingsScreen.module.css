@@ -28,6 +28,12 @@
   gap: 10px;
 }
 
+.gridEmpty {
+  grid-template-columns: 1fr;
+  place-items: center;
+  align-content: center;
+}
+
 .card {
   min-width: 0;
   padding: 9px;
@@ -75,8 +81,8 @@
 
 .emptyState {
   padding: 36px;
-  text-align: center;
   color: var(--muted);
+  text-align: center;
 }
 
 .footerActions {

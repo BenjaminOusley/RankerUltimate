@@ -10,24 +10,215 @@
 }
 
 .toolbar {
-  min-height: 46px;
-  display: flex;
+  min-height: 48px;
+
+  display: grid;
+  grid-template-columns:
+    auto
+    minmax(340px, 520px)
+    minmax(0, 1fr)
+    auto;
+
   align-items: center;
-  justify-content: space-between;
   gap: 18px;
 }
 
-.toolbar > strong {
+.collectionCount {
+  grid-column: 1;
+
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
   color: #d9d2e8;
   font-size: 0.95rem;
+
+  white-space: nowrap;
+}
+
+.searchWrap {
+  grid-column: 2;
+
+  position: relative;
+
+  width: 100%;
+  height: 40px;
+  min-width: 0;
+}
+
+.searchInput {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+
+  /*
+   * Reserve a real area for the clear button.
+   */
+  padding: 0 46px 0 13px;
+
+  border: 1px solid var(--line);
+  border-radius: 11px;
+
+  background: rgba(9, 13, 22, 0.75);
+  color: #f6f3ff;
+
+  /*
+   * Long text scrolls within the input rather than
+   * changing the input or page width.
+   */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.searchInput::placeholder {
+  color: #737b8f;
+}
+
+.clearSearchButton {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 80, 105, 0.42);
+  border-radius: 7px;
+
+  display: grid;
+  place-items: center;
+
+  transform: translateY(-50%);
+
+  background: rgba(255, 70, 95, 0.14);
+
+  cursor: pointer;
+}
+
+.clearSearchButton:hover {
+  border-color: rgba(255, 90, 115, 0.8);
+  background: rgba(255, 70, 95, 0.27);
+}
+
+/*
+ * Draw the X ourselves so browser/font styling cannot
+ * unexpectedly turn it blue.
+ */
+.clearSearchIcon {
+  position: relative;
+
+  width: 13px;
+  height: 13px;
+}
+
+.clearSearchIcon::before,
+.clearSearchIcon::after {
+  content: '';
+
+  position: absolute;
+  top: 5.5px;
+  left: 0;
+
+  width: 13px;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background: #ff526d;
+}
+
+.clearSearchIcon::before {
+  transform: rotate(45deg);
+}
+
+.clearSearchIcon::after {
+  transform: rotate(-45deg);
+}
+
+.emptyState {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 24px;
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
+  gap: 12px;
+
+  overflow: hidden;
+
+  color: var(--muted);
+  text-align: center;
+}
+
+.emptyStateHeader {
+  flex: 0 0 auto;
+
+  width: 100%;
+
+  text-align: center;
+}
+
+.emptyStateHeader strong {
+  color: #b4bbca;
+  font-weight: 650;
+}
+
+.emptyQueryBox {
+  width: min(620px, 100%);
+  max-width: 100%;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 0 8px 12px;
+}
+
+.emptyQueryBox::-webkit-scrollbar {
+  width: 10px;
+}
+
+.emptyQueryBox::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 20px;
+
+  background: rgba(139, 112, 196, 0.5);
+  background-clip: padding-box;
+}
+
+.emptyQuery {
+  display: block;
+  width: 100%;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  color: #81798f;
+  font-size: 0.88rem;
+  line-height: 1.45;
 }
 
 .sortControl {
+  grid-column: 4;
+  justify-self: end;
+
+  height: 40px;
+
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
+
   color: var(--muted);
   font-size: 0.9rem;
+
+  white-space: nowrap;
 }
 
 .sortSelect {
@@ -42,13 +233,15 @@
 
 .list {
   min-height: 0;
-  padding: 2px 4px 2px 2px;
+  padding: 2px 0;
   display: grid;
   align-content: start;
   gap: 10px;
-  overflow: auto;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
 }
 
 .list::-webkit-scrollbar {
@@ -195,11 +388,24 @@
   }
 
   .toolbar {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: stretch;
+    gap: 10px;
+  }
+
+  .collectionCount,
+  .searchWrap,
+  .sortControl {
+    grid-column: 1;
+  }
+
+  .searchWrap {
+    width: 100%;
   }
 
   .sortControl {
+    justify-self: stretch;
     justify-content: space-between;
   }
 

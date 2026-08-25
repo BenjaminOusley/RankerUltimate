@@ -26,9 +26,7 @@ export function PersonalRatingsScreen({
 
   const visibleItems = useMemo(
     () =>
-      hideRated
-        ? items.filter((item) => getPersonalRating(personalRatings, item) === null)
-        : items,
+      hideRated ? items.filter((item) => getPersonalRating(personalRatings, item) === null) : items,
     [hideRated, items, personalRatings],
   );
 
@@ -54,7 +52,9 @@ export function PersonalRatingsScreen({
         </label>
       </SceneHeading>
 
-      <ScrollPanel className={styles.grid}>
+      <ScrollPanel
+        className={`${styles.grid} ${visibleItems.length === 0 ? styles.gridEmpty : ''}`}
+      >
         {visibleItems.map((item) => {
           const rating = getPersonalRating(personalRatings, item);
 

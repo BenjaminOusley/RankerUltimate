@@ -38,25 +38,41 @@ export function CollectionsScreen({
   onMainMenu,
 }: CollectionsScreenProps) {
   const [sort, setSort] = useState<CollectionSort>('nameAsc');
+  const [search, setSearch] = useState('');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [deleteCollectionId, setDeleteCollectionId] = useState<string | null>(null);
   const [editor, setEditor] = useState<EditorState | null>(null);
 
-  const sortedCollections = useMemo(() => {
-    return [...collections].sort((first, second) => {
+  const visibleCollections = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    const filteredCollections = query
+      ? collections.filter((collection) => {
+          const searchableText = [collection.name, collection.description ?? '']
+            .join(' ')
+            .toLowerCase();
+
+          return searchableText.includes(query);
+        })
+      : [...collections];
+
+    return filteredCollections.sort((first, second) => {
       switch (sort) {
         case 'nameDesc':
           return second.name.localeCompare(first.name);
+
         case 'itemsDesc':
           return second.items.length - first.items.length;
+
         case 'itemsAsc':
           return first.items.length - second.items.length;
+
         case 'nameAsc':
         default:
           return first.name.localeCompare(second.name);
       }
     });
-  }, [collections, sort]);
+  }, [collections, search, sort]);
 
   const editorCollection = editor?.collectionId
     ? (collections.find((collection) => collection.id === editor.collectionId) ?? null)
@@ -86,12 +102,39 @@ export function CollectionsScreen({
         </SceneHeading>
 
         <div className={styles.toolbar}>
-          <strong>
+          <strong className={styles.collectionCount}>
             ▤ {collections.length} {collections.length === 1 ? 'Collection' : 'Collections'}
           </strong>
 
+          <div className={styles.searchWrap}>
+            <input
+              className={styles.searchInput}
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search collections…"
+              aria-label="Search collections"
+            />
+
+            {search && (
+              <button
+                className={styles.clearSearchButton}
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Clear collection search"
+                title="Clear search"
+              >
+                <span
+                  className={styles.clearSearchIcon}
+                  aria-hidden="true"
+                />
+              </button>
+            )}
+          </div>
+
           <label className={styles.sortControl}>
             <span>Sort by:</span>
+
             <select
               className={styles.sortSelect}
               value={sort}
@@ -106,7 +149,7 @@ export function CollectionsScreen({
         </div>
 
         <div className={styles.list}>
-          {sortedCollections.map((collection) => (
+          {visibleCollections.map((collection) => (
             <article
               className={styles.row}
               key={collection.id}
@@ -131,9 +174,7 @@ export function CollectionsScreen({
               <div className={styles.actions}>
                 <Button
                   className={styles.editButton}
-                  onClick={() =>
-                    setEditor({ mode: 'edit', collectionId: collection.id })
-                  }
+                  onClick={() => setEditor({ mode: 'edit', collectionId: collection.id })}
                 >
                   ✎ Edit
                 </Button>
@@ -173,6 +214,17 @@ export function CollectionsScreen({
               </div>
             </article>
           ))}
+          {visibleCollections.length === 0 && (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateHeader}>
+                <strong>No collections match your search.</strong>
+              </div>
+
+              <div className={styles.emptyQueryBox}>
+                <span className={styles.emptyQuery}>“{search.trim()}”</span>
+              </div>
+            </div>
+          )}
         </div>
       </ScenePanel>
 
