@@ -1,0 +1,57 @@
+.card {
+  width: min(520px, calc(100vw - 36px));
+  margin: auto;
+  padding: clamp(24px, 5vw, 38px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(20, 25, 39, 0.96), rgba(13, 18, 29, 0.97));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.card h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  letter-spacing: -0.045em;
+}
+
+.card h2 {
+  margin: 12px 0 0;
+  font-size: 1.1rem;
+  color: #d9d3e6;
+}
+
+.card p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 18px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: var(--purple-soft);
+  color: var(--purple-bright);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.warmIcon {
+  background: rgba(242, 201, 76, 0.13);
+  color: var(--gold);
+}
+
+.actions {
+  margin-top: 24px;
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-height: 650px) and (min-width: 761px) {
+  .card {
+    padding-block: 20px;
+  }
+}

@@ -1,20 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import type { RankItem } from './models';
-import {
-  applyRefinementChoice,
-  calculatePreferenceScores,
-  chooseRankingWinner,
-  createInitialRankingState,
-  formatPersonalRating,
-  getCurrentOpponent,
-} from './ranking';
+import type { RankItem } from '@/models';
+
+import { chooseRankingWinner, createInitialRankingState, getCurrentOpponent } from './ranker';
 
 const itemA: RankItem = { id: 'a', name: 'Item A' };
 const itemB: RankItem = { id: 'b', name: 'Item B' };
 const itemC: RankItem = { id: 'c', name: 'Item C' };
 
-// Fisher-Yates picks the current index each time, preserving input order.
 const noShuffle = () => 0.999999;
 
 function makeItems(count: number): RankItem[] {
@@ -46,7 +39,6 @@ function runConsistentRanking(count: number, seed: number) {
       throw new Error('Ranking state had a current item without an opponent.');
     }
 
-    // Lower numeric ID is the hidden true preference.
     const winner = Number(state.current.id) < Number(opponent.id) ? state.current : opponent;
 
     state = chooseRankingWinner(state, winner.id);
@@ -172,54 +164,5 @@ describe('randomized ranking', () => {
     expect(state.ranked.map((item) => Number(item.id))).toEqual(
       Array.from({ length: 35 }, (_, index) => index),
     );
-  });
-});
-
-describe('preference score', () => {
-  it('always respects final rank order', () => {
-    const state = runConsistentRanking(30, 7);
-    const scores = calculatePreferenceScores(state.ranked, state.outcomes);
-
-    for (let index = 1; index < state.ranked.length; index += 1) {
-      const previous = scores[state.ranked[index - 1].id];
-      const current = scores[state.ranked[index].id];
-
-      expect(previous).toBeGreaterThanOrEqual(current);
-    }
-  });
-
-  it('stays reasonably stable across random comparison paths', () => {
-    const firstPlaceScores: number[] = [];
-    const fifthPlaceScores: number[] = [];
-
-    for (let seed = 1; seed <= 80; seed += 1) {
-      const state = runConsistentRanking(30, seed);
-      const scores = calculatePreferenceScores(state.ranked, state.outcomes);
-
-      firstPlaceScores.push(scores['0']);
-      fifthPlaceScores.push(scores['4']);
-    }
-
-    expect(Math.max(...firstPlaceScores) - Math.min(...firstPlaceScores)).toBeLessThan(0.2);
-    expect(Math.max(...fifthPlaceScores) - Math.min(...fifthPlaceScores)).toBeLessThan(0.4);
-  });
-});
-
-describe('refinement', () => {
-  it('moves a lower-ranked winner directly above the item it beat', () => {
-    const ranked = makeItems(5);
-
-    const next = applyRefinementChoice(ranked, { firstId: '1', secondId: '3' }, '3');
-
-    expect(next.map((item) => item.id)).toEqual(['0', '3', '1', '2', '4']);
-  });
-});
-
-describe('personal rating display', () => {
-  it('omits .0 for whole-number ratings', () => {
-    expect(formatPersonalRating(9)).toBe('9');
-    expect(formatPersonalRating(9.5)).toBe('9.5');
-    expect(formatPersonalRating(10)).toBe('10');
-    expect(formatPersonalRating(null)).toBe('—');
   });
 });

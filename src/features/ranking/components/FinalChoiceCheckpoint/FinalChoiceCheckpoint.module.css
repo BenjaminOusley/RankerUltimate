@@ -1,0 +1,125 @@
+.card {
+  width: min(760px, calc(100vw - 36px));
+  margin: auto;
+  padding: clamp(24px, 5vw, 38px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  align-self: center;
+  background: linear-gradient(180deg, rgba(20, 25, 39, 0.96), rgba(13, 18, 29, 0.97));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.card h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  letter-spacing: -0.045em;
+}
+
+.card p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 18px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: var(--purple-soft);
+  color: var(--purple-bright);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.preview {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.choiceCard {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  background: rgba(20, 26, 40, 0.78);
+}
+
+.poster {
+  width: 52px;
+  height: 74px;
+  border-radius: 7px;
+}
+
+.chosenCard {
+  border-color: rgba(154, 107, 255, 0.66);
+  background: rgba(103, 57, 196, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(154, 107, 255, 0.12);
+}
+
+.copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.copy strong,
+.copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.chosenBadge {
+  grid-column: 1 / -1;
+  justify-self: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--purple-soft);
+  color: #d5c7ff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.vs {
+  color: #8f879e;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.actions {
+  margin-top: 24px;
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-width: 760px) {
+  .preview {
+    grid-template-columns: 1fr;
+  }
+
+  .vs {
+    display: none;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 761px) {
+  .card {
+    padding-block: 20px;
+  }
+}

@@ -1,0 +1,77 @@
+.card {
+  width: min(330px, 100%);
+  min-width: 0;
+  max-height: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  display: grid;
+  justify-items: stretch;
+  gap: 10px;
+  background: rgba(21, 27, 41, 0.84);
+  color: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.card:hover {
+  border-color: rgba(154, 107, 255, 0.65);
+  box-shadow:
+    0 0 0 1px rgba(154, 107, 255, 0.18),
+    0 20px 50px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.poster {
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 2 / 3;
+  border-radius: 11px;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.1rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+.subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .card {
+    padding: 7px;
+    border-radius: 12px;
+  }
+
+  .name {
+    font-size: 0.9rem;
+  }
+
+  .subtitle {
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 761px) {
+  .card {
+    width: min(245px, 100%);
+  }
+
+  .name {
+    font-size: 0.95rem;
+  }
+}

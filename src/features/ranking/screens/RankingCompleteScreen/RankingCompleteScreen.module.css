@@ -1,0 +1,24 @@
+.action {
+  min-height: 62px;
+  padding-block: 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+}
+
+.action span {
+  font-weight: 700;
+}
+
+.action em {
+  color: #bda5ff;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.action small {
+  margin-top: 3px;
+  color: #b1a9c0;
+}

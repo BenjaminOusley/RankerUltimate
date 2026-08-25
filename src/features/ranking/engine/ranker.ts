@@ -1,39 +1,12 @@
-import type { RankItem } from './models';
+import type { RankItem } from '@/models';
 
-export type ComparisonPhase = 'ranking' | 'validation' | 'repair' | 'refinement';
-
-export type ComparisonOutcome = {
-  winnerId: string;
-  loserId: string;
-  phase: ComparisonPhase;
-};
-
-export type ValidationPair = {
-  upperId: string;
-  lowerId: string;
-  upperIndex: number;
-  lowerIndex: number;
-};
-
-export type RankingMode = 'insert' | 'validation' | 'repair';
-
-export type RankingState = {
-  ranked: RankItem[];
-  remaining: RankItem[];
-  current: RankItem | null;
-  low: number;
-  high: number;
-  comparisons: number;
-  outcomes: ComparisonOutcome[];
-  mode: RankingMode;
-  validationPair: ValidationPair | null;
-  validationChecked: boolean;
-};
-
-export type RefinementPair = {
-  firstId: string;
-  secondId: string;
-};
+import { buildDirectPairSet, fitBradleyTerry, pairKey, sigmoid } from './model';
+import type {
+  ComparisonOutcome,
+  ComparisonPhase,
+  RankingState,
+  ValidationPair,
+} from './types';
 
 export function shuffleItems<T>(items: readonly T[], random: () => number = Math.random): T[] {
   const shuffled = [...items];
@@ -115,14 +88,6 @@ export function getCurrentOpponent(state: RankingState): RankItem | null {
   return state.ranked[comparisonIndex] ?? null;
 }
 
-function pairKey(firstId: string, secondId: string) {
-  return firstId < secondId ? `${firstId}\u0000${secondId}` : `${secondId}\u0000${firstId}`;
-}
-
-function buildDirectPairSet(outcomes: readonly ComparisonOutcome[]) {
-  return new Set(outcomes.map((outcome) => pairKey(outcome.winnerId, outcome.loserId)));
-}
-
 function calculateObservedStats(outcomes: readonly ComparisonOutcome[]) {
   const stats = new Map<string, { wins: number; total: number }>();
 
@@ -200,8 +165,6 @@ function findExtremeValidationPair(state: RankingState): ValidationPair | null {
       const lowerAbility = abilityById.get(lower.item.id) ?? 0;
       const modelProbability = sigmoid(upperAbility - lowerAbility);
 
-      // Observed extremes alone are not enough. The model must also see a
-      // clearly separated matchup before we spend a hidden sanity check on it.
       if (modelProbability < 0.8) {
         continue;
       }
@@ -329,9 +292,6 @@ export function chooseRankingWinner(state: RankingState, winnerId: string): Rank
 
     const rankedWithoutLower = state.ranked.filter((item) => item.id !== lowerItem.id);
 
-    // The extreme result contradicted the provisional ordering. Reinsert the
-    // surprising winner across the full field so the follow-up questions test
-    // genuinely new opponents instead of immediately repeating the sanity check.
     return {
       ...state,
       ranked: rankedWithoutLower,
@@ -399,228 +359,4 @@ export function chooseRankingWinner(state: RankingState, winnerId: string): Rank
   };
 
   return nextCurrent ? nextState : scheduleValidationIfUseful(nextState);
-}
-
-function sigmoid(value: number) {
-  if (value >= 0) {
-    const exp = Math.exp(-value);
-    return 1 / (1 + exp);
-  }
-
-  const exp = Math.exp(value);
-  return exp / (1 + exp);
-}
-
-function fitBradleyTerry(
-  itemIds: readonly string[],
-  outcomes: readonly ComparisonOutcome[],
-  iterations = 220,
-  regularization = 1.25,
-) {
-  const indexById = new Map(itemIds.map((id, index) => [id, index]));
-  const abilities = new Array(itemIds.length).fill(0) as number[];
-
-  if (itemIds.length <= 1 || outcomes.length === 0) {
-    return abilities;
-  }
-
-  for (let iteration = 0; iteration < iterations; iteration += 1) {
-    const gradient = abilities.map((ability) => -regularization * ability);
-
-    for (const outcome of outcomes) {
-      const winnerIndex = indexById.get(outcome.winnerId);
-      const loserIndex = indexById.get(outcome.loserId);
-
-      if (winnerIndex === undefined || loserIndex === undefined) {
-        continue;
-      }
-
-      const probability = sigmoid(abilities[winnerIndex] - abilities[loserIndex]);
-      const residual = 1 - probability;
-
-      gradient[winnerIndex] += residual;
-      gradient[loserIndex] -= residual;
-    }
-
-    const learningRate = 0.12 / Math.sqrt(1 + iteration * 0.06);
-
-    for (let index = 0; index < abilities.length; index += 1) {
-      abilities[index] += learningRate * gradient[index];
-    }
-
-    const mean = abilities.reduce((sum, value) => sum + value, 0) / abilities.length;
-
-    for (let index = 0; index < abilities.length; index += 1) {
-      abilities[index] -= mean;
-    }
-  }
-
-  return abilities;
-}
-
-function buildMatchCounts(itemIds: readonly string[], outcomes: readonly ComparisonOutcome[]) {
-  const counts = new Map(itemIds.map((id) => [id, 0]));
-
-  for (const outcome of outcomes) {
-    counts.set(outcome.winnerId, (counts.get(outcome.winnerId) ?? 0) + 1);
-    counts.set(outcome.loserId, (counts.get(outcome.loserId) ?? 0) + 1);
-  }
-
-  return counts;
-}
-
-export function calculatePreferenceScores(
-  ranked: readonly RankItem[],
-  outcomes: readonly ComparisonOutcome[],
-): Record<string, number> {
-  const itemIds = ranked.map((item) => item.id);
-  const itemCount = itemIds.length;
-
-  if (itemCount === 0) {
-    return {};
-  }
-
-  if (itemCount === 1) {
-    return { [itemIds[0]]: 10 };
-  }
-
-  const abilities = fitBradleyTerry(itemIds, outcomes);
-  const matchCounts = buildMatchCounts(itemIds, outcomes);
-  const rawScores = ranked.map((item, rankIndex) => {
-    const abilityIndex = itemIds.indexOf(item.id);
-    let expectedWinProbability = 0;
-
-    for (let opponentIndex = 0; opponentIndex < itemCount; opponentIndex += 1) {
-      if (opponentIndex === abilityIndex) {
-        continue;
-      }
-
-      expectedWinProbability += sigmoid(abilities[abilityIndex] - abilities[opponentIndex]);
-    }
-
-    expectedWinProbability /= itemCount - 1;
-
-    // Smoothed rank percentile: avoids pretending the top item is literally 100%
-    // certain or the bottom item literally 0% certain.
-    const rankBaseline = (itemCount - rankIndex - 0.5) / itemCount;
-    const matches = matchCounts.get(item.id) ?? 0;
-
-    // Bradley-Terry adjusts spacing, but rank remains authoritative. The cap keeps
-    // sparse/random comparison paths from moving a score too aggressively.
-    const modelWeight = 0.22 * (matches / (matches + 6));
-    const blended = rankBaseline * (1 - modelWeight) + expectedWinProbability * modelWeight;
-
-    return Math.min(9.9, Math.max(0.1, blended * 10));
-  });
-
-  // Final rank is authoritative. The statistical model can compress/stretch gaps,
-  // but it is never allowed to reverse the displayed order.
-  for (let index = 1; index < rawScores.length; index += 1) {
-    rawScores[index] = Math.min(rawScores[index], rawScores[index - 1]);
-  }
-
-  return Object.fromEntries(itemIds.map((id, index) => [id, rawScores[index]]));
-}
-
-export function buildRefinementPairs(
-  ranked: readonly RankItem[],
-  outcomes: readonly ComparisonOutcome[],
-): RefinementPair[] {
-  const itemCount = ranked.length;
-
-  if (itemCount < 3) {
-    return [];
-  }
-
-  const itemIds = ranked.map((item) => item.id);
-  const abilities = fitBradleyTerry(itemIds, outcomes);
-  const directPairs = buildDirectPairSet(outcomes);
-  const maximumRankDistance = Math.max(2, Math.ceil(itemCount * 0.15));
-  const targetCount = itemCount < 10 ? 3 : itemCount < 30 ? 5 : 7;
-
-  const candidates: Array<RefinementPair & { value: number }> = [];
-
-  for (let firstIndex = 0; firstIndex < itemCount; firstIndex += 1) {
-    for (
-      let secondIndex = firstIndex + 1;
-      secondIndex < Math.min(itemCount, firstIndex + maximumRankDistance + 1);
-      secondIndex += 1
-    ) {
-      const firstId = itemIds[firstIndex];
-      const secondId = itemIds[secondIndex];
-
-      if (directPairs.has(pairKey(firstId, secondId))) {
-        continue;
-      }
-
-      const probability = sigmoid(abilities[firstIndex] - abilities[secondIndex]);
-      const uncertainty = 4 * probability * (1 - probability);
-      const distance = secondIndex - firstIndex;
-      const rankImpact = 1 / (1 + distance * 0.3);
-
-      candidates.push({
-        firstId,
-        secondId,
-        value: uncertainty * rankImpact,
-      });
-    }
-  }
-
-  candidates.sort((left, right) => right.value - left.value);
-
-  const selected: RefinementPair[] = [];
-  const appearances = new Map<string, number>();
-
-  for (const candidate of candidates) {
-    const firstAppearances = appearances.get(candidate.firstId) ?? 0;
-    const secondAppearances = appearances.get(candidate.secondId) ?? 0;
-
-    if (firstAppearances >= 2 || secondAppearances >= 2) {
-      continue;
-    }
-
-    selected.push({ firstId: candidate.firstId, secondId: candidate.secondId });
-    appearances.set(candidate.firstId, firstAppearances + 1);
-    appearances.set(candidate.secondId, secondAppearances + 1);
-
-    if (selected.length >= targetCount) {
-      break;
-    }
-  }
-
-  return selected;
-}
-
-export function applyRefinementChoice(
-  ranked: readonly RankItem[],
-  pair: RefinementPair,
-  winnerId: string,
-): RankItem[] {
-  if (winnerId !== pair.firstId && winnerId !== pair.secondId) {
-    return [...ranked];
-  }
-
-  const loserId = winnerId === pair.firstId ? pair.secondId : pair.firstId;
-  const winnerIndex = ranked.findIndex((item) => item.id === winnerId);
-  const loserIndex = ranked.findIndex((item) => item.id === loserId);
-
-  if (winnerIndex < 0 || loserIndex < 0 || winnerIndex < loserIndex) {
-    return [...ranked];
-  }
-
-  const nextRanked = [...ranked];
-  const [winner] = nextRanked.splice(winnerIndex, 1);
-  const updatedLoserIndex = nextRanked.findIndex((item) => item.id === loserId);
-
-  nextRanked.splice(updatedLoserIndex, 0, winner);
-
-  return nextRanked;
-}
-
-export function formatPersonalRating(value: number | null | undefined) {
-  if (value === null || value === undefined) {
-    return '—';
-  }
-
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }

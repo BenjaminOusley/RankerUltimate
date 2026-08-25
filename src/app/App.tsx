@@ -11,19 +11,24 @@ import { CollectionPickerScreen } from '@/features/collections/screens/Collectio
 import { CollectionReviewScreen } from '@/features/collections/screens/CollectionReviewScreen/CollectionReviewScreen';
 import { CollectionsScreen } from '@/features/collections/screens/CollectionsScreen/CollectionsScreen';
 import type { RankCollection, RankItem } from '@/models';
+import { FinalChoiceCheckpoint } from '@/features/ranking/components/FinalChoiceCheckpoint/FinalChoiceCheckpoint';
 import {
   applyRefinementChoice,
   buildRefinementPairs,
   calculatePreferenceScores,
   chooseRankingWinner,
   createInitialRankingState,
-  formatPersonalRating,
   getCurrentOpponent,
   shuffleItems,
   type ComparisonOutcome,
   type RankingState,
   type RefinementPair,
-} from '@/ranking';
+} from '@/features/ranking/engine';
+import { RankingCompleteScreen } from '@/features/ranking/screens/RankingCompleteScreen/RankingCompleteScreen';
+import { RankingScreen } from '@/features/ranking/screens/RankingScreen/RankingScreen';
+import { RefinementCompleteScreen } from '@/features/ranking/screens/RefinementCompleteScreen/RefinementCompleteScreen';
+import { RefinementScreen } from '@/features/ranking/screens/RefinementScreen/RefinementScreen';
+import { formatPersonalRating } from '@/features/ratings/personalRating';
 
 type AppScreen =
   | 'home'
@@ -168,90 +173,6 @@ function getDistribution(values: readonly number[]) {
   const total = values.length;
 
   return buckets.map((count) => (total === 0 ? 0 : count / total));
-}
-
-function ComparisonCard({ item, onChoose }: { item: RankItem; onChoose: () => void }) {
-  return (
-    <button
-      className="comparison-card"
-      onClick={onChoose}
-    >
-      <Poster item={item} />
-
-      <span className="comparison-card-name">{item.name}</span>
-
-      {item.subtitle && <span className="comparison-card-subtitle">{item.subtitle}</span>}
-    </button>
-  );
-}
-
-function StaticChoiceCard({ item, chosen }: { item: RankItem; chosen: boolean }) {
-  return (
-    <div className={`last-choice-card ${chosen ? 'last-choice-card-chosen' : ''}`}>
-      <Poster item={item} />
-      <div className="last-choice-copy">
-        <strong title={item.name}>{item.name}</strong>
-        {item.subtitle && <span>{item.subtitle}</span>}
-      </div>
-      {chosen && <span className="chosen-badge">✓ Chosen</span>}
-    </div>
-  );
-}
-
-function FinalChoiceCheckpoint({
-  title,
-  first,
-  second,
-  winnerId,
-  onUndo,
-  onContinue,
-}: {
-  title: string;
-  first: RankItem | null;
-  second: RankItem | null;
-  winnerId: string | null;
-  onUndo: () => void;
-  onContinue: () => void;
-}) {
-  return (
-    <section className="center-card final-checkpoint">
-      <div className="completion-icon">✓</div>
-      <h1>{title}</h1>
-      <p>That was the last choice for this phase. Make sure you’re happy with it.</p>
-
-      {first && second && (
-        <div
-          className="last-choice-preview"
-          aria-label="Your last choice"
-        >
-          <StaticChoiceCard
-            item={first}
-            chosen={winnerId === first.id}
-          />
-          <span className="last-choice-vs">VS</span>
-          <StaticChoiceCard
-            item={second}
-            chosen={winnerId === second.id}
-          />
-        </div>
-      )}
-
-      <div className="stacked-actions">
-        <button
-          className="button"
-          onClick={onUndo}
-        >
-          ↶ Undo Last Choice
-        </button>
-        <button
-          className="button button-primary"
-          onClick={onContinue}
-        >
-          Continue →
-        </button>
-      </div>
-    </section>
-  );
 }
 
 function ExitConfirmModal({
@@ -801,50 +722,16 @@ function App() {
     return (
       <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="scene-panel comparison-scene">
-          <div className="comparison-progress-row">
-            <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${Math.min(
-                    100,
-                    (displayedPlaced / Math.max(1, selectedItemIds.size)) * 100,
-                  )}%`,
-                }}
-              />
-            </div>
-            <span>
-              {displayedPlaced} of {selectedItemIds.size} items placed · {rankingState.comparisons}{' '}
-              comparisons
-            </span>
-          </div>
-
-          <h1>Which do you prefer?</h1>
-
-          <div className="comparison-layout">
-            <ComparisonCard
-              item={rankingState.current}
-              onChoose={() => chooseNormal(rankingState.current!)}
-            />
-            <div className="versus">VS</div>
-            <ComparisonCard
-              item={opponent}
-              onChoose={() => chooseNormal(opponent)}
-            />
-          </div>
-
-          <div className="comparison-footer">
-            <button
-              className="button"
-              onClick={undoNormal}
-              disabled={rankingHistory.length === 0}
-            >
-              ↶ Undo Last Choice
-            </button>
-          </div>
-        </section>
+        <RankingScreen
+          current={rankingState.current}
+          opponent={opponent}
+          placedCount={displayedPlaced}
+          totalItems={selectedItemIds.size}
+          comparisons={rankingState.comparisons}
+          canUndo={rankingHistory.length > 0}
+          onChoose={chooseNormal}
+          onUndo={undoNormal}
+        />
         <ExitConfirmModal
           open={exitConfirm}
           onStay={() => setExitConfirm(false)}
@@ -858,46 +745,14 @@ function App() {
     return (
       <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="center-card completion-card">
-          <div className="completion-icon">✓</div>
-          <h1>Ranking complete!</h1>
-          <h2>{collection.name}</h2>
-          <p>{rankingState.comparisons} comparisons so far.</p>
-
-          <div className="stacked-actions">
-            <button
-              className="button button-primary action-with-copy"
-              onClick={startRefinement}
-              disabled={refinementOptions.length === 0}
-            >
-              <span>
-                Refine Results <em>(optional)</em>
-              </span>
-              <small>
-                {refinementOptions.length > 0
-                  ? 'Answer a few more carefully chosen comparisons'
-                  : 'No useful extra comparisons found'}
-              </small>
-            </button>
-            <button
-              className="button action-with-copy"
-              onClick={() => openRatings('rankingComplete')}
-            >
-              <span>
-                Rate Items <em>(optional)</em>
-              </span>
-              <small>Set or update your personal ratings</small>
-            </button>
-            <button
-              className="button action-with-copy"
-              onClick={showResults}
-            >
-              <span>See Results</span>
-              <small>Reveal your final ranked list</small>
-            </button>
-          </div>
-        </section>
+        <RankingCompleteScreen
+          collectionName={collection.name}
+          comparisons={rankingState.comparisons}
+          refinementCount={refinementOptions.length}
+          onRefine={startRefinement}
+          onRateItems={() => openRatings('rankingComplete')}
+          onSeeResults={showResults}
+        />
         <ExitConfirmModal
           open={exitConfirm}
           onStay={() => setExitConfirm(false)}
@@ -952,47 +807,15 @@ function App() {
     return (
       <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="scene-panel comparison-scene">
-          <div className="comparison-progress-row">
-            <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${(refinementIndex / Math.max(1, refinementPairs.length)) * 100}%`,
-                }}
-              />
-            </div>
-            <span>
-              {refinementIndex + 1} of {refinementPairs.length} extra comparisons
-            </span>
-          </div>
-
-          <h1>Which do you prefer?</h1>
-
-          <div className="comparison-layout">
-            <ComparisonCard
-              item={first}
-              onChoose={() => chooseRefinement(first.id)}
-            />
-            <div className="versus">VS</div>
-            <ComparisonCard
-              item={second}
-              onChoose={() => chooseRefinement(second.id)}
-            />
-          </div>
-
-          <div className="comparison-footer">
-            <button
-              className="button"
-              onClick={undoRefinement}
-              disabled={refinementHistory.length === 0}
-            >
-              ↶ Undo Last Choice
-            </button>
-            <span className="quiet-copy">A few extra comparisons help fine-tune the outcome.</span>
-          </div>
-        </section>
+        <RefinementScreen
+          first={first}
+          second={second}
+          index={refinementIndex}
+          total={refinementPairs.length}
+          canUndo={refinementHistory.length > 0}
+          onChoose={chooseRefinement}
+          onUndo={undoRefinement}
+        />
         <ExitConfirmModal
           open={exitConfirm}
           onStay={() => setExitConfirm(false)}
@@ -1006,31 +829,10 @@ function App() {
     return (
       <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="center-card completion-card">
-          <div className="completion-icon completion-icon-warm">✦</div>
-          <h1>Refinement complete!</h1>
-          <p>Your additional choices have been applied.</p>
-
-          <div className="stacked-actions">
-            <button
-              className="button button-primary action-with-copy"
-              onClick={() => openRatings('refinementComplete')}
-            >
-              <span>
-                Rate Items <em>(optional)</em>
-              </span>
-              <small>Set or update your personal ratings</small>
-            </button>
-            <button
-              className="button action-with-copy"
-              onClick={showResults}
-            >
-              <span>See Results</span>
-              <small>Reveal your final ranked list</small>
-            </button>
-          </div>
-        </section>
+        <RefinementCompleteScreen
+          onRateItems={() => openRatings('refinementComplete')}
+          onSeeResults={showResults}
+        />
         <ExitConfirmModal
           open={exitConfirm}
           onStay={() => setExitConfirm(false)}
