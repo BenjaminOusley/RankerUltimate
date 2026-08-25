@@ -49,6 +49,7 @@ function App() {
       <CollectionsScreen
         collections={app.collectionLibrary.availableCollections}
         itemLibrary={app.collectionLibrary.itemLibrary}
+        getCandidateItems={app.collectionLibrary.getCandidateItems}
         onCreate={app.collectionLibrary.createCollection}
         onUpdate={app.collectionLibrary.updateCollection}
         onDelete={app.deleteCollection}

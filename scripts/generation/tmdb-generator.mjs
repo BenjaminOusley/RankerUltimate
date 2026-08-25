@@ -269,6 +269,25 @@ function createCollection(request, resolvedEntity, items) {
     id: `${request.collectionId}-movies`,
     name,
     description,
+    candidateSource: {
+      kind: 'generated',
+      provider: 'tmdb',
+      originalRequest: request.query,
+      definition: {
+        mode: request.mode,
+        query: request.query,
+        tmdbId: resolvedEntity?.id ?? request.tmdbId ?? null,
+        mediaTypes: ['movie'],
+        limit: request.limit,
+        fromYear: request.fromYear,
+        toYear: request.toYear,
+        sort: request.sort,
+        minRuntime: request.minRuntime,
+        excludeDocumentaries: request.excludeDocumentaries,
+        includeAdult: request.includeAdult,
+        language: request.language,
+      },
+    },
     items,
   };
 }

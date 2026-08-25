@@ -23,6 +23,7 @@ type EditorState = {
 type CollectionsScreenProps = {
   collections: readonly RankCollection[];
   itemLibrary: readonly RankItem[];
+  getCandidateItems: (collectionId: string | null) => readonly RankItem[];
   onCreate: (name: string, description: string) => string;
   onUpdate: (collection: RankCollection, itemsChanged: boolean) => void;
   onDelete: (collectionId: string) => void;
@@ -32,6 +33,7 @@ type CollectionsScreenProps = {
 export function CollectionsScreen({
   collections,
   itemLibrary,
+  getCandidateItems,
   onCreate,
   onUpdate,
   onDelete,
@@ -81,6 +83,10 @@ export function CollectionsScreen({
   const deleteTarget = deleteCollectionId
     ? (collections.find((collection) => collection.id === deleteCollectionId) ?? null)
     : null;
+
+  const editorItemLibrary = editor?.collectionId
+    ? getCandidateItems(editor.collectionId)
+    : itemLibrary;
 
   return (
     <AppShell>
@@ -234,7 +240,7 @@ export function CollectionsScreen({
           mode={editor.mode}
           collection={editorCollection}
           availableCollections={collections}
-          itemLibrary={itemLibrary}
+          itemLibrary={editorItemLibrary}
           onCreate={onCreate}
           onUpdate={onUpdate}
           onClose={() => setEditor(null)}

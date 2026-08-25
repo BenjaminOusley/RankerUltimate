@@ -4,6 +4,9 @@ export const testGames: RankCollection = {
   id: 'test-games',
   name: 'Video Games',
   description: 'A test collection of video games.',
+  candidateSource: {
+    kind: 'embedded',
+  },
   items: [
     {
       id: 'baldurs-gate-3',

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { RankCollection } from '@/domain/models';
 import {
+  buildCollectionCandidateItems,
   buildCollectionItemLibrary,
   createCustomCollection,
   deleteCollectionFromLibrary,
@@ -12,7 +13,9 @@ import {
 } from '../library/collectionLibrary';
 
 export function useCollectionLibrary(baseCollections: readonly RankCollection[]) {
-  const [libraryState, setLibraryState] = useState(() => loadCollectionLibraryState());
+  const [libraryState, setLibraryState] = useState(() =>
+    loadCollectionLibraryState(baseCollections),
+  );
 
   useEffect(() => {
     saveCollectionLibraryState(libraryState);
@@ -25,6 +28,11 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
 
   const itemLibrary = useMemo(
     () => buildCollectionItemLibrary(baseCollections),
+    [baseCollections],
+  );
+
+  const getCandidateItems = useCallback(
+    (collectionId: string | null) => buildCollectionCandidateItems(baseCollections, collectionId),
     [baseCollections],
   );
 
@@ -64,6 +72,7 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
   return {
     availableCollections,
     itemLibrary,
+    getCandidateItems,
     createCollection,
     updateCollection,
     deleteCollection,

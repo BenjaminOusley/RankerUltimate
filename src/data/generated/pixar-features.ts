@@ -4,6 +4,10 @@ export const pixarFeaturesMovies: RankCollection = {
   id: 'pixar-features-movies',
   name: 'Pixar Feature Films',
   description: 'Feature films produced by Pixar.',
+  candidateSource: {
+    kind: 'embedded',
+    provider: 'tmdb',
+  },
   items: [
     {
       id: 'toy-story-862',

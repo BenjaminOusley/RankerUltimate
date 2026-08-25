@@ -4,6 +4,10 @@ export const mcuMovies: RankCollection = {
   id: 'mcu-movies',
   name: 'MCU Movies',
   description: 'Rank the MCU Movies.',
+  candidateSource: {
+    kind: 'embedded',
+    provider: 'tmdb',
+  },
   items: [
     {
       id: 'iron-man-1726',

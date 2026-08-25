@@ -3,7 +3,7 @@ import type { RankCollection, RankItem } from '@/domain/models';
 type CollectionOverride = {
   name?: string;
   description?: string | null;
-  itemKeys?: string[];
+  excludedItemKeys?: string[];
 };
 
 type CustomCollectionRecord = {
@@ -14,17 +14,38 @@ type CustomCollectionRecord = {
 };
 
 export type CollectionLibraryState = {
-  version: 1;
+  version: 2;
   customCollections: CustomCollectionRecord[];
   overrides: Record<string, CollectionOverride>;
   deletedBuiltInIds: string[];
 };
 
-const COLLECTION_LIBRARY_KEY = 'rankerultimate:collections:v1';
+type LegacyCollectionOverride = {
+  name?: string;
+  description?: string | null;
+  itemKeys?: string[];
+};
+
+type LegacyCustomCollectionRecord = {
+  id: string;
+  name: string;
+  description?: string;
+  itemKeys: string[];
+};
+
+type LegacyCollectionLibraryState = {
+  version: 1;
+  customCollections?: LegacyCustomCollectionRecord[];
+  overrides?: Record<string, LegacyCollectionOverride>;
+  deletedBuiltInIds?: string[];
+};
+
+const COLLECTION_LIBRARY_KEY_V1 = 'rankerultimate:collections:v1';
+const COLLECTION_LIBRARY_KEY_V2 = 'rankerultimate:collections:v2';
 
 function createEmptyState(): CollectionLibraryState {
   return {
-    version: 1,
+    version: 2,
     customCollections: [],
     overrides: {},
     deletedBuiltInIds: [],
@@ -32,9 +53,25 @@ function createEmptyState(): CollectionLibraryState {
 }
 
 export function getCollectionLibraryItemKey(item: RankItem) {
-  const source = (item as RankItem & { source?: unknown }).source;
+  if (item.source) {
+    return `${item.source.provider}:${item.source.type ?? 'item'}:${item.source.id}`;
+  }
 
-  return source ? `${String(source)}:${item.id}` : item.id;
+  return `local:${item.id}`;
+}
+
+function getLegacyItemKeys(item: RankItem) {
+  const aliases = new Set<string>([item.id]);
+
+  if (item.source) {
+    aliases.add(`${String(item.source)}:${item.id}`);
+    aliases.add(`${item.source.provider}:${item.id}`);
+    aliases.add(`${item.source.provider}:${item.source.type ?? 'item'}:${item.source.id}`);
+  }
+
+  aliases.add(getCollectionLibraryItemKey(item));
+
+  return aliases;
 }
 
 function buildItemCatalog(baseCollections: readonly RankCollection[]) {
@@ -49,53 +86,150 @@ function buildItemCatalog(baseCollections: readonly RankCollection[]) {
   return catalog;
 }
 
+function buildItemAliasCatalog(baseCollections: readonly RankCollection[]) {
+  const aliases = new Map<string, string>();
+
+  for (const collection of baseCollections) {
+    for (const item of collection.items) {
+      const canonicalKey = getCollectionLibraryItemKey(item);
+
+      for (const alias of getLegacyItemKeys(item)) {
+        aliases.set(alias, canonicalKey);
+      }
+    }
+  }
+
+  return aliases;
+}
+
+function normalizeItemKeys(keys: readonly string[], aliases: Map<string, string>) {
+  return [...new Set(keys.map((key) => aliases.get(key)).filter((key): key is string => Boolean(key)))];
+}
+
 function resolveItems(keys: readonly string[], catalog: Map<string, RankItem>) {
   return keys.map((key) => catalog.get(key)).filter((item): item is RankItem => Boolean(item));
 }
 
-function haveSameItemKeys(first: readonly string[], second: readonly string[]) {
-  if (first.length !== second.length) {
-    return false;
+function migrateLegacyState(
+  legacyState: LegacyCollectionLibraryState,
+  baseCollections: readonly RankCollection[],
+): CollectionLibraryState {
+  const aliases = buildItemAliasCatalog(baseCollections);
+
+  const customCollections: CustomCollectionRecord[] = (legacyState.customCollections ?? []).map(
+    (collection) => ({
+      id: collection.id,
+      name: collection.name,
+      description: collection.description,
+      itemKeys: normalizeItemKeys(collection.itemKeys ?? [], aliases),
+    }),
+  );
+
+  const overrides: Record<string, CollectionOverride> = {};
+
+  for (const [collectionId, legacyOverride] of Object.entries(legacyState.overrides ?? {})) {
+    const nextOverride: CollectionOverride = {};
+
+    if (legacyOverride.name !== undefined) {
+      nextOverride.name = legacyOverride.name;
+    }
+
+    if (legacyOverride.description !== undefined) {
+      nextOverride.description = legacyOverride.description;
+    }
+
+    if (legacyOverride.itemKeys) {
+      const baseCollection = baseCollections.find((collection) => collection.id === collectionId);
+
+      if (baseCollection) {
+        const selectedKeys = new Set(normalizeItemKeys(legacyOverride.itemKeys, aliases));
+
+        const excludedItemKeys = baseCollection.items
+          .map(getCollectionLibraryItemKey)
+          .filter((key) => !selectedKeys.has(key));
+
+        if (excludedItemKeys.length > 0) {
+          nextOverride.excludedItemKeys = excludedItemKeys;
+        }
+      }
+    }
+
+    if (Object.keys(nextOverride).length > 0) {
+      overrides[collectionId] = nextOverride;
+    }
   }
 
-  const secondSet = new Set(second);
-
-  return first.every((key) => secondSet.has(key));
+  return {
+    version: 2,
+    customCollections,
+    overrides,
+    deletedBuiltInIds: legacyState.deletedBuiltInIds ?? [],
+  };
 }
 
-export function loadCollectionLibraryState(): CollectionLibraryState {
+export function loadCollectionLibraryState(
+  baseCollections: readonly RankCollection[],
+): CollectionLibraryState {
   try {
-    const raw = localStorage.getItem(COLLECTION_LIBRARY_KEY);
+    const currentRaw = localStorage.getItem(COLLECTION_LIBRARY_KEY_V2);
 
-    if (!raw) {
+    if (currentRaw) {
+      const parsed = JSON.parse(currentRaw) as Partial<CollectionLibraryState>;
+
+      if (parsed.version === 2) {
+        return {
+          version: 2,
+          customCollections: parsed.customCollections ?? [],
+          overrides: parsed.overrides ?? {},
+          deletedBuiltInIds: parsed.deletedBuiltInIds ?? [],
+        };
+      }
+    }
+
+    const legacyRaw = localStorage.getItem(COLLECTION_LIBRARY_KEY_V1);
+
+    if (!legacyRaw) {
       return createEmptyState();
     }
 
-    const parsed = JSON.parse(raw) as CollectionLibraryState;
+    const legacyState = JSON.parse(legacyRaw) as LegacyCollectionLibraryState;
 
-    if (parsed.version !== 1) {
+    if (legacyState.version !== 1) {
       return createEmptyState();
     }
 
-    return {
-      version: 1,
-      customCollections: parsed.customCollections ?? [],
-      overrides: parsed.overrides ?? {},
-      deletedBuiltInIds: parsed.deletedBuiltInIds ?? [],
-    };
+    return migrateLegacyState(legacyState, baseCollections);
   } catch {
     return createEmptyState();
   }
 }
 
 export function saveCollectionLibraryState(state: CollectionLibraryState) {
-  localStorage.setItem(COLLECTION_LIBRARY_KEY, JSON.stringify(state));
+  localStorage.setItem(COLLECTION_LIBRARY_KEY_V2, JSON.stringify(state));
+  localStorage.removeItem(COLLECTION_LIBRARY_KEY_V1);
 }
 
 export function buildCollectionItemLibrary(baseCollections: readonly RankCollection[]) {
   return [...buildItemCatalog(baseCollections).values()].sort((first, second) =>
     first.name.localeCompare(second.name),
   );
+}
+
+export function buildCollectionCandidateItems(
+  baseCollections: readonly RankCollection[],
+  collectionId: string | null,
+) {
+  if (collectionId) {
+    const builtInCollection = baseCollections.find((collection) => collection.id === collectionId);
+
+    if (builtInCollection) {
+      return [...builtInCollection.items].sort((first, second) =>
+        first.name.localeCompare(second.name),
+      );
+    }
+  }
+
+  return buildCollectionItemLibrary(baseCollections);
 }
 
 export function materializeCollections(
@@ -119,11 +253,15 @@ export function materializeCollections(
           ? collection.description
           : (override.description ?? undefined);
 
+      const excludedItemKeys = new Set(override.excludedItemKeys ?? []);
+
       return {
         ...collection,
         name: override.name ?? collection.name,
         description,
-        items: override.itemKeys ? resolveItems(override.itemKeys, catalog) : collection.items,
+        items: collection.items.filter(
+          (item) => !excludedItemKeys.has(getCollectionLibraryItemKey(item)),
+        ),
       };
     });
 
@@ -132,6 +270,9 @@ export function materializeCollections(
     name: collection.name,
     description: collection.description,
     items: resolveItems(collection.itemKeys, catalog),
+    candidateSource: {
+      kind: 'custom',
+    },
   }));
 
   return [...builtInCollections, ...customCollections];
@@ -227,12 +368,16 @@ export function updateCollectionInLibrary(
   }
 
   if (itemsChanged) {
-    const builtInItemKeys = builtInCollection.items.map(getCollectionLibraryItemKey);
+    const selectedKeys = new Set(updatedItemKeys);
 
-    if (haveSameItemKeys(updatedItemKeys, builtInItemKeys)) {
-      delete nextOverride.itemKeys;
+    const excludedItemKeys = builtInCollection.items
+      .map(getCollectionLibraryItemKey)
+      .filter((key) => !selectedKeys.has(key));
+
+    if (excludedItemKeys.length === 0) {
+      delete nextOverride.excludedItemKeys;
     } else {
-      nextOverride.itemKeys = updatedItemKeys;
+      nextOverride.excludedItemKeys = excludedItemKeys;
     }
   }
 

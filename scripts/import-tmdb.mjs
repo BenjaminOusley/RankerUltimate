@@ -219,6 +219,10 @@ export const ${collectionId}Movies: RankCollection = ${JSON.stringify(
     id: `${collectionId}-movies`,
     name: collectionName,
     description: `Rank the ${collectionName}.`,
+    candidateSource: {
+      kind: 'embedded',
+      provider: 'tmdb',
+    },
     items,
   },
   null,
