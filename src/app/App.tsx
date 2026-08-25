@@ -4,7 +4,6 @@ import './legacy.css';
 import { AppShell } from './AppShell';
 import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
 import { Logo } from '@/shared/components/Logo/Logo';
-import { Poster } from '@/shared/components/Poster/Poster';
 import { collections } from '@/data/collections';
 import { useCollectionLibrary } from '@/features/collections/hooks/useCollectionLibrary';
 import { CollectionPickerScreen } from '@/features/collections/screens/CollectionPickerScreen/CollectionPickerScreen';
@@ -28,7 +27,9 @@ import { RankingCompleteScreen } from '@/features/ranking/screens/RankingComplet
 import { RankingScreen } from '@/features/ranking/screens/RankingScreen/RankingScreen';
 import { RefinementCompleteScreen } from '@/features/ranking/screens/RefinementCompleteScreen/RefinementCompleteScreen';
 import { RefinementScreen } from '@/features/ranking/screens/RefinementScreen/RefinementScreen';
-import { formatPersonalRating } from '@/features/ratings/personalRating';
+import { usePersonalRatings } from '@/features/ratings/hooks/usePersonalRatings';
+import { PersonalRatingsScreen } from '@/features/ratings/screens/PersonalRatingsScreen/PersonalRatingsScreen';
+import { ResultsScreen } from '@/features/results/screens/ResultsScreen/ResultsScreen';
 
 type AppScreen =
   | 'home'
@@ -42,15 +43,6 @@ type AppScreen =
   | 'ratings'
   | 'results';
 
-type ResultsTab = 'ranking' | 'summary';
-
-
-type PersonalRatingRecord = {
-  value: number;
-  updatedAt: string;
-};
-
-type PersonalRatingMap = Record<string, PersonalRatingRecord>;
 
 type RefinementSnapshot = {
   rankingState: RankingState;
@@ -75,7 +67,6 @@ type RecoveryPayload = {
 };
 
 const RECOVERY_KEY = 'rankerultimate:recovery:v1';
-const PERSONAL_RATINGS_KEY = 'rankerultimate:personal-ratings:v1';
 
 const menuQuotes = [
   'Your tier list called. It wants receipts.',
@@ -84,24 +75,6 @@ const menuQuotes = [
   'Because “they’re all good” is cowardice.',
   'Turning opinions into unnecessarily precise numbers.',
 ];
-
-function loadPersonalRatings(): PersonalRatingMap {
-  try {
-    const raw = localStorage.getItem(PERSONAL_RATINGS_KEY);
-
-    if (!raw) {
-      return {};
-    }
-
-    return JSON.parse(raw) as PersonalRatingMap;
-  } catch {
-    return {};
-  }
-}
-
-function savePersonalRatings(ratings: PersonalRatingMap) {
-  localStorage.setItem(PERSONAL_RATINGS_KEY, JSON.stringify(ratings));
-}
 
 function loadRecovery(): RecoveryPayload | null {
   try {
@@ -125,54 +98,6 @@ function saveRecovery(payload: RecoveryPayload) {
 
 function clearRecovery() {
   localStorage.removeItem(RECOVERY_KEY);
-}
-
-function getItemStorageKey(item: RankItem) {
-  const source = (item as RankItem & { source?: unknown }).source;
-
-  return source ? `${String(source)}:${item.id}` : item.id;
-}
-
-function getPersonalRating(ratings: PersonalRatingMap, item: RankItem) {
-  return ratings[getItemStorageKey(item)]?.value ?? null;
-}
-
-function formatPreferenceScore(value: number | undefined) {
-  return (value ?? 0).toFixed(1);
-}
-
-function getRankClass(index: number, total: number) {
-  if (index === 0) return 'rank-gold';
-  if (index === 1) return 'rank-silver';
-  if (index === 2) return 'rank-bronze';
-  if (index === total - 1) return 'rank-last';
-  if (index === total - 2) return 'rank-second-last';
-  if (index === total - 3) return 'rank-third-last';
-
-  return '';
-}
-
-function getRankAdornment(index: number) {
-  if (index === 0) return '♛';
-  if (index === 1) return '◆';
-  if (index === 2) return '●';
-  return '';
-}
-
-function getDistribution(values: readonly number[]) {
-  const buckets = [0, 0, 0, 0, 0];
-
-  for (const value of values) {
-    if (value < 2) buckets[0] += 1;
-    else if (value < 4) buckets[1] += 1;
-    else if (value < 6) buckets[2] += 1;
-    else if (value < 8) buckets[3] += 1;
-    else buckets[4] += 1;
-  }
-
-  const total = values.length;
-
-  return buckets.map((count) => (total === 0 ? 0 : count / total));
 }
 
 function ExitConfirmModal({
@@ -233,13 +158,9 @@ function App() {
   const [ratingBackScreen, setRatingBackScreen] = useState<
     'rankingComplete' | 'refinementComplete'
   >('rankingComplete');
-  const [hideRated, setHideRated] = useState(false);
-  const [personalRatings, setPersonalRatings] = useState<PersonalRatingMap>(() =>
-    loadPersonalRatings(),
-  );
+  const { personalRatings, updatePersonalRating } = usePersonalRatings();
   const [resumePrompt, setResumePrompt] = useState<RecoveryPayload | null>(() => loadRecovery());
   const [exitConfirm, setExitConfirm] = useState(false);
-  const [resultsTab, setResultsTab] = useState<ResultsTab>('ranking');
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * menuQuotes.length));
 
   const {
@@ -317,7 +238,6 @@ function App() {
     setRefinementIndex(0);
     setRefinementHistory([]);
     setRatingOrder([]);
-    setHideRated(false);
   }
 
   function goHomeNow() {
@@ -462,33 +382,10 @@ function App() {
 
     setRatingBackScreen(backScreen);
     setRatingOrder(shuffleItems(rankingState.ranked));
-    setHideRated(false);
     setScreen('ratings');
   }
 
-  function updatePersonalRating(item: RankItem, value: number | null) {
-    const key = getItemStorageKey(item);
-
-    setPersonalRatings((previous) => {
-      const next = { ...previous };
-
-      if (value === null) {
-        delete next[key];
-      } else {
-        next[key] = {
-          value,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-
-      savePersonalRatings(next);
-
-      return next;
-    });
-  }
-
   function showResults() {
-    setResultsTab('ranking');
     clearRecovery();
     setScreen('results');
   }
@@ -843,93 +740,16 @@ function App() {
   }
 
   if (screen === 'ratings') {
-    const visibleRatingItems = hideRated
-      ? ratingOrder.filter((item) => getPersonalRating(personalRatings, item) === null)
-      : ratingOrder;
-
     return (
       <AppShell>
         <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="scene-panel ratings-scene">
-          <div className="scene-heading ratings-heading">
-            <div>
-              <h1>
-                Rate the items <span className="optional-label">(optional)</span>
-              </h1>
-              <p>
-                Rate each item on its own. Leave it as <strong>—</strong> if you don’t want to rate
-                it.
-              </p>
-            </div>
-
-            <label className="filter-toggle">
-              <input
-                type="checkbox"
-                checked={hideRated}
-                onChange={(event) => setHideRated(event.target.checked)}
-              />
-              Hide rated items
-            </label>
-          </div>
-
-          <div className="scroll-panel ratings-grid">
-            {visibleRatingItems.map((item) => {
-              const rating = getPersonalRating(personalRatings, item);
-
-              return (
-                <article
-                  className="rating-card"
-                  key={item.id}
-                >
-                  <Poster item={item} />
-                  <div className="rating-card-copy">
-                    <strong title={item.name}>{item.name}</strong>
-                    {item.subtitle && <small>{item.subtitle}</small>}
-                  </div>
-                  <select
-                    className="rating-select"
-                    value={rating ?? ''}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      updatePersonalRating(item, value === '' ? null : Number(value));
-                    }}
-                    aria-label={`Personal rating for ${item.name}`}
-                  >
-                    <option value="">—</option>
-                    {Array.from({ length: 20 }, (_, index) => (index + 1) / 2).map((value) => (
-                      <option
-                        key={value}
-                        value={value}
-                      >
-                        {formatPersonalRating(value)}
-                      </option>
-                    ))}
-                  </select>
-                </article>
-              );
-            })}
-
-            {visibleRatingItems.length === 0 && (
-              <div className="empty-state">Everything here already has a rating.</div>
-            )}
-          </div>
-
-          <div className="footer-actions">
-            <button
-              className="button"
-              onClick={() => setScreen(ratingBackScreen)}
-            >
-              Back
-            </button>
-            <button
-              className="button button-primary"
-              onClick={showResults}
-            >
-              Continue to Results
-            </button>
-          </div>
-        </section>
+        <PersonalRatingsScreen
+          items={ratingOrder}
+          personalRatings={personalRatings}
+          onUpdateRating={updatePersonalRating}
+          onBack={() => setScreen(ratingBackScreen)}
+          onContinue={showResults}
+        />
         <ExitConfirmModal
           open={exitConfirm}
           onStay={() => setExitConfirm(false)}
@@ -939,255 +759,19 @@ function App() {
     );
   }
 
-  const ratedItems = rankingState.ranked.filter(
-    (item) => getPersonalRating(personalRatings, item) !== null,
-  );
-
   if (screen === 'results') {
-    const preferenceDistribution = getDistribution(
-      rankingState.ranked.map((item) => preferenceScores[item.id] ?? 0),
-    );
-    const ratingDistribution = getDistribution(
-      ratedItems.map((item) => getPersonalRating(personalRatings, item) ?? 0),
-    );
-    const maxDistribution = Math.max(0.01, ...preferenceDistribution, ...ratingDistribution);
-
-    const surprises = ratedItems
-      .map((item) => ({
-        item,
-        rating: getPersonalRating(personalRatings, item) ?? 0,
-        preference: preferenceScores[item.id] ?? 0,
-        difference: Math.abs(
-          (getPersonalRating(personalRatings, item) ?? 0) - (preferenceScores[item.id] ?? 0),
-        ),
-        rank: rankingState.ranked.findIndex((rankedItem) => rankedItem.id === item.id) + 1,
-      }))
-      .sort((left, right) => right.difference - left.difference)
-      .slice(0, 3);
-
     return (
       <AppShell className="results-shell">
         <AppHeader onMainMenu={requestMainMenu} />
-
-        <section className="scene-panel results-scene">
-          <div className="results-heading">
-            <div>
-              <h1>{collection.name}</h1>
-              <p>
-                {rankingState.ranked.length} items · {rankingState.comparisons} comparisons
-              </p>
-            </div>
-
-            <div className="results-actions">
-              <button
-                className="button button-small button-primary"
-                onClick={() => {
-                  clearSession();
-                  setResultsTab('ranking');
-                  setScreen('collections');
-                }}
-              >
-                ＋ New Ranking
-              </button>
-              <button
-                className="button button-small"
-                disabled
-              >
-                Share
-              </button>
-              <button
-                className="button button-small"
-                disabled
-              >
-                Export
-              </button>
-            </div>
-          </div>
-
-          <div className="tab-row">
-            <button
-              className={resultsTab === 'ranking' ? 'tab-active' : ''}
-              onClick={() => setResultsTab('ranking')}
-            >
-              Ranked List
-            </button>
-            <button
-              className={resultsTab === 'summary' ? 'tab-active' : ''}
-              onClick={() => setResultsTab('summary')}
-            >
-              Summary
-            </button>
-          </div>
-
-          {resultsTab === 'ranking' ? (
-            <div className="scroll-panel ranking-table-wrap">
-              <div className="ranking-table ranking-table-header">
-                <span>Rank</span>
-                <span>Item</span>
-                <span className="numeric-header">
-                  Preference
-                  <button
-                    className="info-tooltip"
-                    title="Calculated from how this item performed against others in this ranking. Rank sets the order; comparison evidence adjusts the spacing."
-                    aria-label="About Preference Score"
-                  >
-                    ?
-                  </button>
-                </span>
-                <span className="numeric-header">Your Rating</span>
-              </div>
-
-              {rankingState.ranked.map((item, index) => {
-                const rankClass = getRankClass(index, rankingState.ranked.length);
-                const adornment = getRankAdornment(index);
-                const rating = getPersonalRating(personalRatings, item);
-
-                return (
-                  <div
-                    className={`ranking-table ranking-result-row ${rankClass}`}
-                    key={item.id}
-                  >
-                    <span className="rank-cell">
-                      <span className="rank-adornment">{adornment}</span>
-                      <strong>{index + 1}</strong>
-                    </span>
-
-                    <span className="result-item-cell">
-                      <Poster item={item} />
-                      <span className="result-item-copy">
-                        <strong
-                          className="truncate-name"
-                          title={item.name}
-                          tabIndex={0}
-                        >
-                          {item.name}
-                        </strong>
-                        {item.subtitle && <small>{item.subtitle}</small>}
-                      </span>
-                    </span>
-
-                    <span className="score-cell">
-                      <span className="score-pill score-preference">
-                        ◆ {formatPreferenceScore(preferenceScores[item.id])}
-                      </span>
-                    </span>
-
-                    <span className="score-cell">
-                      <span
-                        className={`score-pill score-rating ${rating === null ? 'score-empty' : ''}`}
-                      >
-                        ★ {formatPersonalRating(rating)}
-                      </span>
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="scroll-panel summary-panel">
-              <section className="summary-section">
-                <div className="summary-section-heading">
-                  <div>
-                    <h2>Score Distribution</h2>
-                    <p>Preference and Personal Rating are normalized separately.</p>
-                  </div>
-                  <div className="chart-legend">
-                    <span>
-                      <i className="legend-preference" /> Preference
-                    </span>
-                    <span>
-                      <i className="legend-rating" /> Personal Rating ({ratedItems.length})
-                    </span>
-                  </div>
-                </div>
-
-                <div className="distribution-chart">
-                  {['0–2', '2–4', '4–6', '6–8', '8–10'].map((label, index) => (
-                    <div
-                      className="distribution-group"
-                      key={label}
-                    >
-                      <div className="distribution-bars">
-                        <div
-                          className="distribution-bar bar-preference"
-                          style={{
-                            height: `${(preferenceDistribution[index] / maxDistribution) * 100}%`,
-                          }}
-                          title={`Preference: ${(preferenceDistribution[index] * 100).toFixed(0)}%`}
-                        />
-                        <div
-                          className="distribution-bar bar-rating"
-                          style={{
-                            height: `${(ratingDistribution[index] / maxDistribution) * 100}%`,
-                          }}
-                          title={`Personal Rating: ${(ratingDistribution[index] * 100).toFixed(0)}%`}
-                        />
-                      </div>
-                      <span>{label}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <section className="summary-section">
-                <h2>Quick Stats</h2>
-                <div className="stat-grid">
-                  <div className="stat-card">
-                    <strong>{rankingState.ranked.length}</strong>
-                    <span>Items Ranked</span>
-                  </div>
-                  <div className="stat-card">
-                    <strong>{rankingState.comparisons}</strong>
-                    <span>Comparisons</span>
-                  </div>
-                  <div className="stat-card">
-                    <strong>
-                      {ratedItems.length}/{rankingState.ranked.length}
-                    </strong>
-                    <span>Personally Rated</span>
-                  </div>
-                  <div className="stat-card">
-                    <strong>
-                      {
-                        rankingState.outcomes.filter((outcome) => outcome.phase === 'refinement')
-                          .length
-                      }
-                    </strong>
-                    <span>Refine Choices</span>
-                  </div>
-                </div>
-              </section>
-
-              {surprises.length > 0 && (
-                <section className="summary-section">
-                  <h2>Biggest Surprises</h2>
-                  <div className="surprise-list">
-                    {surprises.map(({ item, rating, preference, rank }) => (
-                      <div
-                        className="surprise-row"
-                        key={item.id}
-                      >
-                        <Poster item={item} />
-                        <div>
-                          <strong>{item.name}</strong>
-                          <span>
-                            You rated it {formatPersonalRating(rating)}, but it landed #{rank} with
-                            a {formatPreferenceScore(preference)} Preference Score.
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-            </div>
-          )}
-        </section>
-
-        <ExitConfirmModal
-          open={exitConfirm}
-          onStay={() => setExitConfirm(false)}
-          onExit={goHomeNow}
+        <ResultsScreen
+          collection={collection}
+          rankingState={rankingState}
+          preferenceScores={preferenceScores}
+          personalRatings={personalRatings}
+          onNewRanking={() => {
+            clearSession();
+            setScreen('collections');
+          }}
         />
       </AppShell>
     );

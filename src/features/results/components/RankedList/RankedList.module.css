@@ -1,0 +1,177 @@
+.tableWrap {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.table {
+  min-width: 680px;
+  display: grid;
+  grid-template-columns: 92px minmax(260px, 1fr) 150px 150px;
+  align-items: center;
+}
+
+.tableHeader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 42px;
+  padding: 0 12px;
+  background: #111726;
+  color: #929aad;
+  font-size: 0.82rem;
+  font-weight: 650;
+  border-bottom: 1px solid var(--line);
+}
+
+.numericHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.infoTooltip {
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  border: 1px solid rgba(174, 148, 237, 0.35);
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  color: #bca8ec;
+  font-size: 0.73rem;
+  cursor: help;
+}
+
+.resultRow {
+  min-height: 76px;
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(16, 22, 34, 0.72);
+}
+
+.resultRow:last-child {
+  border-bottom: 0;
+}
+
+.rankCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+}
+
+.rankAdornment {
+  width: 24px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.itemCell {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.poster {
+  width: 44px;
+  height: 62px;
+  border-radius: 6px;
+}
+
+.itemCopy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.itemCopy small {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.truncateName {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scoreCell {
+  display: flex;
+  justify-content: center;
+}
+
+.scorePill {
+  min-width: 86px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  justify-content: center;
+  gap: 5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 760;
+}
+
+.preferenceScore {
+  background: rgba(123, 66, 246, 0.17);
+  color: #c8b3ff;
+  border: 1px solid rgba(154, 107, 255, 0.25);
+}
+
+.ratingScore {
+  background: rgba(242, 201, 76, 0.1);
+  color: #f7d96e;
+  border: 1px solid rgba(242, 201, 76, 0.2);
+}
+
+.emptyScore {
+  color: #817b6d;
+}
+
+.gold {
+  background: linear-gradient(90deg, rgba(185, 135, 12, 0.18), rgba(16, 22, 34, 0.8) 35%);
+  box-shadow: inset 3px 0 0 #d7a51c;
+}
+
+.gold .rankCell {
+  color: var(--gold);
+}
+
+.silver {
+  background: linear-gradient(90deg, rgba(169, 179, 198, 0.13), rgba(16, 22, 34, 0.8) 35%);
+  box-shadow: inset 3px 0 0 #aeb7c6;
+}
+
+.silver .rankCell {
+  color: var(--silver);
+}
+
+.bronze {
+  background: linear-gradient(90deg, rgba(165, 95, 44, 0.17), rgba(16, 22, 34, 0.8) 35%);
+  box-shadow: inset 3px 0 0 #b87845;
+}
+
+.bronze .rankCell {
+  color: #dda16c;
+}
+
+.thirdLast {
+  background: linear-gradient(90deg, rgba(193, 121, 75, 0.08), rgba(16, 22, 34, 0.75) 34%);
+}
+
+.secondLast {
+  background: linear-gradient(90deg, rgba(159, 77, 113, 0.09), rgba(16, 22, 34, 0.75) 34%);
+}
+
+.last {
+  background: linear-gradient(90deg, rgba(128, 49, 66, 0.16), rgba(16, 22, 34, 0.75) 34%);
+  box-shadow: inset 3px 0 0 rgba(209, 75, 102, 0.55);
+}

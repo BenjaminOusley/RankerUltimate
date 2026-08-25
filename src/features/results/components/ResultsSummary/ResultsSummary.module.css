@@ -1,0 +1,181 @@
+.panel {
+  padding-right: 4px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.section {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(17, 23, 35, 0.76);
+}
+
+.section h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.sectionHeading p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  color: #aeb5c6;
+  font-size: 0.8rem;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.legendPreference,
+.barPreference {
+  background: #8752f5;
+}
+
+.legendRating,
+.barRating {
+  background: #d7b948;
+}
+
+.distributionChart {
+  height: 230px;
+  margin-top: 20px;
+  padding: 12px 10px 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.distributionGroup {
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+  text-align: center;
+  color: #828a9d;
+  font-size: 0.78rem;
+}
+
+.distributionBars {
+  height: 100%;
+  display: flex;
+  gap: 5px;
+  align-items: end;
+  justify-content: center;
+}
+
+.distributionBar {
+  width: min(28px, 35%);
+  min-height: 2px;
+  border-radius: 5px 5px 2px 2px;
+  opacity: 0.92;
+}
+
+.statGrid {
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.statCard {
+  padding: 14px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: grid;
+  gap: 4px;
+  text-align: center;
+  background: rgba(25, 31, 45, 0.72);
+}
+
+.statCard strong {
+  font-size: 1.22rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.statCard span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.surpriseList {
+  margin-top: 12px;
+  display: grid;
+  gap: 9px;
+}
+
+.surpriseRow {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 11px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  background: rgba(24, 30, 44, 0.68);
+}
+
+.poster {
+  width: 42px;
+  height: 59px;
+  border-radius: 6px;
+}
+
+.surpriseRow div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.surpriseRow strong,
+.surpriseRow span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.surpriseRow span {
+  color: #a8afbf;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 760px) {
+  .sectionHeading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .legend {
+    justify-content: flex-start;
+  }
+
+  .statGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
