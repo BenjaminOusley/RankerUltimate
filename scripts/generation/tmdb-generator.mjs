@@ -274,6 +274,8 @@ function createCollection(request, resolvedEntity, items) {
       provider: 'tmdb',
       originalRequest: request.query,
       definition: {
+        schemaVersion: 1,
+        collectionId: request.collectionId,
         mode: request.mode,
         query: request.query,
         tmdbId: resolvedEntity?.id ?? request.tmdbId ?? null,

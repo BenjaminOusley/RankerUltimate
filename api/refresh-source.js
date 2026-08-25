@@ -1,12 +1,12 @@
 import process from 'node:process';
 
-import { generateTmdbCollection } from '../scripts/generation/tmdb-generator.mjs';
-
+import {
+  refreshGeneratedCollectionSource,
+  validateRefreshSourceRequest,
+} from '../scripts/sources/refresh-generated-collection.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
 
-import { validateGenerationRequest } from '../scripts/generation/validation.mjs';
-
-export { validateGenerationRequest } from '../scripts/generation/validation.mjs';
+export { validateRefreshSourceRequest } from '../scripts/sources/refresh-generated-collection.mjs';
 
 function json(body, status = 200) {
   return Response.json(body, {
@@ -25,19 +25,6 @@ export default {
           error: 'Method not allowed.',
         },
         405,
-      );
-    }
-
-    const token = process.env.TMDB_READ_ACCESS_TOKEN;
-
-    if (!token) {
-      console.error('TMDB_READ_ACCESS_TOKEN is missing.');
-
-      return json(
-        {
-          error: 'The collection generator is not configured.',
-        },
-        500,
       );
     }
 
@@ -65,7 +52,7 @@ export default {
       );
     }
 
-    const validation = validateGenerationRequest(body);
+    const validation = validateRefreshSourceRequest(body);
 
     if (!validation.ok) {
       return json(
@@ -76,31 +63,51 @@ export default {
       );
     }
 
-    try {
-      const tmdb = createTmdbProvider(token);
+    if (validation.request.source.provider !== 'tmdb') {
+      return json(
+        {
+          error: `Unsupported collection source provider: ${validation.request.source.provider}`,
+        },
+        400,
+      );
+    }
 
-      const result = await generateTmdbCollection({
-        request: validation.request,
-        tmdb,
+    const token = process.env.TMDB_READ_ACCESS_TOKEN;
+
+    if (!token) {
+      console.error('TMDB_READ_ACCESS_TOKEN is missing.');
+
+      return json(
+        {
+          error: 'The TMDB collection source is not configured.',
+        },
+        500,
+      );
+    }
+
+    try {
+      const result = await refreshGeneratedCollectionSource({
+        collectionId: validation.request.collectionId,
+        source: validation.request.source,
+        providers: {
+          tmdb: createTmdbProvider(token),
+        },
       });
 
       return json({
         collection: result.collection,
-
         meta: {
           candidateCount: result.candidateCount,
-
           validatedCount: result.validatedCount,
-
           missingPosterCount: result.missingPosterCount,
         },
       });
     } catch (error) {
-      console.error('Collection generation failed:', error);
+      console.error('Collection source refresh failed:', error);
 
       return json(
         {
-          error: error instanceof Error ? error.message : 'Collection generation failed.',
+          error: error instanceof Error ? error.message : 'Collection source refresh failed.',
         },
         500,
       );

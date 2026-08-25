@@ -5,8 +5,25 @@ export const pixarFeaturesMovies: RankCollection = {
   name: 'Pixar Feature Films',
   description: 'Feature films produced by Pixar.',
   candidateSource: {
-    kind: 'embedded',
+    kind: 'generated',
     provider: 'tmdb',
+    originalRequest: 'Pixar Animation Studios',
+    definition: {
+      schemaVersion: 1,
+      collectionId: 'pixar-features',
+      mode: 'company-features',
+      query: 'Pixar Animation Studios',
+      tmdbId: 3,
+      mediaTypes: ['movie'],
+      limit: 250,
+      fromYear: null,
+      toYear: null,
+      sort: 'release-asc',
+      minRuntime: null,
+      excludeDocumentaries: false,
+      includeAdult: false,
+      language: 'en-US',
+    },
   },
   items: [
     {
