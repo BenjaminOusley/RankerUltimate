@@ -52,6 +52,7 @@ function App() {
         getCandidateItems={app.collectionLibrary.getCandidateItems}
         onCreate={app.collectionLibrary.createCollection}
         onUpdate={app.collectionLibrary.updateCollection}
+        onRefreshSource={app.collectionLibrary.refreshCollectionCandidates}
         onDelete={app.deleteCollection}
         onMainMenu={app.requestMainMenu}
       />

@@ -4,6 +4,7 @@ import {
   refreshGeneratedCollectionSource,
   validateRefreshSourceRequest,
 } from '../scripts/sources/refresh-generated-collection.mjs';
+import { refreshTmdbCollectionSource } from '../scripts/sources/providers/tmdb-source.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
 
 export { validateRefreshSourceRequest } from '../scripts/sources/refresh-generated-collection.mjs';
@@ -15,6 +16,26 @@ function json(body, status = 200) {
       'Cache-Control': 'no-store',
     },
   });
+}
+
+function createSourceRefreshers() {
+  return {
+    tmdb({ collectionId, source, today, logger }) {
+      const token = process.env.TMDB_READ_ACCESS_TOKEN;
+
+      if (!token) {
+        throw new Error('The TMDB collection source is not configured.');
+      }
+
+      return refreshTmdbCollectionSource({
+        collectionId,
+        source,
+        tmdb: createTmdbProvider(token),
+        today,
+        logger,
+      });
+    },
+  };
 }
 
 export default {
@@ -63,35 +84,11 @@ export default {
       );
     }
 
-    if (validation.request.source.provider !== 'tmdb') {
-      return json(
-        {
-          error: `Unsupported collection source provider: ${validation.request.source.provider}`,
-        },
-        400,
-      );
-    }
-
-    const token = process.env.TMDB_READ_ACCESS_TOKEN;
-
-    if (!token) {
-      console.error('TMDB_READ_ACCESS_TOKEN is missing.');
-
-      return json(
-        {
-          error: 'The TMDB collection source is not configured.',
-        },
-        500,
-      );
-    }
-
     try {
       const result = await refreshGeneratedCollectionSource({
         collectionId: validation.request.collectionId,
         source: validation.request.source,
-        providers: {
-          tmdb: createTmdbProvider(token),
-        },
+        refreshers: createSourceRefreshers(),
       });
 
       return json({
@@ -105,11 +102,15 @@ export default {
     } catch (error) {
       console.error('Collection source refresh failed:', error);
 
+      const message =
+        error instanceof Error ? error.message : 'Collection source refresh failed.';
+      const unsupportedProvider = message.startsWith('Unsupported collection source provider:');
+
       return json(
         {
-          error: error instanceof Error ? error.message : 'Collection source refresh failed.',
+          error: message,
         },
-        500,
+        unsupportedProvider ? 400 : 500,
       );
     }
   },

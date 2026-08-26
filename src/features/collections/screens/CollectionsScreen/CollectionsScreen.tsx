@@ -26,6 +26,7 @@ type CollectionsScreenProps = {
   getCandidateItems: (collectionId: string | null) => readonly RankItem[];
   onCreate: (name: string, description: string) => string;
   onUpdate: (collection: RankCollection, itemsChanged: boolean) => void;
+  onRefreshSource: (collectionId: string) => Promise<void>;
   onDelete: (collectionId: string) => void;
   onMainMenu: () => void;
 };
@@ -36,12 +37,14 @@ export function CollectionsScreen({
   getCandidateItems,
   onCreate,
   onUpdate,
+  onRefreshSource,
   onDelete,
   onMainMenu,
 }: CollectionsScreenProps) {
   const [sort, setSort] = useState<CollectionSort>('nameAsc');
   const [search, setSearch] = useState('');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [refreshingCollectionId, setRefreshingCollectionId] = useState<string | null>(null);
   const [deleteCollectionId, setDeleteCollectionId] = useState<string | null>(null);
   const [editor, setEditor] = useState<EditorState | null>(null);
 
@@ -204,6 +207,33 @@ export function CollectionsScreen({
                       className={styles.actionMenu}
                       role="menu"
                     >
+                      {collection.candidateSource?.kind === 'generated' && (
+                        <button
+                          role="menuitem"
+                          disabled={refreshingCollectionId === collection.id}
+                          onClick={async () => {
+                            setRefreshingCollectionId(collection.id);
+
+                            try {
+                              await onRefreshSource(collection.id);
+                              setOpenMenuId(null);
+                            } catch (error) {
+                              window.alert(
+                                error instanceof Error
+                                  ? error.message
+                                  : 'Collection source refresh failed.',
+                              );
+                            } finally {
+                              setRefreshingCollectionId(null);
+                            }
+                          }}
+                        >
+                          {refreshingCollectionId === collection.id
+                            ? '↻ Refreshing…'
+                            : '↻ Refresh source'}
+                        </button>
+                      )}
+
                       <button
                         className={styles.deleteAction}
                         role="menuitem"
