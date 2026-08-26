@@ -3,8 +3,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { RankCollection } from '@/domain/models';
 import { refreshCollectionSource } from '../api/refreshCollectionSource';
 import {
+  addGeneratedCollectionToLibrary,
   buildCollectionCandidateItems,
   buildCollectionItemLibrary,
+  buildStoredGeneratedCollectionShells,
   createCustomCollection,
   deleteCollectionFromLibrary,
   loadCollectionLibraryState,
@@ -52,9 +54,19 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     };
   }, []);
 
+  const generatedCollectionShells = useMemo(
+    () => buildStoredGeneratedCollectionShells(libraryState),
+    [libraryState],
+  );
+
+  const sourceDefinitions = useMemo(
+    () => [...baseCollections, ...generatedCollectionShells],
+    [baseCollections, generatedCollectionShells],
+  );
+
   const sourceCollections = useMemo(
-    () => applyCollectionSourceSnapshots(baseCollections, sourceSnapshots),
-    [baseCollections, sourceSnapshots],
+    () => applyCollectionSourceSnapshots(sourceDefinitions, sourceSnapshots),
+    [sourceDefinitions, sourceSnapshots],
   );
 
   const availableCollections = useMemo(
@@ -83,6 +95,37 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     return createdId;
   }, []);
 
+  const createGeneratedCollection = useCallback(
+    async (collection: RankCollection) => {
+      if (collection.candidateSource?.kind !== 'generated') {
+        throw new Error('Generated collection is missing its source definition.');
+      }
+
+      const duplicateId = availableCollections.some(
+        (existing) => existing.id === collection.id,
+      );
+
+      if (duplicateId) {
+        throw new Error('A collection with that ID already exists.');
+      }
+
+      const snapshot = createCollectionSourceSnapshot(collection, collection);
+
+      await saveCollectionSourceSnapshot(snapshot);
+
+      setSourceSnapshots((previous) =>
+        upsertCollectionSourceSnapshot(previous, snapshot),
+      );
+
+      setLibraryState((previous) =>
+        addGeneratedCollectionToLibrary(previous, sourceDefinitions, collection),
+      );
+
+      return collection.id;
+    },
+    [availableCollections, sourceDefinitions],
+  );
+
   const updateCollection = useCallback(
     (updatedCollection: RankCollection, itemsChanged: boolean) => {
       setLibraryState((previous) =>
@@ -99,21 +142,21 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
 
   const refreshCollectionCandidates = useCallback(
     async (collectionId: string) => {
-      const baseCollection = baseCollections.find(
+      const sourceCollection = sourceDefinitions.find(
         (collection) => collection.id === collectionId,
       );
 
-      if (!baseCollection) {
+      if (!sourceCollection) {
         throw new Error('Collection source was not found.');
       }
 
-      if (baseCollection.candidateSource?.kind !== 'generated') {
+      if (sourceCollection.candidateSource?.kind !== 'generated') {
         throw new Error('This collection does not have a refreshable source.');
       }
 
-      const result = await refreshCollectionSource(baseCollection);
+      const result = await refreshCollectionSource(sourceCollection);
       const snapshot = createCollectionSourceSnapshot(
-        baseCollection,
+        sourceCollection,
         result.collection,
       );
 
@@ -122,9 +165,8 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
       setSourceSnapshots((previous) =>
         upsertCollectionSourceSnapshot(previous, snapshot),
       );
-
     },
-    [baseCollections],
+    [sourceDefinitions],
   );
 
   const deleteCollection = useCallback(
@@ -148,6 +190,7 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     availableCollections,
     itemLibrary,
     getCandidateItems,
+    createGeneratedCollection,
     refreshCollectionCandidates,
     createCollection,
     updateCollection,

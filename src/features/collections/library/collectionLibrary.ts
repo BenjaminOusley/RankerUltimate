@@ -1,5 +1,10 @@
 import { getCanonicalItemKey, getLegacyItemKeys } from '@/domain/itemIdentity';
-import type { RankCollection, RankItem } from '@/domain/models';
+import type { CollectionCandidateSource, RankCollection, RankItem } from '@/domain/models';
+
+type GeneratedCollectionSource = Extract<
+  CollectionCandidateSource,
+  { kind: 'generated' }
+>;
 
 type CollectionOverride = {
   name?: string;
@@ -14,11 +19,27 @@ type CustomCollectionRecord = {
   itemKeys: string[];
 };
 
+type GeneratedCollectionRecord = {
+  id: string;
+  name: string;
+  description?: string;
+  candidateSource: GeneratedCollectionSource;
+  excludedItemKeys: string[];
+};
+
 export type CollectionLibraryState = {
-  version: 2;
+  version: 3;
   customCollections: CustomCollectionRecord[];
+  generatedCollections: GeneratedCollectionRecord[];
   overrides: Record<string, CollectionOverride>;
   deletedBuiltInIds: string[];
+};
+
+type CollectionLibraryStateV2 = {
+  version: 2;
+  customCollections?: CustomCollectionRecord[];
+  overrides?: Record<string, CollectionOverride>;
+  deletedBuiltInIds?: string[];
 };
 
 type LegacyCollectionOverride = {
@@ -43,11 +64,13 @@ type LegacyCollectionLibraryState = {
 
 const COLLECTION_LIBRARY_KEY_V1 = 'rankerultimate:collections:v1';
 const COLLECTION_LIBRARY_KEY_V2 = 'rankerultimate:collections:v2';
+const COLLECTION_LIBRARY_KEY_V3 = 'rankerultimate:collections:v3';
 
 function createEmptyState(): CollectionLibraryState {
   return {
-    version: 2,
+    version: 3,
     customCollections: [],
+    generatedCollections: [],
     overrides: {},
     deletedBuiltInIds: [],
   };
@@ -57,10 +80,10 @@ export function getCollectionLibraryItemKey(item: RankItem) {
   return getCanonicalItemKey(item);
 }
 
-function buildItemCatalog(baseCollections: readonly RankCollection[]) {
+function buildItemCatalog(collections: readonly RankCollection[]) {
   const catalog = new Map<string, RankItem>();
 
-  for (const collection of baseCollections) {
+  for (const collection of collections) {
     for (const item of collection.items) {
       catalog.set(getCollectionLibraryItemKey(item), item);
     }
@@ -86,11 +109,17 @@ function buildItemAliasCatalog(baseCollections: readonly RankCollection[]) {
 }
 
 function normalizeItemKeys(keys: readonly string[], aliases: Map<string, string>) {
-  return [...new Set(keys.map((key) => aliases.get(key)).filter((key): key is string => Boolean(key)))];
+  return [
+    ...new Set(
+      keys.map((key) => aliases.get(key)).filter((key): key is string => Boolean(key)),
+    ),
+  ];
 }
 
 function resolveItems(keys: readonly string[], catalog: Map<string, RankItem>) {
-  return keys.map((key) => catalog.get(key)).filter((item): item is RankItem => Boolean(item));
+  return keys
+    .map((key) => catalog.get(key))
+    .filter((item): item is RankItem => Boolean(item));
 }
 
 function migrateLegacyState(
@@ -99,18 +128,20 @@ function migrateLegacyState(
 ): CollectionLibraryState {
   const aliases = buildItemAliasCatalog(baseCollections);
 
-  const customCollections: CustomCollectionRecord[] = (legacyState.customCollections ?? []).map(
-    (collection) => ({
-      id: collection.id,
-      name: collection.name,
-      description: collection.description,
-      itemKeys: normalizeItemKeys(collection.itemKeys ?? [], aliases),
-    }),
-  );
+  const customCollections: CustomCollectionRecord[] = (
+    legacyState.customCollections ?? []
+  ).map((collection) => ({
+    id: collection.id,
+    name: collection.name,
+    description: collection.description,
+    itemKeys: normalizeItemKeys(collection.itemKeys ?? [], aliases),
+  }));
 
   const overrides: Record<string, CollectionOverride> = {};
 
-  for (const [collectionId, legacyOverride] of Object.entries(legacyState.overrides ?? {})) {
+  for (const [collectionId, legacyOverride] of Object.entries(
+    legacyState.overrides ?? {},
+  )) {
     const nextOverride: CollectionOverride = {};
 
     if (legacyOverride.name !== undefined) {
@@ -122,10 +153,14 @@ function migrateLegacyState(
     }
 
     if (legacyOverride.itemKeys) {
-      const baseCollection = baseCollections.find((collection) => collection.id === collectionId);
+      const baseCollection = baseCollections.find(
+        (collection) => collection.id === collectionId,
+      );
 
       if (baseCollection) {
-        const selectedKeys = new Set(normalizeItemKeys(legacyOverride.itemKeys, aliases));
+        const selectedKeys = new Set(
+          normalizeItemKeys(legacyOverride.itemKeys, aliases),
+        );
 
         const excludedItemKeys = baseCollection.items
           .map(getCollectionLibraryItemKey)
@@ -143,10 +178,21 @@ function migrateLegacyState(
   }
 
   return {
-    version: 2,
+    version: 3,
     customCollections,
+    generatedCollections: [],
     overrides,
     deletedBuiltInIds: legacyState.deletedBuiltInIds ?? [],
+  };
+}
+
+function migrateV2State(state: CollectionLibraryStateV2): CollectionLibraryState {
+  return {
+    version: 3,
+    customCollections: state.customCollections ?? [],
+    generatedCollections: [],
+    overrides: state.overrides ?? {},
+    deletedBuiltInIds: state.deletedBuiltInIds ?? [],
   };
 }
 
@@ -154,18 +200,29 @@ export function loadCollectionLibraryState(
   baseCollections: readonly RankCollection[],
 ): CollectionLibraryState {
   try {
-    const currentRaw = localStorage.getItem(COLLECTION_LIBRARY_KEY_V2);
+    const currentRaw = localStorage.getItem(COLLECTION_LIBRARY_KEY_V3);
 
     if (currentRaw) {
       const parsed = JSON.parse(currentRaw) as Partial<CollectionLibraryState>;
 
-      if (parsed.version === 2) {
+      if (parsed.version === 3) {
         return {
-          version: 2,
+          version: 3,
           customCollections: parsed.customCollections ?? [],
+          generatedCollections: parsed.generatedCollections ?? [],
           overrides: parsed.overrides ?? {},
           deletedBuiltInIds: parsed.deletedBuiltInIds ?? [],
         };
+      }
+    }
+
+    const v2Raw = localStorage.getItem(COLLECTION_LIBRARY_KEY_V2);
+
+    if (v2Raw) {
+      const parsed = JSON.parse(v2Raw) as CollectionLibraryStateV2;
+
+      if (parsed.version === 2) {
+        return migrateV2State(parsed);
       }
     }
 
@@ -188,42 +245,63 @@ export function loadCollectionLibraryState(
 }
 
 export function saveCollectionLibraryState(state: CollectionLibraryState) {
-  localStorage.setItem(COLLECTION_LIBRARY_KEY_V2, JSON.stringify(state));
+  localStorage.setItem(COLLECTION_LIBRARY_KEY_V3, JSON.stringify(state));
+  localStorage.removeItem(COLLECTION_LIBRARY_KEY_V2);
   localStorage.removeItem(COLLECTION_LIBRARY_KEY_V1);
 }
 
-export function buildCollectionItemLibrary(baseCollections: readonly RankCollection[]) {
-  return [...buildItemCatalog(baseCollections).values()].sort((first, second) =>
+export function buildStoredGeneratedCollectionShells(
+  state: CollectionLibraryState,
+): RankCollection[] {
+  return state.generatedCollections.map((collection) => ({
+    id: collection.id,
+    name: collection.name,
+    description: collection.description,
+    candidateSource: collection.candidateSource,
+    items: [],
+  }));
+}
+
+export function buildCollectionItemLibrary(collections: readonly RankCollection[]) {
+  return [...buildItemCatalog(collections).values()].sort((first, second) =>
     first.name.localeCompare(second.name),
   );
 }
 
 export function buildCollectionCandidateItems(
-  baseCollections: readonly RankCollection[],
+  sourceCollections: readonly RankCollection[],
   collectionId: string | null,
 ) {
   if (collectionId) {
-    const builtInCollection = baseCollections.find((collection) => collection.id === collectionId);
+    const sourceCollection = sourceCollections.find(
+      (collection) => collection.id === collectionId,
+    );
 
-    if (builtInCollection) {
-      return [...builtInCollection.items].sort((first, second) =>
+    if (sourceCollection) {
+      return [...sourceCollection.items].sort((first, second) =>
         first.name.localeCompare(second.name),
       );
     }
   }
 
-  return buildCollectionItemLibrary(baseCollections);
+  return buildCollectionItemLibrary(sourceCollections);
 }
 
 export function materializeCollections(
-  baseCollections: readonly RankCollection[],
+  sourceCollections: readonly RankCollection[],
   state: CollectionLibraryState,
 ): RankCollection[] {
-  const catalog = buildItemCatalog(baseCollections);
+  const catalog = buildItemCatalog(sourceCollections);
   const deletedIds = new Set(state.deletedBuiltInIds);
+  const generatedIds = new Set(
+    state.generatedCollections.map((collection) => collection.id),
+  );
 
-  const builtInCollections = baseCollections
-    .filter((collection) => !deletedIds.has(collection.id))
+  const builtInCollections = sourceCollections
+    .filter(
+      (collection) =>
+        !generatedIds.has(collection.id) && !deletedIds.has(collection.id),
+    )
     .map((collection) => {
       const override = state.overrides[collection.id];
 
@@ -248,17 +326,38 @@ export function materializeCollections(
       };
     });
 
-  const customCollections: RankCollection[] = state.customCollections.map((collection) => ({
-    id: collection.id,
-    name: collection.name,
-    description: collection.description,
-    items: resolveItems(collection.itemKeys, catalog),
-    candidateSource: {
-      kind: 'custom',
-    },
-  }));
+  const generatedCollections: RankCollection[] = state.generatedCollections.map(
+    (collection) => {
+      const sourceCollection = sourceCollections.find(
+        (candidate) => candidate.id === collection.id,
+      );
+      const excludedItemKeys = new Set(collection.excludedItemKeys);
 
-  return [...builtInCollections, ...customCollections];
+      return {
+        id: collection.id,
+        name: collection.name,
+        description: collection.description,
+        candidateSource: collection.candidateSource,
+        items: (sourceCollection?.items ?? []).filter(
+          (item) => !excludedItemKeys.has(getCollectionLibraryItemKey(item)),
+        ),
+      };
+    },
+  );
+
+  const customCollections: RankCollection[] = state.customCollections.map(
+    (collection) => ({
+      id: collection.id,
+      name: collection.name,
+      description: collection.description,
+      items: resolveItems(collection.itemKeys, catalog),
+      candidateSource: {
+        kind: 'custom',
+      },
+    }),
+  );
+
+  return [...builtInCollections, ...generatedCollections, ...customCollections];
 }
 
 export function createCustomCollection(
@@ -289,17 +388,99 @@ export function createCustomCollection(
   };
 }
 
+export function addGeneratedCollectionToLibrary(
+  state: CollectionLibraryState,
+  sourceCollections: readonly RankCollection[],
+  collection: RankCollection,
+): CollectionLibraryState {
+  const source = collection.candidateSource;
+
+  if (source?.kind !== 'generated') {
+    throw new Error('Only generated collections can be added as source-backed collections.');
+  }
+
+  const duplicateId =
+    sourceCollections.some((item) => item.id === collection.id) ||
+    state.customCollections.some((item) => item.id === collection.id) ||
+    state.generatedCollections.some((item) => item.id === collection.id);
+
+  if (duplicateId) {
+    throw new Error('A collection with that ID already exists.');
+  }
+
+  const trimmedDescription = collection.description?.trim();
+
+  const generatedCollection: GeneratedCollectionRecord = {
+    id: collection.id,
+    name: collection.name.trim(),
+    ...(trimmedDescription
+      ? {
+          description: trimmedDescription,
+        }
+      : {}),
+    candidateSource: source,
+    excludedItemKeys: [],
+  };
+
+  return {
+    ...state,
+    generatedCollections: [...state.generatedCollections, generatedCollection],
+  };
+}
+
 export function updateCollectionInLibrary(
   state: CollectionLibraryState,
-  baseCollections: readonly RankCollection[],
+  sourceCollections: readonly RankCollection[],
   updatedCollection: RankCollection,
   itemsChanged: boolean,
 ): CollectionLibraryState {
-  const builtInCollection = baseCollections.find(
+  const generatedIndex = state.generatedCollections.findIndex(
     (collection) => collection.id === updatedCollection.id,
   );
 
   const updatedItemKeys = updatedCollection.items.map(getCollectionLibraryItemKey);
+
+  if (generatedIndex >= 0) {
+    const existing = state.generatedCollections[generatedIndex];
+    const sourceCollection = sourceCollections.find(
+      (collection) => collection.id === updatedCollection.id,
+    );
+    const trimmedDescription = updatedCollection.description?.trim();
+
+    const nextRecord: GeneratedCollectionRecord = {
+      ...existing,
+      name: updatedCollection.name.trim(),
+      ...(trimmedDescription
+        ? {
+            description: trimmedDescription,
+          }
+        : {}),
+    };
+
+    if (!trimmedDescription) {
+      delete nextRecord.description;
+    }
+
+    if (itemsChanged) {
+      const selectedKeys = new Set(updatedItemKeys);
+
+      nextRecord.excludedItemKeys = (sourceCollection?.items ?? [])
+        .map(getCollectionLibraryItemKey)
+        .filter((key) => !selectedKeys.has(key));
+    }
+
+    const generatedCollections = [...state.generatedCollections];
+    generatedCollections[generatedIndex] = nextRecord;
+
+    return {
+      ...state,
+      generatedCollections,
+    };
+  }
+
+  const builtInCollection = sourceCollections.find(
+    (collection) => collection.id === updatedCollection.id,
+  );
 
   if (!builtInCollection) {
     const updatedCustom: CustomCollectionRecord = {
@@ -377,16 +558,27 @@ export function updateCollectionInLibrary(
   return {
     ...state,
     overrides: nextOverrides,
-    deletedBuiltInIds: state.deletedBuiltInIds.filter((id) => id !== updatedCollection.id),
+    deletedBuiltInIds: state.deletedBuiltInIds.filter(
+      (id) => id !== updatedCollection.id,
+    ),
   };
 }
 
 export function deleteCollectionFromLibrary(
   state: CollectionLibraryState,
-  baseCollections: readonly RankCollection[],
+  sourceCollections: readonly RankCollection[],
   collectionId: string,
 ): CollectionLibraryState {
-  const builtIn = baseCollections.some((collection) => collection.id === collectionId);
+  if (state.generatedCollections.some((collection) => collection.id === collectionId)) {
+    return {
+      ...state,
+      generatedCollections: state.generatedCollections.filter(
+        (collection) => collection.id !== collectionId,
+      ),
+    };
+  }
+
+  const builtIn = sourceCollections.some((collection) => collection.id === collectionId);
 
   if (!builtIn) {
     return {
