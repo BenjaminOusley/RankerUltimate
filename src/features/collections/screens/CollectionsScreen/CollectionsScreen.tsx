@@ -23,6 +23,7 @@ type EditorState = {
 type CollectionsScreenProps = {
   collections: readonly RankCollection[];
   itemLibrary: readonly RankItem[];
+  onGenerate: () => void;
   getCandidateItems: (collectionId: string | null) => readonly RankItem[];
   onCreate: (name: string, description: string) => string;
   onUpdate: (collection: RankCollection, itemsChanged: boolean) => void;
@@ -34,6 +35,7 @@ type CollectionsScreenProps = {
 export function CollectionsScreen({
   collections,
   itemLibrary,
+  onGenerate,
   getCandidateItems,
   onCreate,
   onUpdate,
@@ -98,16 +100,22 @@ export function CollectionsScreen({
       <ScenePanel className={styles.scene}>
         <SceneHeading className={styles.heading}>
           <div>
-            <h1>My Collections</h1>
-            <p>Create and manage your collections.</p>
+            <h1>Collection Library</h1>
+            <p>Create, generate, and manage your collections.</p>
           </div>
 
-          <Button
-            variant="primary"
-            onClick={() => setEditor({ mode: 'create', collectionId: null })}
-          >
-            ＋ Create Collection
-          </Button>
+          <div className={styles.headingActions}>
+            <Button onClick={() => setEditor({ mode: 'create', collectionId: null })}>
+              ＋ Create Collection
+            </Button>
+
+            <Button
+              variant="primary"
+              onClick={onGenerate}
+            >
+              ✦ Generate Collection
+            </Button>
+          </div>
         </SceneHeading>
 
         <div className={styles.toolbar}>

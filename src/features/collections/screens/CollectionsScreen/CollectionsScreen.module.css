@@ -9,6 +9,12 @@
   align-items: center;
 }
 
+.headingActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .toolbar {
   min-height: 48px;
 
@@ -431,5 +437,13 @@
     line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+  }
+
+  .headingActions {
+    width: 100%;
+  }
+
+  .headingActions > * {
+    flex: 1;
   }
 }

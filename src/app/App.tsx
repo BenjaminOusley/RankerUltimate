@@ -2,6 +2,7 @@ import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
 import { CollectionPickerScreen } from '@/features/collections/screens/CollectionPickerScreen/CollectionPickerScreen';
 import { CollectionReviewScreen } from '@/features/collections/screens/CollectionReviewScreen/CollectionReviewScreen';
 import { CollectionsScreen } from '@/features/collections/screens/CollectionsScreen/CollectionsScreen';
+import { CollectionGeneratorScreen } from '@/features/generation/screens/CollectionGeneratorScreen/CollectionGeneratorScreen';
 import { MainMenuScreen } from '@/features/home/screens/MainMenuScreen/MainMenuScreen';
 import { FinalChoiceCheckpoint } from '@/features/ranking/components/FinalChoiceCheckpoint/FinalChoiceCheckpoint';
 import { RankingCompleteScreen } from '@/features/ranking/screens/RankingCompleteScreen/RankingCompleteScreen';
@@ -38,7 +39,7 @@ function App() {
   if (app.screen === 'home') {
     return (
       <MainMenuScreen
-        onNewRanking={() => app.setScreen('collections')}
+        onStartRanking={() => app.setScreen('collections')}
         onCollections={() => app.setScreen('manageCollections')}
       />
     );
@@ -49,11 +50,23 @@ function App() {
       <CollectionsScreen
         collections={app.collectionLibrary.availableCollections}
         itemLibrary={app.collectionLibrary.itemLibrary}
+        onGenerate={() => app.setScreen('generateCollection')}
         getCandidateItems={app.collectionLibrary.getCandidateItems}
         onCreate={app.collectionLibrary.createCollection}
         onUpdate={app.collectionLibrary.updateCollection}
         onRefreshSource={app.collectionLibrary.refreshCollectionCandidates}
         onDelete={app.deleteCollection}
+        onMainMenu={app.requestMainMenu}
+      />
+    );
+  }
+
+  if (app.screen === 'generateCollection') {
+    return (
+      <CollectionGeneratorScreen
+        onCreateGeneratedCollection={app.collectionLibrary.createGeneratedCollection}
+        onComplete={() => app.setScreen('manageCollections')}
+        onBack={() => app.setScreen('manageCollections')}
         onMainMenu={app.requestMainMenu}
       />
     );

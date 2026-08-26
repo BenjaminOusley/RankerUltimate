@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import styles from './CollectionGenerator.module.css';
+
 import type {
   GenerationMode,
   GenerationRequest,
@@ -13,7 +15,9 @@ import type {
 type CollectionGeneratorProps = {
   initialRequest: GenerationRequest | null;
 
-  onGenerate: (request: GenerationRequest) => Promise<void>;
+  onGenerate: (request: GenerationRequest) => Promise<string>;
+
+  onGenerated: (collectionId: string) => void;
 
   onSearchPeople: (mode: PersonGenerationMode, query: string) => Promise<PersonMatch[]>;
 
@@ -64,16 +68,8 @@ const generationSorts: {
   },
 ];
 
-function createCollectionId(query: string, mode: GenerationMode) {
-  const querySlug = query
-    .trim()
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  return `${querySlug || 'generated'}-${mode}`;
+function createRuntimeCollectionId() {
+  return `generated-${crypto.randomUUID()}`;
 }
 
 function parseOptionalInteger(value: string) {
@@ -84,9 +80,10 @@ function parseOptionalInteger(value: string) {
   return Number(value);
 }
 
-function CollectionGenerator({
+export function CollectionGenerator({
   initialRequest,
   onGenerate,
+  onGenerated,
   onSearchPeople,
   onSearchCompanies,
 }: CollectionGeneratorProps) {
@@ -156,8 +153,8 @@ function CollectionGenerator({
 
     const parsedLimit = Number(limit);
 
-    if (!Number.isInteger(parsedLimit) || parsedLimit < 1) {
-      setError('Maximum results must be a positive integer.');
+    if (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 250) {
+      setError('Maximum results must be between 1 and 250.');
 
       return;
     }
@@ -194,9 +191,9 @@ function CollectionGenerator({
 
     if (
       parsedMinRuntime !== null &&
-      (!Number.isInteger(parsedMinRuntime) || parsedMinRuntime < 0)
+      (!Number.isInteger(parsedMinRuntime) || parsedMinRuntime < 0 || parsedMinRuntime > 1000)
     ) {
-      setError('Minimum runtime must be a non-negative integer.');
+      setError('Minimum runtime must be between 0 and 1000 minutes.');
 
       return;
     }
@@ -243,6 +240,7 @@ function CollectionGenerator({
             setPersonMatches(matches);
             setSelectedPersonId(null);
             setError(null);
+            setIsGenerating(false);
 
             return;
           }
@@ -269,6 +267,7 @@ function CollectionGenerator({
             setCompanyMatches(matches);
             setSelectedCompanyId(null);
             setError(null);
+            setIsGenerating(false);
 
             return;
           }
@@ -285,7 +284,7 @@ function CollectionGenerator({
         mode,
         query: trimmedQuery,
 
-        collectionId: createCollectionId(trimmedQuery, mode),
+        collectionId: createRuntimeCollectionId(),
 
         limit: parsedLimit,
         tmdbId,
@@ -300,16 +299,20 @@ function CollectionGenerator({
         language: 'en-US',
       };
 
-      await onGenerate(request);
+      const generatedCollectionId = await onGenerate(request);
+
+      setIsGenerating(false);
+      onGenerated(generatedCollectionId);
+      return;
     } catch (generationError) {
       setError(
         generationError instanceof Error
           ? generationError.message
           : 'Collection generation failed.',
       );
-    } finally {
-      setIsGenerating(false);
     }
+
+    setIsGenerating(false);
   }
 
   const needsPersonSelection =
@@ -323,19 +326,11 @@ function CollectionGenerator({
     selectedCompanyId === null;
 
   return (
-    <>
-      <header className="header">
-        <h1>Create Collection</h1>
-
-        <p>Build a custom movie list from TMDB.</p>
-      </header>
-
-      <section className="collection-generator">
-        <form
-          className="generation-form"
-          onSubmit={handleSubmit}
-        >
-          <label className="generation-field">
+    <form
+      className={styles.form}
+      onSubmit={handleSubmit}
+    >
+          <label className={styles.field}>
             <span>Collection Type</span>
 
             <select
@@ -347,6 +342,7 @@ function CollectionGenerator({
                 setSelectedPersonId(null);
                 setCompanyMatches([]);
                 setSelectedCompanyId(null);
+                setError(null);
               }}
             >
               {generationModes.map((option) => (
@@ -360,17 +356,21 @@ function CollectionGenerator({
             </select>
           </label>
 
-          <label className="generation-field">
+          <label className={styles.field}>
             <span>Search</span>
 
             <input
               type="text"
+              maxLength={200}
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
 
                 setPersonMatches([]);
                 setSelectedPersonId(null);
+                setCompanyMatches([]);
+                setSelectedCompanyId(null);
+                setError(null);
               }}
               placeholder={
                 mode === 'genre'
@@ -384,8 +384,8 @@ function CollectionGenerator({
             />
           </label>
 
-          <div className="generation-grid">
-            <label className="generation-field">
+          <div className={styles.grid}>
+            <label className={styles.field}>
               <span>From Year</span>
 
               <input
@@ -398,7 +398,7 @@ function CollectionGenerator({
               />
             </label>
 
-            <label className="generation-field">
+            <label className={styles.field}>
               <span>To Year</span>
 
               <input
@@ -412,8 +412,8 @@ function CollectionGenerator({
             </label>
           </div>
 
-          <div className="generation-grid">
-            <label className="generation-field">
+          <div className={styles.grid}>
+            <label className={styles.field}>
               <span>Sort</span>
 
               <select
@@ -431,32 +431,34 @@ function CollectionGenerator({
               </select>
             </label>
 
-            <label className="generation-field">
+            <label className={styles.field}>
               <span>Maximum Results</span>
 
               <input
                 type="number"
                 min="1"
+                max="250"
                 value={limit}
                 onChange={(event) => setLimit(event.target.value)}
               />
             </label>
           </div>
 
-          <label className="generation-field">
+          <label className={styles.field}>
             <span>Minimum Runtime (minutes)</span>
 
             <input
               type="number"
               min="0"
+              max="1000"
               value={minRuntime}
               onChange={(event) => setMinRuntime(event.target.value)}
               placeholder="Optional"
             />
           </label>
 
-          <div className="generation-checks">
-            <label className="generation-checkbox">
+          <div className={styles.checks}>
+            <label className={styles.checkbox}>
               <input
                 type="checkbox"
                 checked={excludeDocumentaries}
@@ -466,7 +468,7 @@ function CollectionGenerator({
               <span>Exclude documentaries</span>
             </label>
 
-            <label className="generation-checkbox">
+            <label className={styles.checkbox}>
               <input
                 type="checkbox"
                 checked={includeAdult}
@@ -478,21 +480,22 @@ function CollectionGenerator({
           </div>
 
           {personMatches.length > 1 && (
-            <section className="person-matches">
-              <div className="person-matches-heading">
+            <section className={styles.matches}>
+              <div className={styles.matchesHeading}>
                 <h2>Choose Person</h2>
 
                 <p>Multiple TMDB profiles matched "{query}". Select the correct person.</p>
               </div>
 
-              <div className="person-match-list">
+              <div className={styles.matchList}>
                 {personMatches.map((person) => (
                   <label
-                    className={
-                      selectedPersonId === person.id
-                        ? 'person-match person-match-selected'
-                        : 'person-match'
-                    }
+                    className={[
+                      styles.match,
+                      selectedPersonId === person.id ? styles.matchSelected : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     key={person.id}
                   >
                     <input
@@ -502,13 +505,13 @@ function CollectionGenerator({
                       onChange={() => setSelectedPersonId(person.id)}
                     />
 
-                    <span className="person-match-info">
+                    <span className={styles.matchInfo}>
                       <strong>{person.name}</strong>
 
-                      <span className="person-match-department">{person.department}</span>
+                      <span className={styles.matchDepartment}>{person.department}</span>
 
                       {person.knownFor.length > 0 && (
-                        <span className="person-match-known-for">
+                        <span className={styles.matchKnownFor}>
                           {person.knownFor.join(' • ')}
                         </span>
                       )}
@@ -520,21 +523,22 @@ function CollectionGenerator({
           )}
 
           {companyMatches.length > 1 && (
-            <section className="company-matches">
-              <div className="company-matches-heading">
+            <section className={styles.matches}>
+              <div className={styles.matchesHeading}>
                 <h2>Choose Company</h2>
 
                 <p>Multiple TMDB companies matched "{query}". Select the correct company.</p>
               </div>
 
-              <div className="company-match-list">
+              <div className={styles.matchList}>
                 {companyMatches.map((company) => (
                   <label
-                    className={
-                      selectedCompanyId === company.id
-                        ? 'company-match company-match-selected'
-                        : 'company-match'
-                    }
+                    className={[
+                      styles.match,
+                      selectedCompanyId === company.id ? styles.matchSelected : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     key={company.id}
                   >
                     <input
@@ -546,13 +550,13 @@ function CollectionGenerator({
 
                     {company.logo && (
                       <img
-                        className="company-match-logo"
+                        className={styles.companyLogo}
                         src={company.logo}
                         alt=""
                       />
                     )}
 
-                    <span className="company-match-info">
+                    <span className={styles.matchInfo}>
                       <strong>{company.name}</strong>
 
                       {company.originCountry && <span>{company.originCountry}</span>}
@@ -563,13 +567,13 @@ function CollectionGenerator({
             </section>
           )}
 
-          <p className="generation-note">
+          <p className={styles.note}>
             Only released titles are currently included. TMDB metadata is requested in English (US).
           </p>
 
-          {error && <p className="generation-error">{error}</p>}
+          {error && <p className={styles.error}>{error}</p>}
 
-          <div className="actions">
+          <div className={styles.actions}>
             <button
               type="submit"
               disabled={isGenerating || needsPersonSelection || needsCompanySelection}
@@ -583,10 +587,7 @@ function CollectionGenerator({
                     : 'Generate Collection'}
             </button>
           </div>
-        </form>
-      </section>
-    </>
+    </form>
   );
 }
 
-export default CollectionGenerator;

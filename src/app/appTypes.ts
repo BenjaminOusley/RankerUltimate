@@ -2,6 +2,7 @@ export type AppScreen =
   | 'home'
   | 'collections'
   | 'manageCollections'
+  | 'generateCollection'
   | 'review'
   | 'ranking'
   | 'rankingComplete'

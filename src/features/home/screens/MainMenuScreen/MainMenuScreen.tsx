@@ -13,11 +13,11 @@ const menuQuotes = [
 ];
 
 type MainMenuScreenProps = {
-  onNewRanking: () => void;
+  onStartRanking: () => void;
   onCollections: () => void;
 };
 
-export function MainMenuScreen({ onNewRanking, onCollections }: MainMenuScreenProps) {
+export function MainMenuScreen({ onStartRanking, onCollections }: MainMenuScreenProps) {
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * menuQuotes.length));
 
   return (
@@ -34,25 +34,40 @@ export function MainMenuScreen({ onNewRanking, onCollections }: MainMenuScreenPr
         </div>
 
         <div className={styles.actions}>
-          <button className={`${styles.menuButton} ${styles.primaryButton}`} onClick={onNewRanking}>
+          <button
+            className={`${styles.menuButton} ${styles.primaryButton}`}
+            onClick={onStartRanking}
+          >
             <span>＋</span>
-            <strong>New Ranking</strong>
+            <strong>Start Ranking</strong>
           </button>
-          <button className={styles.menuButton} disabled>
+          <button
+            className={styles.menuButton}
+            disabled
+          >
             <span>▤</span>
             <strong>My Rankings</strong>
             <small>Later</small>
           </button>
-          <button className={styles.menuButton} onClick={onCollections}>
+          <button
+            className={styles.menuButton}
+            onClick={onCollections}
+          >
             <span>▣</span>
-            <strong>Collections</strong>
+            <strong>Collection Library</strong>
           </button>
-          <button className={styles.menuButton} disabled>
+          <button
+            className={styles.menuButton}
+            disabled
+          >
             <span>★</span>
             <strong>Global Ratings</strong>
             <small>Later</small>
           </button>
-          <button className={styles.menuButton} disabled>
+          <button
+            className={styles.menuButton}
+            disabled
+          >
             <span>⚙</span>
             <strong>Settings</strong>
             <small>Later</small>
