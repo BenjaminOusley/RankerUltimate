@@ -4,6 +4,7 @@ import {
   refreshGeneratedCollectionSource,
   validateRefreshSourceRequest,
 } from './refresh-generated-collection.mjs';
+import { buildIgdbGenerationRequestFromSource } from './providers/igdb-source.mjs';
 import { buildTmdbGenerationRequestFromSource } from './providers/tmdb-source.mjs';
 
 const pixarSource = {
@@ -153,6 +154,80 @@ describe('generated collection source refresh', () => {
         language: 'en-US',
       },
     });
+  });
+
+  it('reconstructs IGDB sources from stable provider IDs', () => {
+    const result = buildIgdbGenerationRequestFromSource('generated-halo-games', {
+      kind: 'generated',
+      provider: 'igdb',
+      originalRequest: 'Halo',
+      definition: {
+        schemaVersion: 1,
+        collectionId: 'generated-halo',
+        mediaType: 'game',
+        mode: 'franchise',
+        query: 'Halo',
+        igdbId: 24,
+        resolvedName: 'Halo',
+        limit: 50,
+        sort: 'release-asc',
+      },
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      request: {
+        mode: 'franchise',
+        query: 'Halo',
+        collectionId: 'generated-halo',
+        igdbId: 24,
+        limit: 50,
+        sort: 'release-asc',
+      },
+    });
+  });
+
+  it('dispatches IGDB refreshes without coupling the generic dispatcher to games', async () => {
+    const igdbRefresh = vi.fn().mockResolvedValue({
+      collection: {
+        id: 'generated-halo-games',
+        name: 'Halo Games',
+        items: [],
+      },
+      candidateCount: 0,
+      validatedCount: 0,
+      missingPosterCount: 0,
+    });
+
+    const source = {
+      kind: 'generated',
+      provider: 'igdb',
+      definition: {
+        mode: 'franchise',
+        query: 'Halo',
+        collectionId: 'generated-halo',
+        igdbId: 24,
+        limit: 50,
+        sort: 'rating',
+      },
+    };
+
+    const result = await refreshGeneratedCollectionSource({
+      collectionId: 'generated-halo-games',
+      source,
+      refreshers: {
+        igdb: igdbRefresh,
+      },
+      logger: console,
+    });
+
+    expect(igdbRefresh).toHaveBeenCalledWith({
+      collectionId: 'generated-halo-games',
+      source,
+      today: undefined,
+      logger: console,
+    });
+    expect(result.collection.name).toBe('Halo Games');
   });
 
 });

@@ -4,7 +4,9 @@ import {
   refreshGeneratedCollectionSource,
   validateRefreshSourceRequest,
 } from '../scripts/sources/refresh-generated-collection.mjs';
+import { refreshIgdbCollectionSource } from '../scripts/sources/providers/igdb-source.mjs';
 import { refreshTmdbCollectionSource } from '../scripts/sources/providers/tmdb-source.mjs';
+import { createIgdbProvider } from '../scripts/providers/igdb.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
 
 export { validateRefreshSourceRequest } from '../scripts/sources/refresh-generated-collection.mjs';
@@ -32,6 +34,24 @@ function createSourceRefreshers() {
         source,
         tmdb: createTmdbProvider(token),
         today,
+        logger,
+      });
+    },
+    igdb({ collectionId, source, logger }) {
+      const clientId = process.env.IGDB_CLIENT_ID;
+      const clientSecret = process.env.IGDB_CLIENT_SECRET;
+
+      if (!clientId || !clientSecret) {
+        throw new Error('The IGDB collection source is not configured.');
+      }
+
+      return refreshIgdbCollectionSource({
+        collectionId,
+        source,
+        igdb: createIgdbProvider({
+          clientId,
+          clientSecret,
+        }),
         logger,
       });
     },
