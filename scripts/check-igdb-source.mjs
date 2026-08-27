@@ -33,7 +33,7 @@ if (!clientId || !clientSecret) {
         collectionId: 'igdb-source-check',
         igdbId: shooter.id,
         limit: 5,
-        sort: 'rating',
+        sort: 'popular',
       },
       igdb,
       logger: {

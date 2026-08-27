@@ -4,6 +4,10 @@ import {
   refreshGeneratedCollectionSource,
   validateRefreshSourceRequest,
 } from './refresh-generated-collection.mjs';
+import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+} from '../providers/igdb.mjs';
 import { buildIgdbGenerationRequestFromSource } from './providers/igdb-source.mjs';
 import { buildTmdbGenerationRequestFromSource } from './providers/tmdb-source.mjs';
 
@@ -183,6 +187,45 @@ describe('generated collection source refresh', () => {
         igdbId: 24,
         limit: 50,
         sort: 'release-asc',
+        gameTypes: [...CORE_IGDB_GAME_TYPES],
+      },
+    });
+  });
+
+  it('preserves explicit IGDB DLC and expansion scope during refresh reconstruction', () => {
+    const gameTypes = [
+      ...CORE_IGDB_GAME_TYPES,
+      ...DLC_EXPANSION_IGDB_GAME_TYPES,
+    ];
+
+    const result = buildIgdbGenerationRequestFromSource('generated-destiny-games', {
+      kind: 'generated',
+      provider: 'igdb',
+      originalRequest: 'Destiny',
+      definition: {
+        schemaVersion: 2,
+        collectionId: 'generated-destiny',
+        mediaType: 'game',
+        mode: 'franchise',
+        query: 'Destiny',
+        igdbId: 5,
+        resolvedName: 'Destiny',
+        limit: 50,
+        sort: 'popular',
+        gameTypes,
+      },
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      request: {
+        mode: 'franchise',
+        query: 'Destiny',
+        collectionId: 'generated-destiny',
+        igdbId: 5,
+        limit: 50,
+        sort: 'popular',
+        gameTypes,
       },
     });
   });

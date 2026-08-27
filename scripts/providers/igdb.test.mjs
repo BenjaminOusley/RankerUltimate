@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
   createIgdbImageUrl,
   createIgdbProvider,
   createIgdbRankItem,
   getIgdbReleaseYear,
+  isRankableIgdbGame,
 } from './igdb.mjs';
 
 function response({ status = 200, json = {}, text = '' } = {}) {
@@ -51,6 +54,48 @@ describe('IGDB provider', () => {
       'https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cover-id.jpg',
     );
     expect(getIgdbReleaseYear({ first_release_date: 946684800 })).toBe('2000');
+  });
+
+
+  it('keeps core game releases and filters add-ons, bundles, mods, packs, and unreleased noise', () => {
+    const game = (type, status = 'Released') => ({
+      id: 1,
+      name: 'Example',
+      game_type: { type },
+      game_status: { status },
+      version_parent: null,
+    });
+
+    expect(isRankableIgdbGame(game('Main Game'))).toBe(true);
+    expect(isRankableIgdbGame(game('Standalone Expansion'))).toBe(false);
+    expect(isRankableIgdbGame(game('Remake'))).toBe(true);
+    expect(isRankableIgdbGame(game('Remaster'))).toBe(true);
+    expect(isRankableIgdbGame(game('Expanded Game'))).toBe(true);
+
+    expect(isRankableIgdbGame(game('DLC / Addon'))).toBe(false);
+    expect(isRankableIgdbGame(game('Expansion'))).toBe(false);
+    expect(isRankableIgdbGame(game('Bundle'))).toBe(false);
+    expect(isRankableIgdbGame(game('Mod'))).toBe(false);
+    expect(isRankableIgdbGame(game('Season'))).toBe(false);
+    expect(isRankableIgdbGame(game('Pack'))).toBe(false);
+    expect(isRankableIgdbGame(game('Update'))).toBe(false);
+    expect(isRankableIgdbGame(game('Port'))).toBe(false);
+
+    expect(isRankableIgdbGame(game('Main Game', 'Cancelled'))).toBe(false);
+    expect(isRankableIgdbGame(game('Main Game', 'Rumored'))).toBe(false);
+    expect(isRankableIgdbGame(game('Main Game', 'Alpha'))).toBe(false);
+    expect(isRankableIgdbGame(game('Main Game', 'Beta'))).toBe(false);
+    expect(isRankableIgdbGame(game('Main Game', 'Early Access'))).toBe(true);
+    expect(isRankableIgdbGame(game('Main Game', 'Delisted'))).toBe(true);
+
+    const withDlcExpansions = {
+      gameTypes: [...CORE_IGDB_GAME_TYPES, ...DLC_EXPANSION_IGDB_GAME_TYPES],
+    };
+
+    expect(isRankableIgdbGame(game('Standalone Expansion'), withDlcExpansions)).toBe(true);
+    expect(isRankableIgdbGame(game('DLC / Addon'), withDlcExpansions)).toBe(true);
+    expect(isRankableIgdbGame(game('Expansion'), withDlcExpansions)).toBe(true);
+    expect(isRankableIgdbGame(game('Bundle'), withDlcExpansions)).toBe(false);
   });
 
   it('gets an app token and reuses it while valid', async () => {
@@ -217,9 +262,108 @@ describe('IGDB provider', () => {
     });
 
     expect(bodies[0]).toContain('where version_parent = null & genres = 12;');
+    expect(bodies[0]).toContain('game_type.type,game_status.status');
     expect(bodies[0]).toContain('sort first_release_date desc;');
     expect(bodies[1]).toContain('where version_parent = null & platforms = 48;');
     expect(bodies[1]).toContain('sort total_rating desc;');
+  });
+
+  it('filters non-game franchise noise before returning ranking candidates', async () => {
+    let requestNumber = 0;
+
+    const provider = createIgdbProvider({
+      clientId: 'client-id',
+      clientSecret: 'client-secret',
+      async fetchImpl(url) {
+        if (String(url).includes('id.twitch.tv')) {
+          return response({
+            json: {
+              access_token: 'token',
+              expires_in: 3600,
+            },
+          });
+        }
+
+        requestNumber += 1;
+
+        if (requestNumber === 1) {
+          return response({
+            json: [{ id: 1, name: 'Halo', games: [10, 11, 12, 13] }],
+          });
+        }
+
+        return response({
+          json: [
+            {
+              id: 10,
+              name: 'Halo: Combat Evolved',
+              game_type: { type: 'Main Game' },
+              game_status: { status: 'Released' },
+              total_rating_count: 100,
+            },
+            {
+              id: 11,
+              name: 'Halo Multiplayer Map Pack',
+              game_type: { type: 'Pack' },
+              game_status: { status: 'Released' },
+              total_rating_count: 80,
+            },
+            {
+              id: 12,
+              name: 'Halo Collection Bundle',
+              game_type: { type: 'Bundle' },
+              game_status: { status: 'Released' },
+              total_rating_count: 70,
+            },
+            {
+              id: 13,
+              name: 'Cancelled Halo Project',
+              game_type: { type: 'Main Game' },
+              game_status: { status: 'Cancelled' },
+              total_rating_count: 60,
+            },
+          ],
+        });
+      },
+    });
+
+    const games = await provider.getGamesByFranchiseId({
+      id: 1,
+      limit: 50,
+      sort: 'popular',
+    });
+
+    expect(games.map((game) => game.id)).toEqual([10]);
+  });
+
+  it('uses rating-count popularity for the default broad game sort', async () => {
+    let body = '';
+
+    const provider = createIgdbProvider({
+      clientId: 'client-id',
+      clientSecret: 'client-secret',
+      async fetchImpl(url, init) {
+        if (String(url).includes('id.twitch.tv')) {
+          return response({
+            json: {
+              access_token: 'token',
+              expires_in: 3600,
+            },
+          });
+        }
+
+        body = init.body;
+        return response({ json: [] });
+      },
+    });
+
+    await provider.getGamesByRelation({
+      relation: 'genres',
+      id: 5,
+      limit: 10,
+    });
+
+    expect(body).toContain('sort total_rating_count desc;');
   });
 
   it('loads canonical named entities by stable IGDB ID', async () => {

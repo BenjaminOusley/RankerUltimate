@@ -5,6 +5,7 @@ import { Button } from '@/shared/components/Button/Button';
 import { SceneHeading, ScenePanel, ScrollPanel } from '@/shared/components/Scene/Scene';
 import { generateCollection } from '../../api/generateCollection';
 import { searchCompanies } from '../../api/searchCompanies';
+import { searchIgdbEntities } from '../../api/searchIgdbEntities';
 import { searchPeople } from '../../api/searchPeople';
 import { CollectionGenerator } from '../../components/CollectionGenerator';
 import type { GenerationRequest } from '../../types';
@@ -37,7 +38,7 @@ export function CollectionGeneratorScreen({
         <SceneHeading className={styles.heading}>
           <div>
             <h1>Generate Collection</h1>
-            <p>Build a movie or TV collection from TMDB.</p>
+            <p>Build movie, TV, or game collections from TMDB and IGDB.</p>
           </div>
 
           <Button onClick={onBack}>← Back</Button>
@@ -50,6 +51,7 @@ export function CollectionGeneratorScreen({
             onGenerated={onComplete}
             onSearchPeople={searchPeople}
             onSearchCompanies={searchCompanies}
+            onSearchIgdbEntities={searchIgdbEntities}
           />
         </ScrollPanel>
       </ScenePanel>

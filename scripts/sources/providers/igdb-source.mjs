@@ -39,6 +39,7 @@ export function buildIgdbGenerationRequestFromSource(collectionId, source) {
     igdbId: definition.igdbId,
     limit: definition.limit,
     sort: definition.sort,
+    gameTypes: definition.gameTypes,
   });
 
   if (!validation.ok) {

@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+} from '../providers/igdb.mjs';
+import {
   generateIgdbCollection,
   validateIgdbGenerationRequest,
 } from './igdb-generator.mjs';
@@ -35,8 +39,41 @@ describe('IGDB collection generation', () => {
         igdbId: 5,
         limit: 50,
         sort: 'rating',
+        gameTypes: [...CORE_IGDB_GAME_TYPES],
       },
     });
+  });
+
+
+  it('defaults broad game collections to popularity instead of raw rating', () => {
+    const result = validateIgdbGenerationRequest({
+      mode: 'genre',
+      query: 'Shooter',
+      collectionId: 'generated-popular',
+      igdbId: 5,
+      limit: 25,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.request.sort).toBe('popular');
+    expect(result.request.gameTypes).toEqual([...CORE_IGDB_GAME_TYPES]);
+  });
+
+  it('adds DLC and expansion types only when explicitly requested', () => {
+    const result = validateIgdbGenerationRequest({
+      mode: 'franchise',
+      query: 'Destiny',
+      collectionId: 'generated-destiny',
+      igdbId: 1,
+      limit: 50,
+      includeDlcExpansions: true,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.request.gameTypes).toEqual([
+      ...CORE_IGDB_GAME_TYPES,
+      ...DLC_EXPANSION_IGDB_GAME_TYPES,
+    ]);
   });
 
   it('creates a refreshable IGDB genre collection with canonical RankItems', async () => {
@@ -69,6 +106,7 @@ describe('IGDB collection generation', () => {
       id: 5,
       limit: 50,
       sort: 'rating',
+      gameTypes: [...CORE_IGDB_GAME_TYPES],
     });
     expect(result.collection).toMatchObject({
       id: 'generated-test-games',
@@ -78,7 +116,7 @@ describe('IGDB collection generation', () => {
         provider: 'igdb',
         originalRequest: 'Shooter',
         definition: {
-          schemaVersion: 1,
+          schemaVersion: 2,
           collectionId: 'generated-test',
           mediaType: 'game',
           mode: 'genre',
@@ -87,6 +125,7 @@ describe('IGDB collection generation', () => {
           resolvedName: 'Shooter',
           limit: 50,
           sort: 'rating',
+          gameTypes: [...CORE_IGDB_GAME_TYPES],
         },
       },
     });
@@ -125,11 +164,12 @@ describe('IGDB collection generation', () => {
       },
     });
 
-    expect(igdb.getGamesByFranchiseId).toHaveBeenCalledWith(
-      24,
-      25,
-      'release-asc',
-    );
+    expect(igdb.getGamesByFranchiseId).toHaveBeenCalledWith({
+      id: 24,
+      limit: 25,
+      sort: 'release-asc',
+      gameTypes: [...CORE_IGDB_GAME_TYPES],
+    });
     expect(result.collection.name).toBe('Halo Games');
   });
 });

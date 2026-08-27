@@ -1,8 +1,13 @@
-import { createIgdbRankItem } from '../providers/igdb.mjs';
+import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+  createIgdbRankItem,
+  normalizeIgdbGameTypes,
+} from '../providers/igdb.mjs';
 
 const MAX_COLLECTION_LIMIT = 250;
 const MODES = new Set(['genre', 'franchise', 'platform', 'company']);
-const SORTS = new Set(['rating', 'release-asc', 'release-desc', 'name']);
+const SORTS = new Set(['popular', 'rating', 'release-asc', 'release-desc', 'name']);
 
 function isObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -45,11 +50,25 @@ function validateRequest(request) {
     throw new Error(`IGDB collection limit must be between 1 and ${MAX_COLLECTION_LIMIT}.`);
   }
 
-  const sort = request.sort ?? 'rating';
+  const sort = request.sort ?? 'popular';
 
   if (!SORTS.has(sort)) {
     throw new Error(`Unsupported IGDB collection sort: ${sort}`);
   }
+
+  if (
+    request.includeDlcExpansions !== undefined &&
+    typeof request.includeDlcExpansions !== 'boolean'
+  ) {
+    throw new Error('Include DLC / expansions must be true or false.');
+  }
+
+  const gameTypes = normalizeIgdbGameTypes(
+    request.gameTypes ??
+      (request.includeDlcExpansions
+        ? [...CORE_IGDB_GAME_TYPES, ...DLC_EXPANSION_IGDB_GAME_TYPES]
+        : CORE_IGDB_GAME_TYPES),
+  );
 
   return {
     mode: request.mode,
@@ -58,6 +77,7 @@ function validateRequest(request) {
     igdbId: request.igdbId,
     limit,
     sort,
+    gameTypes,
   };
 }
 
@@ -84,6 +104,7 @@ async function loadGames(igdb, request) {
       id: request.igdbId,
       limit: request.limit,
       sort: request.sort,
+      gameTypes: request.gameTypes,
     });
   }
 
@@ -93,14 +114,25 @@ async function loadGames(igdb, request) {
       id: request.igdbId,
       limit: request.limit,
       sort: request.sort,
+      gameTypes: request.gameTypes,
     });
   }
 
   if (request.mode === 'franchise') {
-    return igdb.getGamesByFranchiseId(request.igdbId, request.limit, request.sort);
+    return igdb.getGamesByFranchiseId({
+      id: request.igdbId,
+      limit: request.limit,
+      sort: request.sort,
+      gameTypes: request.gameTypes,
+    });
   }
 
-  return igdb.getGamesByCompanyId(request.igdbId, request.limit, request.sort);
+  return igdb.getGamesByCompanyId({
+    id: request.igdbId,
+    limit: request.limit,
+    sort: request.sort,
+    gameTypes: request.gameTypes,
+  });
 }
 
 function createCollection(request, resolvedEntity, items) {
@@ -127,7 +159,7 @@ function createCollection(request, resolvedEntity, items) {
       provider: 'igdb',
       originalRequest: request.query,
       definition: {
-        schemaVersion: 1,
+        schemaVersion: 2,
         collectionId: request.collectionId,
         mediaType: 'game',
         mode: request.mode,
@@ -136,6 +168,7 @@ function createCollection(request, resolvedEntity, items) {
         resolvedName: entityName,
         limit: request.limit,
         sort: request.sort,
+        gameTypes: request.gameTypes,
       },
     },
     items,
