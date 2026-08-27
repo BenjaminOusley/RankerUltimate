@@ -37,7 +37,7 @@ export function CollectionGeneratorScreen({
         <SceneHeading className={styles.heading}>
           <div>
             <h1>Generate Collection</h1>
-            <p>Build a movie collection from TMDB.</p>
+            <p>Build a movie or TV collection from TMDB.</p>
           </div>
 
           <Button onClick={onBack}>← Back</Button>

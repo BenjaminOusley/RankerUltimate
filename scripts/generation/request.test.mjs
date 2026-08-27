@@ -9,6 +9,7 @@ describe('parseGenerationRequest', () => {
     expect(result).toEqual({
       ok: true,
       request: {
+        mediaType: 'movie',
         mode: 'genre',
         query: 'Horror',
         collectionId: 'horror',
@@ -49,6 +50,7 @@ describe('parseGenerationRequest', () => {
     expect(result).toEqual({
       ok: true,
       request: {
+        mediaType: 'movie',
         mode: 'actor',
         query: 'Ryan Gosling',
         collectionId: 'gosling',
@@ -104,13 +106,14 @@ describe('parseGenerationRequest', () => {
     });
   });
 
-  it('rejects a TMDB ID for an incompatible mode', () => {
+  it('accepts a TMDB genre ID for stable source refreshes', () => {
     const result = parseGenerationRequest(['genre', 'Horror', 'horror', '--tmdb-id', '27']);
 
-    expect(result).toEqual({
-      ok: false,
-      error: '--tmdb-id can only be used with company, company-features, actor, or director mode.',
-    });
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(result.request.tmdbId).toBe(27);
+    }
   });
 
   it('rejects a backwards year range', () => {
@@ -175,4 +178,40 @@ describe('parseGenerationRequest', () => {
       expect(result.request.tmdbId).toBe(3);
     }
   });
+
+  it('parses TV generation requests', () => {
+    const result = parseGenerationRequest([
+      'genre',
+      'Drama',
+      'tv-drama',
+      '--media',
+      'tv',
+      '--limit',
+      '25',
+    ]);
+
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(result.request.mediaType).toBe('tv');
+      expect(result.request.mode).toBe('genre');
+      expect(result.request.limit).toBe(25);
+    }
+  });
+
+  it('rejects movie-only modes for TV', () => {
+    const result = parseGenerationRequest([
+      'director',
+      'Christopher Nolan',
+      'nolan-tv',
+      '--media',
+      'tv',
+    ]);
+
+    expect(result).toEqual({
+      ok: false,
+      error: 'director mode is only supported for movies.',
+    });
+  });
+
 });

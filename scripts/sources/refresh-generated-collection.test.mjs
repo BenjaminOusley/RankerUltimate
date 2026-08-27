@@ -49,6 +49,7 @@ describe('generated collection source refresh', () => {
     expect(result).toEqual({
       ok: true,
       request: {
+        mediaType: 'movie',
         mode: 'company-features',
         query: 'Pixar Animation Studios',
         collectionId: 'pixar-features',
@@ -109,4 +110,49 @@ describe('generated collection source refresh', () => {
       }),
     ).rejects.toThrow('Unsupported collection source provider: future-provider');
   });
+
+  it('reconstructs TV sources without coupling refresh to movie-only fields', () => {
+    const result = buildTmdbGenerationRequestFromSource('generated-test-tv', {
+      kind: 'generated',
+      provider: 'tmdb',
+      originalRequest: 'Drama',
+      definition: {
+        schemaVersion: 2,
+        collectionId: 'generated-test',
+        mediaType: 'tv',
+        mode: 'genre',
+        query: 'Drama',
+        tmdbId: 18,
+        mediaTypes: ['tv'],
+        limit: 50,
+        fromYear: null,
+        toYear: null,
+        sort: 'popularity',
+        minRuntime: null,
+        excludeDocumentaries: false,
+        includeAdult: false,
+        language: 'en-US',
+      },
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      request: {
+        mediaType: 'tv',
+        mode: 'genre',
+        query: 'Drama',
+        collectionId: 'generated-test',
+        limit: 50,
+        tmdbId: 18,
+        fromYear: null,
+        toYear: null,
+        sort: 'popularity',
+        minRuntime: null,
+        excludeDocumentaries: false,
+        includeAdult: false,
+        language: 'en-US',
+      },
+    });
+  });
+
 });

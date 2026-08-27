@@ -4,6 +4,7 @@ import { validateGenerationRequest } from '../../api/generate.js';
 
 function createRequest(overrides = {}) {
   return {
+    mediaType: 'movie',
     mode: 'genre',
     query: 'Horror',
     collectionId: 'horror-genre',
@@ -54,17 +55,14 @@ describe('validateGenerationRequest', () => {
     });
   });
 
-  it('rejects a TMDB ID for genre mode', () => {
+  it('accepts a TMDB genre ID so generated genre sources can refresh stably', () => {
     const result = validateGenerationRequest(
       createRequest({
         tmdbId: 27,
       }),
     );
 
-    expect(result).toEqual({
-      ok: false,
-      error: 'TMDB ID can only be used with company, company-features, actor, or director mode.',
-    });
+    expect(result.ok).toBe(true);
   });
 
   it('accepts a TMDB ID for company mode', () => {
@@ -79,4 +77,36 @@ describe('validateGenerationRequest', () => {
 
     expect(result.ok).toBe(true);
   });
+
+  it('accepts TV genre requests', () => {
+    const result = validateGenerationRequest(
+      createRequest({
+        mediaType: 'tv',
+        mode: 'genre',
+        query: 'Drama',
+        collectionId: 'tv-drama',
+        minRuntime: null,
+      }),
+    );
+
+    expect(result.ok).toBe(true);
+  });
+
+  it('rejects movie-only modes for TV', () => {
+    const result = validateGenerationRequest(
+      createRequest({
+        mediaType: 'tv',
+        mode: 'director',
+        query: 'Christopher Nolan',
+        collectionId: 'nolan-tv',
+        minRuntime: null,
+      }),
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error: 'director mode is only supported for movies.',
+    });
+  });
+
 });

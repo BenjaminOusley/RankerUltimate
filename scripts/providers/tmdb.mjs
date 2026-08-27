@@ -10,8 +10,10 @@ export function normalizeTitle(title) {
     .replace(/\s+/g, ' ');
 }
 
-export function getReleaseYear(movie) {
-  return movie.release_date?.slice(0, 4) || undefined;
+export function getReleaseYear(item, mediaType = 'movie') {
+  const date = mediaType === 'tv' ? item.first_air_date : item.release_date;
+
+  return date?.slice(0, 4) || undefined;
 }
 
 export function createItemId(title, tmdbId) {
@@ -23,18 +25,19 @@ export function createItemId(title, tmdbId) {
   return `${slug}-${tmdbId}`;
 }
 
-export function createRankItem(movie) {
-  const releaseYear = getReleaseYear(movie);
+export function createRankItem(item, mediaType = 'movie') {
+  const title = mediaType === 'tv' ? item.name : item.title;
+  const releaseYear = getReleaseYear(item, mediaType);
 
   return {
-    id: createItemId(movie.title, movie.id),
-    name: movie.title,
+    id: createItemId(title, item.id),
+    name: title,
     subtitle: releaseYear,
-    image: movie.poster_path ? `${TMDB_IMAGE_BASE}${movie.poster_path}` : undefined,
+    image: item.poster_path ? `${TMDB_IMAGE_BASE}${item.poster_path}` : undefined,
     source: {
       provider: 'tmdb',
-      id: String(movie.id),
-      type: 'movie',
+      id: String(item.id),
+      type: mediaType,
     },
   };
 }
@@ -80,6 +83,12 @@ export function createTmdbProvider(token) {
     });
   }
 
+  async function getTvById(tmdbId) {
+    return request(`/tv/${tmdbId}`, {
+      language: 'en-US',
+    });
+  }
+
   async function searchCompany(name) {
     const data = await request('/search/company', {
       query: name,
@@ -118,6 +127,31 @@ export function createTmdbProvider(token) {
     return movies.slice(0, limit);
   }
 
+  async function discoverTv(filters, limit = 250) {
+    const shows = [];
+
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const data = await request('/discover/tv', {
+        ...filters,
+        page: String(page),
+      });
+
+      shows.push(...(data.results ?? []));
+
+      if (shows.length >= limit) {
+        break;
+      }
+
+      totalPages = Math.min(data.total_pages ?? 1, 500);
+      page += 1;
+    } while (page <= totalPages);
+
+    return shows.slice(0, limit);
+  }
+
   async function searchPerson(name) {
     const data = await request('/search/person', {
       query: name,
@@ -137,6 +171,14 @@ export function createTmdbProvider(token) {
     return data.genres ?? [];
   }
 
+  async function getTvGenres() {
+    const data = await request('/genre/tv/list', {
+      language: 'en-US',
+    });
+
+    return data.genres ?? [];
+  }
+
   async function getPersonById(personId) {
     return request(`/person/${personId}`, {
       language: 'en-US',
@@ -149,15 +191,25 @@ export function createTmdbProvider(token) {
     });
   }
 
+  async function getPersonTvCredits(personId) {
+    return request(`/person/${personId}/tv_credits`, {
+      language: 'en-US',
+    });
+  }
+
   return {
     searchMovie,
     getMovieById,
+    getTvById,
     searchCompany,
     getCompanyById,
     discoverMovies,
+    discoverTv,
     searchPerson,
     getMovieGenres,
+    getTvGenres,
     getPersonById,
     getPersonMovieCredits,
+    getPersonTvCredits,
   };
 }

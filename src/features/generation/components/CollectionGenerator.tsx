@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styles from './CollectionGenerator.module.css';
 
 import type {
+  GenerationMediaType,
   GenerationMode,
   GenerationRequest,
   GenerationSort,
@@ -23,6 +24,20 @@ type CollectionGeneratorProps = {
 
   onSearchCompanies: (mode: CompanyGenerationMode, query: string) => Promise<CompanyMatch[]>;
 };
+
+const generationMediaTypes: {
+  value: GenerationMediaType;
+  label: string;
+}[] = [
+  {
+    value: 'movie',
+    label: 'Movies',
+  },
+  {
+    value: 'tv',
+    label: 'TV Shows',
+  },
+];
 
 const generationModes: {
   value: GenerationMode;
@@ -87,6 +102,10 @@ export function CollectionGenerator({
   onSearchPeople,
   onSearchCompanies,
 }: CollectionGeneratorProps) {
+  const [mediaType, setMediaType] = useState<GenerationMediaType>(
+    initialRequest?.mediaType ?? 'movie',
+  );
+
   const [mode, setMode] = useState<GenerationMode>(initialRequest?.mode ?? 'genre');
 
   const [query, setQuery] = useState(initialRequest?.query ?? '');
@@ -187,7 +206,7 @@ export function CollectionGenerator({
       return;
     }
 
-    const parsedMinRuntime = parseOptionalInteger(minRuntime);
+    const parsedMinRuntime = mediaType === 'movie' ? parseOptionalInteger(minRuntime) : null;
 
     if (
       parsedMinRuntime !== null &&
@@ -281,6 +300,7 @@ export function CollectionGenerator({
       }
 
       const request: GenerationRequest = {
+        mediaType,
         mode,
         query: trimmedQuery,
 
@@ -330,31 +350,71 @@ export function CollectionGenerator({
       className={styles.form}
       onSubmit={handleSubmit}
     >
-          <label className={styles.field}>
-            <span>Collection Type</span>
+          <div className={styles.grid}>
+            <label className={styles.field}>
+              <span>Media Type</span>
 
-            <select
-              value={mode}
-              onChange={(event) => {
-                setMode(event.target.value as GenerationMode);
+              <select
+                value={mediaType}
+                onChange={(event) => {
+                  const nextMediaType = event.target.value as GenerationMediaType;
 
-                setPersonMatches([]);
-                setSelectedPersonId(null);
-                setCompanyMatches([]);
-                setSelectedCompanyId(null);
-                setError(null);
-              }}
-            >
-              {generationModes.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                >
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+                  setMediaType(nextMediaType);
+
+                  if (nextMediaType === 'tv' && (mode === 'company-features' || mode === 'director')) {
+                    setMode('genre');
+                  }
+
+                  setPersonMatches([]);
+                  setSelectedPersonId(null);
+                  setCompanyMatches([]);
+                  setSelectedCompanyId(null);
+                  setError(null);
+                }}
+              >
+                {generationMediaTypes.map((option) => (
+                  <option
+                    key={option.value}
+                    value={option.value}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className={styles.field}>
+              <span>Collection Type</span>
+
+              <select
+                value={mode}
+                onChange={(event) => {
+                  setMode(event.target.value as GenerationMode);
+
+                  setPersonMatches([]);
+                  setSelectedPersonId(null);
+                  setCompanyMatches([]);
+                  setSelectedCompanyId(null);
+                  setError(null);
+                }}
+              >
+                {generationModes
+                  .filter(
+                    (option) =>
+                      mediaType === 'movie' ||
+                      (option.value !== 'company-features' && option.value !== 'director'),
+                  )
+                  .map((option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
 
           <label className={styles.field}>
             <span>Search</span>
@@ -444,18 +504,20 @@ export function CollectionGenerator({
             </label>
           </div>
 
-          <label className={styles.field}>
-            <span>Minimum Runtime (minutes)</span>
+          {mediaType === 'movie' && (
+            <label className={styles.field}>
+              <span>Minimum Runtime (minutes)</span>
 
-            <input
-              type="number"
-              min="0"
-              max="1000"
-              value={minRuntime}
-              onChange={(event) => setMinRuntime(event.target.value)}
-              placeholder="Optional"
-            />
-          </label>
+              <input
+                type="number"
+                min="0"
+                max="1000"
+                value={minRuntime}
+                onChange={(event) => setMinRuntime(event.target.value)}
+                placeholder="Optional"
+              />
+            </label>
+          )}
 
           <div className={styles.checks}>
             <label className={styles.checkbox}>

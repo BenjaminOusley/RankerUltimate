@@ -1,9 +1,16 @@
 import { createRankItem, normalizeTitle } from '../providers/tmdb.mjs';
 
 const DISCOVER_SORTS = {
-  'release-asc': 'primary_release_date.asc',
-  'release-desc': 'primary_release_date.desc',
-  popularity: 'popularity.desc',
+  movie: {
+    'release-asc': 'primary_release_date.asc',
+    'release-desc': 'primary_release_date.desc',
+    popularity: 'popularity.desc',
+  },
+  tv: {
+    'release-asc': 'first_air_date.asc',
+    'release-desc': 'first_air_date.desc',
+    popularity: 'popularity.desc',
+  },
 };
 
 function printCompanySuggestions(companies, logger) {
@@ -23,9 +30,7 @@ async function resolveCompany(tmdb, name, logger) {
   logger.log(`Searching for company: ${name}...\n`);
 
   const companies = await tmdb.searchCompany(name);
-
   const requestedName = normalizeTitle(name);
-
   const exactMatches = companies.filter(
     (company) => normalizeTitle(company.name) === requestedName,
   );
@@ -36,23 +41,10 @@ async function resolveCompany(tmdb, name, logger) {
 
   if (exactMatches.length > 1) {
     logger.error('Multiple companies with that exact name were found.');
-
     printCompanySuggestions(exactMatches, logger);
-
     return null;
   }
 
-  /*
-   * TMDB sometimes uses a shorter canonical
-   * company name.
-   *
-   * Example:
-   * Requested: "Pixar Animation Studios"
-   * TMDB:      "Pixar"
-   *
-   * We allow a containment match only when
-   * exactly one search result qualifies.
-   */
   const aliasMatches = companies.filter((company) => {
     const candidateName = normalizeTitle(company.name);
 
@@ -68,7 +60,6 @@ async function resolveCompany(tmdb, name, logger) {
   }
 
   logger.error('No safe company match was found.');
-
   printCompanySuggestions(companies, logger);
 
   return null;
@@ -93,9 +84,7 @@ async function resolvePerson(tmdb, name, expectedDepartment, logger) {
   logger.log(`Searching for person: ${name}...\n`);
 
   const people = await tmdb.searchPerson(name);
-
   const requestedName = normalizeTitle(name);
-
   const exactMatches = people.filter((person) => normalizeTitle(person.name) === requestedName);
 
   if (exactMatches.length === 1) {
@@ -114,41 +103,33 @@ async function resolvePerson(tmdb, name, expectedDepartment, logger) {
 
     if (departmentMatches.length > 1) {
       logger.error(`Multiple exact matches were found in ${expectedDepartment}.`);
-
       printPersonSuggestions(departmentMatches, logger);
-
       return null;
     }
   }
 
   if (exactMatches.length > 1) {
     logger.error('Multiple people with that exact name were found.');
-
     printPersonSuggestions(exactMatches, logger);
-
     return null;
   }
 
   logger.error('No safe exact person match was found.');
-
   printPersonSuggestions(people, logger);
 
   return null;
 }
 
-async function resolveGenre(tmdb, name, logger) {
-  const genres = await tmdb.getMovieGenres();
-
+async function resolveGenre(tmdb, name, mediaType, logger) {
+  const genres = mediaType === 'tv' ? await tmdb.getTvGenres() : await tmdb.getMovieGenres();
   const requestedName = normalizeTitle(name);
-
   const matches = genres.filter((genre) => normalizeTitle(genre.name) === requestedName);
 
   if (matches.length === 1) {
     return matches[0];
   }
 
-  logger.error(`No exact movie genre found for "${name}".`);
-
+  logger.error(`No exact ${mediaType === 'tv' ? 'TV' : 'movie'} genre found for "${name}".`);
   logger.log('\nAvailable genres:');
 
   for (const genre of genres) {
@@ -158,65 +139,72 @@ async function resolveGenre(tmdb, name, logger) {
   return null;
 }
 
-function sortPersonMovies(movies, sort) {
-  if (sort === 'release-asc') {
-    movies.sort((a, b) => a.release_date.localeCompare(b.release_date));
+function getItemDate(item, mediaType) {
+  return mediaType === 'tv' ? item.first_air_date : item.release_date;
+}
 
+function getItemTitle(item, mediaType) {
+  return mediaType === 'tv' ? item.name : item.title;
+}
+
+function sortPersonItems(items, sort, mediaType) {
+  if (sort === 'release-asc') {
+    items.sort((a, b) => getItemDate(a, mediaType).localeCompare(getItemDate(b, mediaType)));
     return;
   }
 
   if (sort === 'release-desc') {
-    movies.sort((a, b) => b.release_date.localeCompare(a.release_date));
-
+    items.sort((a, b) => getItemDate(b, mediaType).localeCompare(getItemDate(a, mediaType)));
     return;
   }
 
-  movies.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+  items.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
 }
 
 function getEffectiveCriteria(request) {
-  const companyFeatures = request.mode === 'company-features';
+  const companyFeatures = request.mediaType === 'movie' && request.mode === 'company-features';
 
   return {
-    minRuntime: request.minRuntime ?? (companyFeatures ? 75 : null),
-
+    minRuntime: request.mediaType === 'movie' ? request.minRuntime ?? (companyFeatures ? 75 : null) : null,
     excludeDocumentaries: request.excludeDocumentaries || companyFeatures,
   };
 }
 
-function passesCanonicalValidation(movie, request, criteria, today) {
-  if (!request.includeAdult && movie.adult === true) {
+function passesCanonicalValidation(item, request, criteria, today) {
+  if (!request.includeAdult && item.adult === true) {
     return false;
   }
 
-  if (movie.video === true) {
+  if (request.mediaType === 'movie' && item.video === true) {
     return false;
   }
 
-  if (!movie.release_date) {
+  const releaseDate = getItemDate(item, request.mediaType);
+
+  if (!releaseDate) {
     return false;
   }
 
-  if (movie.release_date > today) {
+  if (releaseDate > today) {
     return false;
   }
 
-  if (request.fromYear !== null && movie.release_date < `${request.fromYear}-01-01`) {
+  if (request.fromYear !== null && releaseDate < `${request.fromYear}-01-01`) {
     return false;
   }
 
-  if (request.toYear !== null && movie.release_date > `${request.toYear}-12-31`) {
+  if (request.toYear !== null && releaseDate > `${request.toYear}-12-31`) {
     return false;
   }
 
   if (
     criteria.minRuntime !== null &&
-    (movie.runtime === null || movie.runtime === undefined || movie.runtime < criteria.minRuntime)
+    (item.runtime === null || item.runtime === undefined || item.runtime < criteria.minRuntime)
   ) {
     return false;
   }
 
-  if (criteria.excludeDocumentaries && movie.genres?.some((genre) => genre.id === 99)) {
+  if (criteria.excludeDocumentaries && item.genres?.some((genre) => genre.id === 99)) {
     return false;
   }
 
@@ -233,40 +221,38 @@ function getFilterDescription(request, criteria) {
     criteria.minRuntime !== null ? `, minimum runtime ${criteria.minRuntime} min` : '';
 
   const documentaryText = criteria.excludeDocumentaries ? ', documentaries excluded' : '';
-
   const adultText = request.includeAdult ? ', adult titles included' : ', adult titles excluded';
 
-  return `${yearRange}` + `${runtimeText}` + `${documentaryText}` + `${adultText}`;
+  return `${yearRange}${runtimeText}${documentaryText}${adultText}`;
 }
 
 function createCollection(request, resolvedEntity, items) {
+  const isTv = request.mediaType === 'tv';
+  const mediaLabel = isTv ? 'TV Shows' : 'Movies';
+  const mediaDescription = isTv ? 'TV shows' : 'Movies';
+
   let name;
   let description;
 
   if (request.mode === 'company') {
-    name = `${resolvedEntity.name} Movies`;
-
-    description = `Movies produced by ${resolvedEntity.name}.`;
+    name = `${resolvedEntity.name} ${mediaLabel}`;
+    description = `${mediaDescription} produced by ${resolvedEntity.name}.`;
   } else if (request.mode === 'company-features') {
     name = `${resolvedEntity.name} Feature Films`;
-
     description = `Feature films produced by ${resolvedEntity.name}.`;
   } else if (request.mode === 'director') {
     name = `${resolvedEntity.name} Movies`;
-
     description = `Movies directed by ${resolvedEntity.name}.`;
   } else if (request.mode === 'actor') {
-    name = `${resolvedEntity.name} Movies`;
-
-    description = `Movies featuring ${resolvedEntity.name}.`;
+    name = `${resolvedEntity.name} ${mediaLabel}`;
+    description = `${mediaDescription} featuring ${resolvedEntity.name}.`;
   } else {
-    name = `${resolvedEntity.name} Movies`;
-
-    description = `${resolvedEntity.name} movies from TMDB.`;
+    name = `${resolvedEntity.name} ${mediaLabel}`;
+    description = `${resolvedEntity.name} ${isTv ? 'TV shows' : 'movies'} from TMDB.`;
   }
 
   return {
-    id: `${request.collectionId}-movies`,
+    id: `${request.collectionId}-${isTv ? 'tv' : 'movies'}`,
     name,
     description,
     candidateSource: {
@@ -274,12 +260,13 @@ function createCollection(request, resolvedEntity, items) {
       provider: 'tmdb',
       originalRequest: request.query,
       definition: {
-        schemaVersion: 1,
+        schemaVersion: 2,
         collectionId: request.collectionId,
+        mediaType: request.mediaType,
         mode: request.mode,
         query: request.query,
         tmdbId: resolvedEntity?.id ?? request.tmdbId ?? null,
-        mediaTypes: ['movie'],
+        mediaTypes: [request.mediaType],
         limit: request.limit,
         fromYear: request.fromYear,
         toYear: request.toYear,
@@ -294,6 +281,68 @@ function createCollection(request, resolvedEntity, items) {
   };
 }
 
+function buildDiscoverFilters(request, criteria, today) {
+  const filters = {
+    include_adult: String(request.includeAdult),
+    language: request.language,
+    sort_by: DISCOVER_SORTS[request.mediaType][request.sort],
+  };
+
+  if (request.mediaType === 'movie') {
+    filters.include_video = 'false';
+  }
+
+  const dateKey = request.mediaType === 'tv' ? 'first_air_date' : 'primary_release_date';
+
+  if (request.fromYear !== null) {
+    filters[`${dateKey}.gte`] = `${request.fromYear}-01-01`;
+  }
+
+  const requestedEndDate = request.toYear === null ? today : `${request.toYear}-12-31`;
+  filters[`${dateKey}.lte`] = requestedEndDate < today ? requestedEndDate : today;
+
+  if (criteria.minRuntime !== null) {
+    filters['with_runtime.gte'] = String(criteria.minRuntime);
+  }
+
+  if (criteria.excludeDocumentaries) {
+    filters.without_genres = '99';
+  }
+
+  if (request.mediaType === 'movie' && request.mode === 'company-features') {
+    filters.region = 'US';
+    filters.with_release_type = '3|2';
+  }
+
+  return filters;
+}
+
+function prefilterPersonCredit(item, request, today) {
+  if (!request.includeAdult && item.adult === true) {
+    return false;
+  }
+
+  if (request.mediaType === 'movie' && item.video === true) {
+    return false;
+  }
+
+  const releaseDate = getItemDate(item, request.mediaType);
+
+  if (!releaseDate || releaseDate > today) {
+    return false;
+  }
+
+  if (request.fromYear !== null && releaseDate < `${request.fromYear}-01-01`) {
+    return false;
+  }
+
+  if (request.toYear !== null && releaseDate > `${request.toYear}-12-31`) {
+    return false;
+  }
+
+  return true;
+}
+
 export async function generateTmdbCollection({
   request,
   tmdb,
@@ -301,17 +350,7 @@ export async function generateTmdbCollection({
   logger = console,
 }) {
   const criteria = getEffectiveCriteria(request);
-
-  const discoverSortBy = DISCOVER_SORTS[request.sort];
-
-  /** @type {Record<string, string>} */
-  const filters = {
-    include_adult: String(request.includeAdult),
-    include_video: 'false',
-    language: request.language,
-    sort_by: discoverSortBy,
-  };
-
+  const filters = buildDiscoverFilters(request, criteria, today);
   let resolvedEntity = null;
 
   if (request.mode === 'company' || request.mode === 'company-features') {
@@ -319,9 +358,7 @@ export async function generateTmdbCollection({
 
     if (request.tmdbId !== null) {
       logger.log(`Loading company by TMDB ID ${request.tmdbId}...\n`);
-
       company = await tmdb.getCompanyById(request.tmdbId);
-
       logger.log(`✓ Company: ${company.name} [TMDB ${company.id}]`);
     } else {
       company = await resolveCompany(tmdb, request.query, logger);
@@ -334,20 +371,16 @@ export async function generateTmdbCollection({
     }
 
     resolvedEntity = company;
-
     filters.with_companies = String(company.id);
   }
 
   if (request.mode === 'director' || request.mode === 'actor') {
     const expectedDepartment = request.mode === 'director' ? 'Directing' : 'Acting';
-
     let person;
 
     if (request.tmdbId !== null) {
       logger.log(`Loading person by TMDB ID ${request.tmdbId}...\n`);
-
       person = await tmdb.getPersonById(request.tmdbId);
-
       logger.log(
         `✓ Person: ${person.name} — ${
           person.known_for_department ?? 'Unknown department'
@@ -367,133 +400,114 @@ export async function generateTmdbCollection({
   }
 
   if (request.mode === 'genre') {
-    const genre = await resolveGenre(tmdb, request.query, logger);
+    let genre;
 
-    if (!genre) {
-      throw new Error('Generation cancelled.');
+    if (request.tmdbId !== null) {
+      const genres =
+        request.mediaType === 'tv' ? await tmdb.getTvGenres() : await tmdb.getMovieGenres();
+
+      genre = genres.find((candidate) => candidate.id === request.tmdbId) ?? null;
+
+      if (!genre) {
+        throw new Error(`TMDB genre ${request.tmdbId} was not found.`);
+      }
+    } else {
+      genre = await resolveGenre(tmdb, request.query, request.mediaType, logger);
+
+      if (!genre) {
+        throw new Error('Generation cancelled.');
+      }
     }
 
     resolvedEntity = genre;
-
     logger.log(`✓ Genre: ${genre.name} [TMDB ${genre.id}]`);
-
     filters.with_genres = String(genre.id);
   }
 
-  if (request.fromYear !== null) {
-    filters['primary_release_date.gte'] = `${request.fromYear}-01-01`;
-  }
-
-  const requestedEndDate = request.toYear === null ? today : `${request.toYear}-12-31`;
-
-  filters['primary_release_date.lte'] = requestedEndDate < today ? requestedEndDate : today;
-
-  if (criteria.minRuntime !== null) {
-    filters['with_runtime.gte'] = String(criteria.minRuntime);
-  }
-
-  if (criteria.excludeDocumentaries) {
-    filters.without_genres = '99';
-  }
-
-  if (request.mode === 'company-features') {
-    filters.region = 'US';
-    filters.with_release_type = '3|2';
-  }
-
   const filterDescription = getFilterDescription(request, criteria);
-
-  let movies;
+  let candidates;
 
   if (request.mode === 'director' || request.mode === 'actor') {
+    const mediaDescription = request.mediaType === 'tv' ? 'TV' : 'movie';
+
     logger.log(
-      `\nLoading ${resolvedEntity.name}'s movie credits (${request.sort}${filterDescription})...\n`,
+      `\nLoading ${resolvedEntity.name}'s ${mediaDescription} credits (${request.sort}${filterDescription})...\n`,
     );
 
-    const credits = await tmdb.getPersonMovieCredits(resolvedEntity.id);
+    const credits =
+      request.mediaType === 'tv'
+        ? await tmdb.getPersonTvCredits(resolvedEntity.id)
+        : await tmdb.getPersonMovieCredits(resolvedEntity.id);
 
     const candidateCredits =
       request.mode === 'director'
         ? (credits.crew ?? []).filter((credit) => credit.job === 'Director')
         : (credits.cast ?? []);
 
-    const uniqueMovies = new Map();
+    const uniqueItems = new Map();
 
-    for (const movie of candidateCredits) {
-      if (!request.includeAdult && movie.adult === true) {
+    for (const item of candidateCredits) {
+      if (!prefilterPersonCredit(item, request, today)) {
         continue;
       }
 
-      if (movie.video === true) {
-        continue;
-      }
-
-      if (!movie.release_date) {
-        continue;
-      }
-
-      if (movie.release_date > today) {
-        continue;
-      }
-
-      if (request.fromYear !== null && movie.release_date < `${request.fromYear}-01-01`) {
-        continue;
-      }
-
-      if (request.toYear !== null && movie.release_date > `${request.toYear}-12-31`) {
-        continue;
-      }
-
-      uniqueMovies.set(movie.id, movie);
+      uniqueItems.set(item.id, item);
     }
 
-    movies = [...uniqueMovies.values()];
-
-    sortPersonMovies(movies, request.sort);
+    candidates = [...uniqueItems.values()];
+    sortPersonItems(candidates, request.sort, request.mediaType);
   } else {
+    const mediaDescription = request.mediaType === 'tv' ? 'TV shows' : 'movies';
+
     logger.log(
-      `\nDiscovering released movies through ${today}${filterDescription} (maximum ${request.limit}, sort ${request.sort})...\n`,
+      `\nDiscovering released ${mediaDescription} through ${today}${filterDescription} (maximum ${request.limit}, sort ${request.sort})...\n`,
     );
 
-    movies = await tmdb.discoverMovies(filters, request.limit);
+    candidates =
+      request.mediaType === 'tv'
+        ? await tmdb.discoverTv(filters, request.limit)
+        : await tmdb.discoverMovies(filters, request.limit);
   }
 
-  const uniqueMovies = [...new Map(movies.map((movie) => [movie.id, movie])).values()];
+  const uniqueCandidates = [...new Map(candidates.map((item) => [item.id, item])).values()];
+  const mediaDescription = request.mediaType === 'tv' ? 'TV shows' : 'movies';
 
-  logger.log(`Found ${uniqueMovies.length} candidate movies.`);
+  logger.log(`Found ${uniqueCandidates.length} candidate ${mediaDescription}.`);
+  logger.log(`\nLoading canonical ${request.mediaType === 'tv' ? 'TV' : 'movie'} metadata...\n`);
 
-  logger.log('\nLoading canonical movie metadata...\n');
+  const canonicalItems = [];
 
-  const canonicalMovies = [];
-
-  for (const movie of uniqueMovies) {
-    const details = await tmdb.getMovieById(movie.id);
+  for (const candidate of uniqueCandidates) {
+    const details =
+      request.mediaType === 'tv'
+        ? await tmdb.getTvById(candidate.id)
+        : await tmdb.getMovieById(candidate.id);
 
     if (!passesCanonicalValidation(details, request, criteria, today)) {
       continue;
     }
 
-    canonicalMovies.push(details);
+    canonicalItems.push(details);
 
-    if (canonicalMovies.length >= request.limit) {
+    if (canonicalItems.length >= request.limit) {
       break;
     }
   }
 
-  if (canonicalMovies.length === 0) {
-    throw new Error('No movies passed validation.');
+  if (canonicalItems.length === 0) {
+    throw new Error(`No ${mediaDescription} passed validation.`);
   }
 
-  logger.log(`\nValidated ${canonicalMovies.length} movies:\n`);
+  logger.log(`\nValidated ${canonicalItems.length} ${mediaDescription}:\n`);
 
-  for (const movie of canonicalMovies) {
-    const year = movie.release_date?.slice(0, 4) ?? 'unknown';
+  for (const item of canonicalItems) {
+    const date = getItemDate(item, request.mediaType);
+    const year = date?.slice(0, 4) ?? 'unknown';
 
-    logger.log(`  ${year} - ${movie.title} [TMDB ${movie.id}]`);
+    logger.log(`  ${year} - ${getItemTitle(item, request.mediaType)} [TMDB ${item.id}]`);
   }
 
-  const items = canonicalMovies.map(createRankItem);
-
+  const items = canonicalItems.map((item) => createRankItem(item, request.mediaType));
   const missingPosterCount = items.filter((item) => !item.image).length;
 
   if (missingPosterCount > 0) {
@@ -503,8 +517,8 @@ export async function generateTmdbCollection({
   return {
     collection: createCollection(request, resolvedEntity, items),
     resolvedEntity,
-    candidateCount: uniqueMovies.length,
-    validatedCount: canonicalMovies.length,
+    candidateCount: uniqueCandidates.length,
+    validatedCount: canonicalItems.length,
     missingPosterCount,
   };
 }

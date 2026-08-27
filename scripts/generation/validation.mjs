@@ -1,3 +1,5 @@
+const GENERATION_MEDIA_TYPES = new Set(['movie', 'tv']);
+
 const GENERATION_MODES = new Set(['company', 'company-features', 'director', 'actor', 'genre']);
 
 const GENERATION_SORTS = new Set(['release-asc', 'release-desc', 'popularity']);
@@ -41,8 +43,18 @@ export function validateGenerationRequest(value) {
     language,
   } = value;
 
+  const mediaType = value.mediaType ?? 'movie';
+
+  if (!GENERATION_MEDIA_TYPES.has(mediaType)) {
+    return failure('Invalid media type.');
+  }
+
   if (!GENERATION_MODES.has(mode)) {
     return failure('Invalid generation mode.');
+  }
+
+  if (mediaType === 'tv' && (mode === 'company-features' || mode === 'director')) {
+    return failure(`${mode} mode is only supported for movies.`);
   }
 
   if (typeof query !== 'string' || query.trim().length === 0 || query.trim().length > 200) {
@@ -71,10 +83,11 @@ export function validateGenerationRequest(value) {
     mode !== 'company' &&
     mode !== 'company-features' &&
     mode !== 'actor' &&
-    mode !== 'director'
+    mode !== 'director' &&
+    mode !== 'genre'
   ) {
     return failure(
-      'TMDB ID can only be used with company, company-features, actor, or director mode.',
+      'TMDB ID can only be used with company, company-features, actor, director, or genre mode.',
     );
   }
 
@@ -98,6 +111,10 @@ export function validateGenerationRequest(value) {
     return failure('Minimum runtime must be between 0 and 1000 minutes.');
   }
 
+  if (mediaType === 'tv' && minRuntime !== null) {
+    return failure('Minimum runtime is currently only supported for movies.');
+  }
+
   if (typeof excludeDocumentaries !== 'boolean') {
     return failure('Exclude documentaries must be a boolean.');
   }
@@ -113,6 +130,7 @@ export function validateGenerationRequest(value) {
   return {
     ok: true,
     request: {
+      mediaType,
       mode,
       query: query.trim(),
       collectionId,

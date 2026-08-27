@@ -6,9 +6,19 @@ export const SUPPORTED_GENERATION_MODES = [
   'genre',
 ];
 
-const VALUE_OPTIONS = new Set(['limit', 'tmdb-id', 'from', 'to', 'sort', 'min-runtime']);
+const VALUE_OPTIONS = new Set([
+  'media',
+  'limit',
+  'tmdb-id',
+  'from',
+  'to',
+  'sort',
+  'min-runtime',
+]);
 
 const FLAG_OPTIONS = new Set(['exclude-documentaries', 'include-adult']);
+
+const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv']);
 
 const SUPPORTED_SORTS = new Set(['release-asc', 'release-desc', 'popularity']);
 
@@ -117,8 +127,17 @@ export function parseGenerationRequest(args) {
     index += 1;
   }
 
-  const limitValue = values.get('limit');
+  const mediaType = values.get('media') ?? 'movie';
 
+  if (!SUPPORTED_MEDIA_TYPES.has(mediaType)) {
+    return failure('--media must be movie or tv.');
+  }
+
+  if (mediaType === 'tv' && (mode === 'company-features' || mode === 'director')) {
+    return failure(`${mode} mode is only supported for movies.`);
+  }
+
+  const limitValue = values.get('limit');
   const limit = limitValue === undefined ? 250 : parsePositiveInteger(limitValue);
 
   if (limit === null) {
@@ -126,7 +145,6 @@ export function parseGenerationRequest(args) {
   }
 
   const tmdbIdValue = values.get('tmdb-id');
-
   const tmdbId = tmdbIdValue === undefined ? null : parsePositiveInteger(tmdbIdValue);
 
   if (tmdbIdValue !== undefined && tmdbId === null) {
@@ -138,15 +156,15 @@ export function parseGenerationRequest(args) {
     mode !== 'company' &&
     mode !== 'company-features' &&
     mode !== 'actor' &&
-    mode !== 'director'
+    mode !== 'director' &&
+    mode !== 'genre'
   ) {
     return failure(
-      '--tmdb-id can only be used with company, company-features, actor, or director mode.',
+      '--tmdb-id can only be used with company, company-features, actor, director, or genre mode.',
     );
   }
 
   const fromValue = values.get('from');
-
   const fromYear = fromValue === undefined ? null : parseYear(fromValue);
 
   if (fromValue !== undefined && fromYear === null) {
@@ -154,7 +172,6 @@ export function parseGenerationRequest(args) {
   }
 
   const toValue = values.get('to');
-
   const toYear = toValue === undefined ? null : parseYear(toValue);
 
   if (toValue !== undefined && toYear === null) {
@@ -172,7 +189,6 @@ export function parseGenerationRequest(args) {
   }
 
   const minRuntimeValue = values.get('min-runtime');
-
   const minRuntime =
     minRuntimeValue === undefined ? null : parseNonNegativeInteger(minRuntimeValue);
 
@@ -180,9 +196,14 @@ export function parseGenerationRequest(args) {
     return failure('--min-runtime must be a non-negative integer.');
   }
 
+  if (mediaType === 'tv' && minRuntime !== null) {
+    return failure('--min-runtime is currently only supported for movies.');
+  }
+
   return {
     ok: true,
     request: {
+      mediaType,
       mode,
       query,
       collectionId,

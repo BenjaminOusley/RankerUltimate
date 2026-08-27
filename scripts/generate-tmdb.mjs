@@ -43,7 +43,7 @@ async function main() {
 
   const outputPath = path.join(outputDirectory, `${request.collectionId}.ts`);
 
-  const exportName = `${toCamelCase(request.collectionId)}Movies`;
+  const exportName = `${toCamelCase(request.collectionId)}${request.mediaType === 'tv' ? 'TvShows' : 'Movies'}`;
 
   const output = `import type { RankCollection } from '../../domain/models';
 

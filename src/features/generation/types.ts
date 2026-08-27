@@ -1,8 +1,11 @@
+export type GenerationMediaType = 'movie' | 'tv';
+
 export type GenerationMode = 'company' | 'company-features' | 'director' | 'actor' | 'genre';
 
 export type GenerationSort = 'release-asc' | 'release-desc' | 'popularity';
 
 export type GenerationRequest = {
+  mediaType: GenerationMediaType;
   mode: GenerationMode;
   query: string;
   collectionId: string;

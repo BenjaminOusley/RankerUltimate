@@ -9,6 +9,7 @@ const silentLogger = {
 
 function createRequest(overrides = {}) {
   return {
+    mediaType: 'movie',
     mode: 'genre',
     query: 'Horror',
     collectionId: 'test',
@@ -588,4 +589,149 @@ describe('generateTmdbCollection', () => {
 
     expect(result.collection.name).toBe('Pixar Movies');
   });
+
+  it('generates TV collections through TMDB discover', async () => {
+    let receivedFilters = null;
+
+    const tmdb = {
+      async getTvGenres() {
+        return [
+          {
+            id: 18,
+            name: 'Drama',
+          },
+        ];
+      },
+
+      async discoverTv(filters) {
+        receivedFilters = filters;
+
+        return [
+          {
+            id: 100,
+          },
+        ];
+      },
+
+      async getTvById() {
+        return {
+          id: 100,
+          name: 'Test Drama',
+          first_air_date: '2020-01-01',
+          genres: [{ id: 18, name: 'Drama' }],
+          adult: false,
+          poster_path: null,
+        };
+      },
+    };
+
+    const result = await generateTmdbCollection({
+      request: createRequest({
+        mediaType: 'tv',
+        mode: 'genre',
+        query: 'Drama',
+        collectionId: 'tv-drama',
+        minRuntime: null,
+        fromYear: 2015,
+        sort: 'release-desc',
+      }),
+      tmdb,
+      today: '2026-08-20',
+      logger: silentLogger,
+    });
+
+    expect(receivedFilters).toEqual({
+      include_adult: 'false',
+      language: 'en-US',
+      sort_by: 'first_air_date.desc',
+      with_genres: '18',
+      'first_air_date.gte': '2015-01-01',
+      'first_air_date.lte': '2026-08-20',
+    });
+
+    expect(result.collection.name).toBe('Drama TV Shows');
+    expect(result.collection.items).toEqual([
+      expect.objectContaining({
+        name: 'Test Drama',
+        subtitle: '2020',
+        source: {
+          provider: 'tmdb',
+          id: '100',
+          type: 'tv',
+        },
+      }),
+    ]);
+    expect(result.collection.candidateSource.definition).toMatchObject({
+      schemaVersion: 2,
+      mediaType: 'tv',
+      mediaTypes: ['tv'],
+    });
+  });
+
+  it('generates actor TV collections from TV credits', async () => {
+    const tmdb = {
+      async getPersonById() {
+        return {
+          id: 1,
+          name: 'Test Actor',
+          known_for_department: 'Acting',
+        };
+      },
+
+      async getPersonTvCredits() {
+        return {
+          cast: [
+            {
+              id: 101,
+              name: 'Older Show',
+              first_air_date: '2010-01-01',
+              adult: false,
+              popularity: 1,
+            },
+            {
+              id: 102,
+              name: 'Newer Show',
+              first_air_date: '2020-01-01',
+              adult: false,
+              popularity: 2,
+            },
+          ],
+          crew: [],
+        };
+      },
+
+      async getTvById(id) {
+        return {
+          id,
+          name: id === 101 ? 'Older Show' : 'Newer Show',
+          first_air_date: id === 101 ? '2010-01-01' : '2020-01-01',
+          genres: [],
+          adult: false,
+          poster_path: null,
+        };
+      },
+    };
+
+    const result = await generateTmdbCollection({
+      request: createRequest({
+        mediaType: 'tv',
+        mode: 'actor',
+        query: 'Test Actor',
+        collectionId: 'test-actor-tv',
+        tmdbId: 1,
+        minRuntime: null,
+        sort: 'release-desc',
+      }),
+      tmdb,
+      today: '2026-08-20',
+      logger: silentLogger,
+    });
+
+    expect(result.collection.name).toBe('Test Actor TV Shows');
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Newer Show',
+      'Older Show',
+    ]);
+  });
+
 });

@@ -13,9 +13,31 @@ function failure(error) {
 }
 
 function fallbackSourceCollectionId(collectionId) {
-  return collectionId.endsWith('-movies')
-    ? collectionId.slice(0, -'-movies'.length)
-    : collectionId;
+  if (collectionId.endsWith('-movies')) {
+    return collectionId.slice(0, -'-movies'.length);
+  }
+
+  if (collectionId.endsWith('-tv')) {
+    return collectionId.slice(0, -'-tv'.length);
+  }
+
+  return collectionId;
+}
+
+function getMediaType(definition) {
+  if (definition.mediaType === 'movie' || definition.mediaType === 'tv') {
+    return definition.mediaType;
+  }
+
+  if (Array.isArray(definition.mediaTypes)) {
+    const firstMediaType = definition.mediaTypes[0];
+
+    if (firstMediaType === 'movie' || firstMediaType === 'tv') {
+      return firstMediaType;
+    }
+  }
+
+  return 'movie';
 }
 
 export function buildTmdbGenerationRequestFromSource(collectionId, source) {
@@ -26,6 +48,7 @@ export function buildTmdbGenerationRequestFromSource(collectionId, source) {
   }
 
   const generationRequest = {
+    mediaType: getMediaType(definition),
     mode: definition.mode,
     query: definition.query,
     collectionId:
