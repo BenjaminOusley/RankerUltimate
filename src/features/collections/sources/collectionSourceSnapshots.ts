@@ -62,6 +62,29 @@ export function getCollectionSourceFingerprint(source: RefreshableCollectionSour
 // Backward-compatible name for callers/tests that still deal with a single provider source.
 export const getGeneratedSourceFingerprint = getCollectionSourceFingerprint;
 
+function getLegacyGeneratedSourceFingerprint(
+  source: Extract<RefreshableCollectionSource, { kind: 'generated' }>,
+) {
+  return stableSerialize({
+    provider: source.provider,
+    definition: source.definition,
+  });
+}
+
+function sourceFingerprintMatches(
+  source: RefreshableCollectionSource,
+  sourceFingerprint: string,
+) {
+  if (sourceFingerprint === getCollectionSourceFingerprint(source)) {
+    return true;
+  }
+
+  return (
+    source.kind === 'generated' &&
+    sourceFingerprint === getLegacyGeneratedSourceFingerprint(source)
+  );
+}
+
 export function createCollectionSourceSnapshot(
   baseCollection: RankCollection,
   refreshedCollection: RankCollection,
@@ -117,7 +140,7 @@ export function applyCollectionSourceSnapshots(
       return collection;
     }
 
-    if (snapshot.sourceFingerprint !== getCollectionSourceFingerprint(source)) {
+    if (!sourceFingerprintMatches(source, snapshot.sourceFingerprint)) {
       return collection;
     }
 

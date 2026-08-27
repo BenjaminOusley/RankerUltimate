@@ -104,6 +104,31 @@ describe('collection source snapshots', () => {
     expect(getGeneratedSourceFingerprint(first)).toBe(getGeneratedSourceFingerprint(second));
   });
 
+
+  it('loads single-source snapshots created before composite source support', () => {
+    const legacySnapshot = {
+      version: 1 as const,
+      collectionId: generatedCollection.id,
+      sourceFingerprint:
+        '{"definition":{"mediaTypes":["movie"],"mode":"company-features","schemaVersion":1,"tmdbId":3},"provider":"tmdb"}',
+      refreshedAt: '2026-08-26T08:00:00.000Z',
+      items: [
+        { id: 'toy-story', name: 'Toy Story' },
+        { id: 'legacy-candidate', name: 'Legacy Candidate' },
+      ],
+    };
+
+    const [resolved] = applyCollectionSourceSnapshots(
+      [generatedCollection],
+      [legacySnapshot],
+    );
+
+    expect(resolved.items.map((item) => item.name)).toEqual([
+      'Toy Story',
+      'Legacy Candidate',
+    ]);
+  });
+
   it('supports composite source snapshots and ignores child source ordering', () => {
     const movieSource = {
       kind: 'generated' as const,
