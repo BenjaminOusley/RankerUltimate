@@ -1,10 +1,5 @@
 import { getCanonicalItemKey, getLegacyItemKeys } from '@/domain/itemIdentity';
-import type { CollectionCandidateSource, RankCollection, RankItem } from '@/domain/models';
-
-type GeneratedCollectionSource = Extract<
-  CollectionCandidateSource,
-  { kind: 'generated' }
->;
+import type { RankCollection, RankItem, RefreshableCollectionSource } from '@/domain/models';
 
 type CollectionOverride = {
   name?: string;
@@ -23,7 +18,7 @@ type GeneratedCollectionRecord = {
   id: string;
   name: string;
   description?: string;
-  candidateSource: GeneratedCollectionSource;
+  candidateSource: RefreshableCollectionSource;
   excludedItemKeys: string[];
 };
 
@@ -395,8 +390,8 @@ export function addGeneratedCollectionToLibrary(
 ): CollectionLibraryState {
   const source = collection.candidateSource;
 
-  if (source?.kind !== 'generated') {
-    throw new Error('Only generated collections can be added as source-backed collections.');
+  if (source?.kind !== 'generated' && source?.kind !== 'composite') {
+    throw new Error('Only refreshable collections can be added as source-backed collections.');
   }
 
   const duplicateId =

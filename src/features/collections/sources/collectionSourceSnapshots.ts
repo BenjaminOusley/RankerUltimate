@@ -1,9 +1,8 @@
-import type { CollectionCandidateSource, RankCollection, RankItem } from '@/domain/models';
-
-export type GeneratedCollectionSource = Extract<
-  CollectionCandidateSource,
-  { kind: 'generated' }
->;
+import type {
+  RankCollection,
+  RankItem,
+  RefreshableCollectionSource,
+} from '@/domain/models';
 
 export type CollectionSourceSnapshot = {
   version: 1;
@@ -30,12 +29,38 @@ function stableSerialize(value: unknown): string {
     .join(',')}}`;
 }
 
-export function getGeneratedSourceFingerprint(source: GeneratedCollectionSource) {
+export function isRefreshableCollectionSource(
+  source: RankCollection['candidateSource'],
+): source is RefreshableCollectionSource {
+  return source?.kind === 'generated' || source?.kind === 'composite';
+}
+
+export function getCollectionSourceFingerprint(source: RefreshableCollectionSource) {
+  if (source.kind === 'generated') {
+    return stableSerialize({
+      kind: source.kind,
+      provider: source.provider,
+      definition: source.definition,
+    });
+  }
+
+  const childFingerprints = source.sources
+    .map((child) =>
+      stableSerialize({
+        provider: child.provider,
+        definition: child.definition,
+      }),
+    )
+    .sort();
+
   return stableSerialize({
-    provider: source.provider,
-    definition: source.definition,
+    kind: source.kind,
+    sources: childFingerprints,
   });
 }
+
+// Backward-compatible name for callers/tests that still deal with a single provider source.
+export const getGeneratedSourceFingerprint = getCollectionSourceFingerprint;
 
 export function createCollectionSourceSnapshot(
   baseCollection: RankCollection,
@@ -44,8 +69,8 @@ export function createCollectionSourceSnapshot(
 ): CollectionSourceSnapshot {
   const source = baseCollection.candidateSource;
 
-  if (source?.kind !== 'generated') {
-    throw new Error('Only generated collections can create source snapshots.');
+  if (!isRefreshableCollectionSource(source)) {
+    throw new Error('Only refreshable collections can create source snapshots.');
   }
 
   if (refreshedCollection.id !== baseCollection.id) {
@@ -55,7 +80,7 @@ export function createCollectionSourceSnapshot(
   return {
     version: 1,
     collectionId: baseCollection.id,
-    sourceFingerprint: getGeneratedSourceFingerprint(source),
+    sourceFingerprint: getCollectionSourceFingerprint(source),
     refreshedAt,
     items: refreshedCollection.items,
   };
@@ -82,7 +107,7 @@ export function applyCollectionSourceSnapshots(
   return baseCollections.map((collection) => {
     const source = collection.candidateSource;
 
-    if (source?.kind !== 'generated') {
+    if (!isRefreshableCollectionSource(source)) {
       return collection;
     }
 
@@ -92,7 +117,7 @@ export function applyCollectionSourceSnapshots(
       return collection;
     }
 
-    if (snapshot.sourceFingerprint !== getGeneratedSourceFingerprint(source)) {
+    if (snapshot.sourceFingerprint !== getCollectionSourceFingerprint(source)) {
       return collection;
     }
 

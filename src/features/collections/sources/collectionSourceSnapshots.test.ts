@@ -4,6 +4,7 @@ import type { RankCollection } from '@/domain/models';
 import {
   applyCollectionSourceSnapshots,
   createCollectionSourceSnapshot,
+  getCollectionSourceFingerprint,
   getGeneratedSourceFingerprint,
 } from './collectionSourceSnapshots';
 
@@ -102,4 +103,71 @@ describe('collection source snapshots', () => {
 
     expect(getGeneratedSourceFingerprint(first)).toBe(getGeneratedSourceFingerprint(second));
   });
+
+  it('supports composite source snapshots and ignores child source ordering', () => {
+    const movieSource = {
+      kind: 'generated' as const,
+      provider: 'tmdb',
+      definition: {
+        mediaType: 'movie',
+        mode: 'genre',
+        tmdbId: 878,
+      },
+    };
+    const gameSource = {
+      kind: 'generated' as const,
+      provider: 'igdb',
+      definition: {
+        mediaType: 'game',
+        mode: 'genre',
+        igdbId: 5,
+      },
+    };
+
+    const first = {
+      kind: 'composite' as const,
+      originalRequest: 'science fiction movies and games',
+      sources: [movieSource, gameSource],
+    };
+    const second = {
+      kind: 'composite' as const,
+      originalRequest: 'sci-fi games plus movies',
+      sources: [gameSource, movieSource],
+    };
+
+    expect(getCollectionSourceFingerprint(first)).toBe(
+      getCollectionSourceFingerprint(second),
+    );
+
+    const collection: RankCollection = {
+      id: 'science-fiction-media',
+      name: 'Science Fiction Movies and Games',
+      candidateSource: first,
+      items: [],
+    };
+    const refreshed: RankCollection = {
+      ...collection,
+      items: [
+        {
+          id: 'dune',
+          name: 'Dune',
+          source: { provider: 'tmdb', type: 'movie', id: '438631' },
+        },
+        {
+          id: 'mass-effect',
+          name: 'Mass Effect',
+          source: { provider: 'igdb', type: 'game', id: '73' },
+        },
+      ],
+    };
+
+    const snapshot = createCollectionSourceSnapshot(collection, refreshed);
+    const [resolved] = applyCollectionSourceSnapshots(
+      [{ ...collection, candidateSource: second }],
+      [snapshot],
+    );
+
+    expect(resolved.items.map((item) => item.name)).toEqual(['Dune', 'Mass Effect']);
+  });
+
 });

@@ -12,17 +12,29 @@ export type RankItem = {
   source?: ItemSource;
 };
 
+export type GeneratedCollectionSource = {
+  kind: 'generated';
+  provider: string;
+  originalRequest?: string;
+  definition: Record<string, unknown>;
+};
+
+export type CompositeCollectionSource = {
+  kind: 'composite';
+  originalRequest?: string;
+  sources: GeneratedCollectionSource[];
+};
+
+export type RefreshableCollectionSource =
+  | GeneratedCollectionSource
+  | CompositeCollectionSource;
+
 export type CollectionCandidateSource =
   | {
       kind: 'embedded';
       provider?: string;
     }
-  | {
-      kind: 'generated';
-      provider: string;
-      originalRequest?: string;
-      definition: Record<string, unknown>;
-    }
+  | RefreshableCollectionSource
   | {
       kind: 'custom';
     };

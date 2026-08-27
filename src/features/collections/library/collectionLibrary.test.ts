@@ -273,6 +273,53 @@ describe('runtime generated collections', () => {
     expect(nextState.generatedCollections).toEqual([]);
     expect(nextState.deletedBuiltInIds).toEqual([]);
   });
+
+  it('stores a composite runtime source without freezing its candidate items', () => {
+    const compositeCollection: RankCollection = {
+      id: 'mixed-media',
+      name: 'Mixed Media',
+      candidateSource: {
+        kind: 'composite',
+        originalRequest: 'science fiction movies and games',
+        sources: [
+          {
+            kind: 'generated',
+            provider: 'tmdb',
+            definition: { mediaType: 'movie', mode: 'genre', tmdbId: 878 },
+          },
+          {
+            kind: 'generated',
+            provider: 'igdb',
+            definition: { mediaType: 'game', mode: 'genre', igdbId: 5 },
+          },
+        ],
+      },
+      items: [
+        {
+          id: 'dune',
+          name: 'Dune',
+          source: { provider: 'tmdb', type: 'movie', id: '438631' },
+        },
+        {
+          id: 'mass-effect',
+          name: 'Mass Effect',
+          source: { provider: 'igdb', type: 'game', id: '73' },
+        },
+      ],
+    };
+
+    const state = addGeneratedCollectionToLibrary(
+      emptyState(),
+      baseCollections,
+      compositeCollection,
+    );
+
+    expect(state.generatedCollections[0].candidateSource).toEqual(
+      compositeCollection.candidateSource,
+    );
+    expect(buildStoredGeneratedCollectionShells(state)[0].items).toEqual([]);
+  });
+
 });
 
 describe('collection storage migration', () => {

@@ -1,4 +1,5 @@
 import type { RankCollection } from '@/domain/models';
+import { isRefreshableCollectionSource } from '../sources/collectionSourceSnapshots';
 
 export type CollectionSourceRefreshMeta = {
   candidateCount: number;
@@ -13,7 +14,7 @@ type RefreshCollectionSourceResponse = {
 };
 
 export function canRefreshCollectionSource(collection: RankCollection) {
-  return collection.candidateSource?.kind === 'generated';
+  return isRefreshableCollectionSource(collection.candidateSource);
 }
 
 export async function refreshCollectionSource(collection: RankCollection): Promise<{

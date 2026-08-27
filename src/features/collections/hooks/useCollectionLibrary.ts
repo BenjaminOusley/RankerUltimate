@@ -18,6 +18,7 @@ import {
   applyCollectionSourceSnapshots,
   createCollectionSourceSnapshot,
   type CollectionSourceSnapshot,
+  isRefreshableCollectionSource,
   upsertCollectionSourceSnapshot,
 } from '../sources/collectionSourceSnapshots';
 import {
@@ -97,7 +98,7 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
 
   const createGeneratedCollection = useCallback(
     async (collection: RankCollection) => {
-      if (collection.candidateSource?.kind !== 'generated') {
+      if (!isRefreshableCollectionSource(collection.candidateSource)) {
         throw new Error('Generated collection is missing its source definition.');
       }
 
@@ -150,7 +151,7 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
         throw new Error('Collection source was not found.');
       }
 
-      if (sourceCollection.candidateSource?.kind !== 'generated') {
+      if (!isRefreshableCollectionSource(sourceCollection.candidateSource)) {
         throw new Error('This collection does not have a refreshable source.');
       }
 

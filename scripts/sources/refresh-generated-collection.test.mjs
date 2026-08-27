@@ -273,4 +273,104 @@ describe('generated collection source refresh', () => {
     expect(result.collection.name).toBe('Halo Games');
   });
 
+  it('validates composite sources without coupling them to specific providers', () => {
+    expect(
+      validateRefreshSourceRequest({
+        collectionId: 'star-wars-movies-and-games',
+        source: {
+          kind: 'composite',
+          originalRequest: 'Star Wars movies and games',
+          sources: [
+            pixarSource,
+            {
+              kind: 'generated',
+              provider: 'igdb',
+              definition: {
+                schemaVersion: 2,
+                mediaType: 'game',
+                mode: 'franchise',
+                igdbId: 1,
+              },
+            },
+          ],
+        },
+      }),
+    ).toMatchObject({ ok: true });
+  });
+
+  it('refreshes composite sources sequentially and deduplicates canonical items', async () => {
+    const sharedItem = {
+      id: 'shared-1',
+      name: 'Shared Item',
+      source: { provider: 'tmdb', type: 'movie', id: '1' },
+      image: 'poster.jpg',
+    };
+
+    const tmdbRefresh = vi.fn().mockResolvedValue({
+      collection: {
+        id: 'mixed-media',
+        name: 'Movies',
+        items: [
+          sharedItem,
+          {
+            id: 'movie-2',
+            name: 'Movie Two',
+            source: { provider: 'tmdb', type: 'movie', id: '2' },
+          },
+        ],
+      },
+      candidateCount: 2,
+      validatedCount: 2,
+      missingPosterCount: 1,
+    });
+
+    const secondTmdbRefresh = vi.fn().mockResolvedValue({
+      collection: {
+        id: 'mixed-media',
+        name: 'Other Movies',
+        items: [sharedItem],
+      },
+      candidateCount: 1,
+      validatedCount: 1,
+      missingPosterCount: 0,
+    });
+
+    let call = 0;
+    const compositeRefresher = vi.fn(async (args) => {
+      call += 1;
+      return call === 1 ? tmdbRefresh(args) : secondTmdbRefresh(args);
+    });
+
+    const source = {
+      kind: 'composite',
+      originalRequest: 'two movie groups',
+      sources: [
+        pixarSource,
+        {
+          ...pixarSource,
+          definition: {
+            ...pixarSource.definition,
+            tmdbId: 4,
+          },
+        },
+      ],
+    };
+
+    const result = await refreshGeneratedCollectionSource({
+      collectionId: 'mixed-media',
+      source,
+      refreshers: { tmdb: compositeRefresher },
+    });
+
+    expect(compositeRefresher).toHaveBeenCalledTimes(2);
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Shared Item',
+      'Movie Two',
+    ]);
+    expect(result.collection.candidateSource).toEqual(source);
+    expect(result.candidateCount).toBe(3);
+    expect(result.validatedCount).toBe(2);
+    expect(result.missingPosterCount).toBe(1);
+  });
+
 });
