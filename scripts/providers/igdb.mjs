@@ -193,16 +193,22 @@ function sortGames(games, sort) {
 
   if (normalizedSort === 'release-asc') {
     return copy.sort(
-      (a, b) => (a.first_release_date ?? Number.MAX_SAFE_INTEGER) - (b.first_release_date ?? Number.MAX_SAFE_INTEGER),
+      (a, b) =>
+        (a.first_release_date ?? Number.MAX_SAFE_INTEGER) -
+        (b.first_release_date ?? Number.MAX_SAFE_INTEGER),
     );
   }
 
   if (normalizedSort === 'release-desc') {
-    return copy.sort((a, b) => (b.first_release_date ?? 0) - (a.first_release_date ?? 0));
+    return copy.sort(
+      (a, b) => (b.first_release_date ?? 0) - (a.first_release_date ?? 0),
+    );
   }
 
   if (normalizedSort === 'name') {
-    return copy.sort((a, b) => String(a.name ?? '').localeCompare(String(b.name ?? '')));
+    return copy.sort((a, b) =>
+      String(a.name ?? '').localeCompare(String(b.name ?? '')),
+    );
   }
 
   return copy.sort((a, b) => {
@@ -345,16 +351,19 @@ export function createIgdbProvider({
     const query = requireNonEmptyString(body, 'IGDB query');
     const accessToken = await getAccessToken();
 
-    const response = await fetchImpl(`${IGDB_API_BASE}/${endpoint.replace(/^\/+/, '')}`, {
-      method: 'POST',
-      headers: {
-        'Client-ID': normalizedClientId,
-        Authorization: `Bearer ${accessToken}`,
-        Accept: 'application/json',
-        'Content-Type': 'text/plain',
+    const response = await fetchImpl(
+      `${IGDB_API_BASE}/${endpoint.replace(/^\/+/, '')}`,
+      {
+        method: 'POST',
+        headers: {
+          'Client-ID': normalizedClientId,
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'text/plain',
+        },
+        body: query,
       },
-      body: query,
-    });
+    );
 
     if (response.status === 401 && retryUnauthorized) {
       clearAccessToken();
@@ -377,7 +386,10 @@ export function createIgdbProvider({
   async function searchGames(search, limit = 10) {
     const normalizedSearch = requireNonEmptyString(search, 'IGDB game search');
     const normalizedLimit = normalizeLimit(limit);
-    const fetchLimit = Math.min(MAX_QUERY_LIMIT, Math.max(normalizedLimit, normalizedLimit * 4));
+    const fetchLimit = Math.min(
+      MAX_QUERY_LIMIT,
+      Math.max(normalizedLimit, normalizedLimit * 4),
+    );
     const games = await request(
       'games',
       [
@@ -406,7 +418,10 @@ export function createIgdbProvider({
   }
 
   async function searchNamedEndpoint(endpoint, search, fields, limit = 20) {
-    const normalizedSearch = requireNonEmptyString(search, `IGDB ${endpoint} search`);
+    const normalizedSearch = requireNonEmptyString(
+      search,
+      `IGDB ${endpoint} search`,
+    );
     const normalizedLimit = normalizeLimit(limit, 20);
 
     return request(
@@ -452,7 +467,7 @@ export function createIgdbProvider({
   }
 
   async function getFranchiseById(id) {
-    return getNamedEntityById('franchises', id, 'id,name,slug');
+    return getNamedEntityById('franchises', id, 'id,name,slug,games');
   }
 
   async function getPlatformById(id) {
@@ -506,7 +521,11 @@ export function createIgdbProvider({
     );
     const uniqueGames = new Map();
 
-    for (let offset = 0; offset < MAX_RELATION_GAME_ROWS; offset += pageSize) {
+    for (
+      let offset = 0;
+      offset < MAX_RELATION_GAME_ROWS;
+      offset += pageSize
+    ) {
       const games = await request(
         'games',
         [
@@ -527,9 +546,15 @@ export function createIgdbProvider({
         }
       }
 
-      const rankableGames = sortGames([...uniqueGames.values()], normalizedSort);
+      const rankableGames = sortGames(
+        [...uniqueGames.values()],
+        normalizedSort,
+      );
 
-      if (rankableGames.length >= normalizedLimit || games.length < pageSize) {
+      if (
+        rankableGames.length >= normalizedLimit ||
+        games.length < pageSize
+      ) {
         return rankableGames.slice(0, normalizedLimit);
       }
     }
@@ -546,19 +571,50 @@ export function createIgdbProvider({
     gameTypes = CORE_IGDB_GAME_TYPES,
   }) {
     const normalizedId = normalizePositiveId(id, 'IGDB franchise ID');
+    const normalizedLimit = normalizeLimit(limit, 100);
+    const normalizedSort = normalizeGameSort(sort);
+    const normalizedGameTypes = normalizeIgdbGameTypes(gameTypes);
     const franchise = await getFranchiseById(normalizedId);
 
     if (!franchise) {
       return [];
     }
 
-    return getGamesByRelation({
-      relation: 'franchises',
-      id: normalizedId,
-      limit,
-      sort,
-      gameTypes,
-    });
+    const gameIds = [
+      ...new Set(
+        (Array.isArray(franchise.games) ? franchise.games : []).filter(
+          (gameId) => Number.isSafeInteger(gameId) && gameId > 0,
+        ),
+      ),
+    ];
+
+    if (gameIds.length === 0) {
+      return [];
+    }
+
+    const uniqueGames = new Map();
+
+    // IGDB limits one ID-list lookup to 500 IDs. The franchise record itself
+    // contains the authoritative association list, so load those IDs in
+    // batches rather than relying on the games endpoint's relation index.
+    for (let offset = 0; offset < gameIds.length; offset += MAX_QUERY_LIMIT) {
+      const batchIds = gameIds.slice(offset, offset + MAX_QUERY_LIMIT);
+      const games = await getGamesByIds(batchIds);
+
+      for (const game of games) {
+        if (
+          Number.isSafeInteger(game?.id) &&
+          isRankableIgdbGame(game, { gameTypes: normalizedGameTypes })
+        ) {
+          uniqueGames.set(game.id, game);
+        }
+      }
+    }
+
+    return sortGames([...uniqueGames.values()], normalizedSort).slice(
+      0,
+      normalizedLimit,
+    );
   }
 
   async function getGamesByCompanyId({
@@ -572,7 +628,11 @@ export function createIgdbProvider({
     const normalizedGameTypes = normalizeIgdbGameTypes(gameTypes);
     const uniqueGames = new Map();
 
-    for (let offset = 0; offset < MAX_COMPANY_INVOLVEMENTS; offset += MAX_QUERY_LIMIT) {
+    for (
+      let offset = 0;
+      offset < MAX_COMPANY_INVOLVEMENTS;
+      offset += MAX_QUERY_LIMIT
+    ) {
       const involvementRows = await request(
         'involved_companies',
         [
@@ -596,7 +656,10 @@ export function createIgdbProvider({
       }
 
       if (involvementRows.length < MAX_QUERY_LIMIT) {
-        return sortGames([...uniqueGames.values()], sort).slice(0, normalizedLimit);
+        return sortGames([...uniqueGames.values()], sort).slice(
+          0,
+          normalizedLimit,
+        );
       }
     }
 

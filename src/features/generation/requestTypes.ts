@@ -81,7 +81,7 @@ export type CollectionPlanningMatch = {
 
 export type CollectionPlanningClarification = {
   status: 'clarification';
-  reason: 'ambiguous-entity' | 'unresolved-entity';
+  reason: 'ambiguous-entity' | 'unresolved-entity' | 'unsupported-limit';
   question: string;
   examples: string[];
   matches: CollectionPlanningMatch[];

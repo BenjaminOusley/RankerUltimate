@@ -3,6 +3,7 @@ import { normalizeTitle } from '../providers/tmdb.mjs';
 
 const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv', 'game']);
 const DEFAULT_LIMIT = 50;
+const MAX_COLLECTION_LIMIT = 250;
 
 function normalizeWhitespace(value) {
   return value.replace(/\s+/gu, ' ').trim();
@@ -49,6 +50,62 @@ function entityNamesMatch(query, candidate, { allowSimplePlural = false } = {}) 
     allowSimplePlural &&
     simpleSingular(normalizedQuery) === simpleSingular(normalizedCandidate)
   );
+}
+
+
+function parseRequestedLimit(text) {
+  const normalized = normalizeComparable(text);
+  const patterns = [
+    /\b(?:top|best)\s+(\d{1,4})\b/u,
+    /\b(\d{1,4})\s+(?:most\s+popular|highest\s+rated|best)\b/u,
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+
+    if (!match) {
+      continue;
+    }
+
+    const limit = Number.parseInt(match[1], 10);
+
+    if (Number.isSafeInteger(limit) && limit > 0) {
+      return limit;
+    }
+  }
+
+  return null;
+}
+
+function stripRequestedLimit(value) {
+  return value
+    .replace(/^(?:the\s+)?(?:top|best)\s+\d{1,4}\s+/iu, '')
+    .replace(/^(?:the\s+)?\d{1,4}\s+(?:most\s+popular|highest\s+rated|best)\s+/iu, '')
+    .trim();
+}
+
+function parseIncludeDlcExpansionsHint(text) {
+  const normalized = normalizeComparable(text);
+
+  return (
+    /\b(?:include|including|with|plus)\b[^,.]{0,40}\b(?:dlc|dlcs|expansion|expansions)\b/u.test(
+      normalized,
+    ) ||
+    /\b(?:dlc|dlcs|expansion|expansions)\b[^,.]{0,20}\bincluded\b/u.test(normalized)
+  );
+}
+
+function stripGameContentScopeModifiers(value) {
+  return value
+    .replace(
+      /\s+(?:including|include|with|plus|without)\s+(?:(?:dlc|dlcs)(?:\s*(?:and|\/|&)\s*)?)?(?:expansion|expansions)?\s*$/iu,
+      '',
+    )
+    .replace(
+      /\s+(?:including|include|with|plus|without)\s+(?:expansion|expansions)(?:\s*(?:and|\/|&)\s*(?:dlc|dlcs))?\s*$/iu,
+      '',
+    )
+    .trim();
 }
 
 function parseSortHint(text, mediaType) {
@@ -119,6 +176,15 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
   let query = normalizeWhitespace(subject);
   const combinedText = `${requestText} ${subject}`;
   const relationHint = parseRelationHint(combinedText, mediaType);
+  const requestedLimit = parseRequestedLimit(combinedText);
+  const includeDlcExpansions =
+    mediaType === 'game' && parseIncludeDlcExpansionsHint(combinedText);
+
+  query = stripRequestedLimit(query);
+
+  if (mediaType === 'game') {
+    query = stripGameContentScopeModifiers(query);
+  }
 
   query = query
     .replace(
@@ -138,6 +204,8 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
     query: query || normalizeWhitespace(subject),
     relationHint,
     sort: parseSortHint(combinedText, mediaType),
+    requestedLimit,
+    includeDlcExpansions,
   };
 }
 
@@ -179,9 +247,9 @@ function normalizeReadyRequest(value) {
   };
 }
 
-function createTmdbParameters(mediaType, sort) {
+function createTmdbParameters(mediaType, sort, limit) {
   return {
-    limit: DEFAULT_LIMIT,
+    limit,
     sort,
     fromYear: null,
     toYear: null,
@@ -192,15 +260,15 @@ function createTmdbParameters(mediaType, sort) {
   };
 }
 
-function createIgdbParameters(sort) {
+function createIgdbParameters(sort, limit, includeDlcExpansions) {
   return {
-    limit: DEFAULT_LIMIT,
+    limit,
     sort,
-    includeDlcExpansions: false,
+    includeDlcExpansions,
   };
 }
 
-function createTmdbPlan({ mediaType, mode, query, entity, sort }) {
+function createTmdbPlan({ mediaType, mode, query, entity, sort, limit }) {
   return {
     provider: 'tmdb',
     mediaType,
@@ -208,11 +276,11 @@ function createTmdbPlan({ mediaType, mode, query, entity, sort }) {
     query,
     resolvedId: entity.id,
     resolvedName: entity.name,
-    parameters: createTmdbParameters(mediaType, sort),
+    parameters: createTmdbParameters(mediaType, sort, limit),
   };
 }
 
-function createIgdbPlan({ mode, query, entity, sort }) {
+function createIgdbPlan({ mode, query, entity, sort, limit, includeDlcExpansions }) {
   return {
     provider: 'igdb',
     mediaType: 'game',
@@ -220,7 +288,7 @@ function createIgdbPlan({ mode, query, entity, sort }) {
     query,
     resolvedId: entity.id,
     resolvedName: entity.name,
-    parameters: createIgdbParameters(sort),
+    parameters: createIgdbParameters(sort, limit, includeDlcExpansions),
   };
 }
 
@@ -231,6 +299,16 @@ function toPlanningMatch(plan) {
     mode: plan.mode,
     id: plan.resolvedId,
     name: plan.resolvedName,
+  };
+}
+
+function clarificationForUnsupportedLimit({ requestedLimit, subject }) {
+  return {
+    status: 'clarification',
+    reason: 'unsupported-limit',
+    question: `You asked for ${requestedLimit} items, but RankerUltimate currently supports up to ${MAX_COLLECTION_LIMIT} items in one generated collection. Ask for ${MAX_COLLECTION_LIMIT} or fewer for now.`,
+    examples: [`top ${MAX_COLLECTION_LIMIT} ${subject}`, `top 100 ${subject}`],
+    matches: [],
   };
 }
 
@@ -277,7 +355,26 @@ async function findGamePlans({ igdb, subject, requestText }) {
     throw new Error('IGDB provider is required to plan game collections.');
   }
 
-  const { query, relationHint, sort } = cleanPlanningQuery(subject, requestText, 'game');
+  const {
+    query,
+    relationHint,
+    sort,
+    requestedLimit,
+    includeDlcExpansions,
+  } = cleanPlanningQuery(subject, requestText, 'game');
+  const limit = requestedLimit ?? DEFAULT_LIMIT;
+
+  if (limit > MAX_COLLECTION_LIMIT) {
+    return {
+      plans: [],
+      relatedPlatformPlans: [],
+      relationHint,
+      limitClarification: clarificationForUnsupportedLimit({
+        requestedLimit: limit,
+        subject: query,
+      }),
+    };
+  }
   const modes = relationHint
     ? [relationHint]
     : ['genre', 'franchise', 'platform', 'company'];
@@ -317,6 +414,8 @@ async function findGamePlans({ igdb, subject, requestText }) {
             query,
             entity: match,
             sort,
+            limit,
+            includeDlcExpansions,
           }),
         );
         continue;
@@ -333,6 +432,8 @@ async function findGamePlans({ igdb, subject, requestText }) {
             query: match.name,
             entity: match,
             sort,
+            limit,
+            includeDlcExpansions,
           }),
         );
       }
@@ -343,6 +444,7 @@ async function findGamePlans({ igdb, subject, requestText }) {
     plans: dedupePlans(exactPlans),
     relatedPlatformPlans: dedupePlans(relatedPlatformPlans),
     relationHint,
+    limitClarification: null,
   };
 }
 
@@ -394,7 +496,23 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
     throw new Error('TMDB provider is required to plan movie/TV collections.');
   }
 
-  const { query, relationHint, sort } = cleanPlanningQuery(subject, requestText, mediaType);
+  const { query, relationHint, sort, requestedLimit } = cleanPlanningQuery(
+    subject,
+    requestText,
+    mediaType,
+  );
+  const limit = requestedLimit ?? DEFAULT_LIMIT;
+
+  if (limit > MAX_COLLECTION_LIMIT) {
+    return {
+      plans: [],
+      limitClarification: clarificationForUnsupportedLimit({
+        requestedLimit: limit,
+        subject: query,
+      }),
+    };
+  }
+
   const plans = [];
 
   if (!relationHint || relationHint === 'genre') {
@@ -409,6 +527,7 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
             query,
             entity: genre,
             sort,
+            limit,
           }),
         );
       }
@@ -431,6 +550,7 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
             query,
             entity: company,
             sort,
+            limit,
           }),
         );
       }
@@ -458,12 +578,16 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
           query,
           entity: person,
           sort,
+          limit,
         }),
       );
     }
   }
 
-  return plans;
+  return {
+    plans,
+    limitClarification: null,
+  };
 }
 
 function dedupePlans(plans) {
@@ -489,7 +613,12 @@ async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb })
       plans,
       relatedPlatformPlans,
       relationHint,
+      limitClarification,
     } = await findGamePlans({ igdb, subject, requestText });
+
+    if (limitClarification) {
+      return limitClarification;
+    }
 
     if (
       plans.length === 1 &&
@@ -522,9 +651,18 @@ async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb })
     return clarificationForNoMatch({ subject, mediaType });
   }
 
-  const plans = dedupePlans(
-    await findTmdbPlans({ tmdb, mediaType, subject, requestText }),
-  );
+  const tmdbResult = await findTmdbPlans({
+    tmdb,
+    mediaType,
+    subject,
+    requestText,
+  });
+
+  if (tmdbResult.limitClarification) {
+    return tmdbResult.limitClarification;
+  }
+
+  const plans = dedupePlans(tmdbResult.plans);
 
   if (plans.length === 1) {
     return {

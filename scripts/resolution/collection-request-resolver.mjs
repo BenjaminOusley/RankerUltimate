@@ -37,7 +37,6 @@ function normalizeWhitespace(value) {
   return value.replace(/\s+/gu, ' ').trim();
 }
 
-
 const RELATION_ONLY_PATTERN = /^(?:the\s+)?(?:genre|franchise|series|platform|console|company|developer|publisher|studio|director|actor|actress)$/iu;
 
 function isRelationOnlyClarification(value) {
@@ -77,9 +76,9 @@ export function extractCollectionRequestSubject(text) {
   }
 
   subject = subject
-    .replace(/\b(?:and|or)\b/giu, ' ')
     .replace(/\bfrom\b/giu, ' ')
     .replace(/\b(?:collection|list)\b/giu, ' ')
+    .replace(/^\s*(?:and|or)\b|\b(?:and|or)\s*$/giu, ' ')
     .replace(/^[\s,;:/&+\-]+|[\s,;:/&+\-]+$/gu, '');
 
   return normalizeWhitespace(subject);

@@ -73,6 +73,10 @@ function createFakeIgdb() {
         return [{ id: 100, name: 'Halo' }];
       }
 
+      if (/mario/iu.test(query)) {
+        return [{ id: 200, name: 'Mario' }];
+      }
+
       return [];
     },
     async searchPlatforms(query) {
@@ -146,6 +150,73 @@ describe('collection request planner', () => {
       resolvedName: 'Shooter',
       parameters: {
         sort: 'popular',
+      },
+    });
+  });
+
+
+  it('uses an explicit conversational item count instead of the default 50', async () => {
+    const result = await planCollectionRequest({
+      request: ready('top 100 Mario', ['game'], 'top 100 Mario games'),
+      igdb: createFakeIgdb(),
+    });
+
+    expect(result.status).toBe('planned');
+    expect(result.plan.sources[0]).toMatchObject({
+      mode: 'franchise',
+      resolvedName: 'Mario',
+      parameters: {
+        limit: 100,
+        sort: 'popular',
+      },
+    });
+  });
+
+  it('understands an explicit DLC / expansion inclusion modifier', async () => {
+    const result = await planCollectionRequest({
+      request: ready(
+        'top 100 Halo including DLC and expansions',
+        ['game'],
+        'top 100 Halo games including DLC and expansions',
+      ),
+      igdb: createFakeIgdb(),
+    });
+
+    expect(result.status).toBe('planned');
+    expect(result.plan.sources[0]).toMatchObject({
+      mode: 'franchise',
+      resolvedName: 'Halo',
+      parameters: {
+        limit: 100,
+        includeDlcExpansions: true,
+      },
+    });
+  });
+
+  it('asks for a smaller count when a conversational request exceeds the current collection cap', async () => {
+    const result = await planCollectionRequest({
+      request: ready('top 300 Halo', ['game'], 'top 300 Halo games'),
+      igdb: createFakeIgdb(),
+    });
+
+    expect(result.status).toBe('clarification');
+    expect(result.reason).toBe('unsupported-limit');
+    expect(result.question).toContain('250');
+  });
+
+  it('applies conversational item counts to TMDB sources too', async () => {
+    const result = await planCollectionRequest({
+      request: ready('top 25 Horror', ['movie'], 'top 25 horror movies'),
+      tmdb: createFakeTmdb(),
+    });
+
+    expect(result.status).toBe('planned');
+    expect(result.plan.sources[0]).toMatchObject({
+      provider: 'tmdb',
+      mode: 'genre',
+      resolvedName: 'Horror',
+      parameters: {
+        limit: 25,
       },
     });
   });

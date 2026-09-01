@@ -56,7 +56,6 @@ describe('IGDB provider', () => {
     expect(getIgdbReleaseYear({ first_release_date: 946684800 })).toBe('2000');
   });
 
-
   it('keeps core game releases and filters add-ons, bundles, mods, packs, and unreleased noise', () => {
     const game = (type, status = 'Released') => ({
       id: 1,
@@ -226,6 +225,7 @@ describe('IGDB provider', () => {
 
     expect(requestBody).toContain('where name ~ *"role playing"*;');
   });
+
   it('builds direct relation queries for genre and platform candidate pools', async () => {
     const bodies = [];
 
@@ -395,9 +395,13 @@ describe('IGDB provider', () => {
     expect(body).toContain('where id = 12;');
   });
 
-  it('paginates large franchise candidate pools instead of failing above 500 associated games', async () => {
+  it('batches large franchise candidate pools using the franchise game ID list', async () => {
     const apiBodies = [];
     let apiRequestNumber = 0;
+    const franchiseGameIds = Array.from(
+      { length: 501 },
+      (_, index) => 1_000 + index,
+    );
 
     const provider = createIgdbProvider({
       clientId: 'client-id',
@@ -417,17 +421,25 @@ describe('IGDB provider', () => {
 
         if (apiRequestNumber === 1) {
           return response({
-            json: [{ id: 99, name: 'Mario', slug: 'mario' }],
+            json: [
+              {
+                id: 99,
+                name: 'Mario',
+                slug: 'mario',
+                games: franchiseGameIds,
+              },
+            ],
           });
         }
 
         if (apiRequestNumber === 2) {
           return response({
-            json: Array.from({ length: 100 }, (_, index) => ({
+            json: Array.from({ length: 500 }, (_, index) => ({
               id: 1_000 + index,
               name: `Mario add-on ${index}`,
               game_type: { type: 'DLC / Addon' },
               game_status: { status: 'Released' },
+              version_parent: null,
               total_rating_count: 10_000 - index,
             })),
           });
@@ -436,10 +448,11 @@ describe('IGDB provider', () => {
         return response({
           json: [
             {
-              id: 2_000,
+              id: 1_500,
               name: 'Super Mario Bros.',
               game_type: { type: 'Main Game' },
               game_status: { status: 'Released' },
+              version_parent: null,
               total_rating_count: 9_000,
             },
           ],
@@ -453,10 +466,15 @@ describe('IGDB provider', () => {
       sort: 'popular',
     });
 
-    expect(games.map((game) => game.id)).toEqual([2_000]);
-    expect(apiBodies[1]).toContain('where version_parent = null & franchises = 99;');
-    expect(apiBodies[1]).toContain('limit 100;');
-    expect(apiBodies[2]).toContain('offset 100;');
+    expect(games.map((game) => game.id)).toEqual([1_500]);
+    expect(apiBodies).toHaveLength(3);
+    expect(apiBodies[0]).toContain('fields id,name,slug,games;');
+    expect(apiBodies[1]).toContain('where id = (');
+    expect(apiBodies[1]).toContain('limit 500;');
+    expect(apiBodies[2]).toContain('where id = (1500);');
+    expect(apiBodies[2]).toContain('limit 1;');
+    expect(apiBodies.some((body) => body.includes('where franchises = 99;'))).toBe(
+      false,
+    );
   });
-
 });
