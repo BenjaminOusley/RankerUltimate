@@ -4,6 +4,7 @@ const IGDB_IMAGE_BASE = 'https://images.igdb.com/igdb/image/upload';
 const TOKEN_EXPIRY_SKEW_MS = 60_000;
 const MAX_QUERY_LIMIT = 500;
 const MAX_COMPANY_INVOLVEMENTS = 5_000;
+const MAX_RELATION_GAME_ROWS = 5_000;
 
 const GAME_FIELDS =
   'id,name,slug,first_release_date,cover.image_id,total_rating,total_rating_count,game_type.type,game_status.status,version_parent';
@@ -451,7 +452,7 @@ export function createIgdbProvider({
   }
 
   async function getFranchiseById(id) {
-    return getNamedEntityById('franchises', id, 'id,name,slug,games');
+    return getNamedEntityById('franchises', id, 'id,name,slug');
   }
 
   async function getPlatformById(id) {
@@ -487,7 +488,11 @@ export function createIgdbProvider({
     sort = 'popular',
     gameTypes = CORE_IGDB_GAME_TYPES,
   }) {
-    if (relation !== 'genres' && relation !== 'platforms') {
+    if (
+      relation !== 'genres' &&
+      relation !== 'platforms' &&
+      relation !== 'franchises'
+    ) {
       throw new Error(`Unsupported direct IGDB game relation: ${relation}`);
     }
 
@@ -495,26 +500,42 @@ export function createIgdbProvider({
     const normalizedLimit = normalizeLimit(limit, 100);
     const normalizedSort = normalizeGameSort(sort);
     const normalizedGameTypes = normalizeIgdbGameTypes(gameTypes);
-
-    const fetchLimit = Math.min(MAX_QUERY_LIMIT, Math.max(normalizedLimit, normalizedLimit * 4));
-    const games = await request(
-      'games',
-      [
-        `fields ${GAME_FIELDS};`,
-        `where version_parent = null & ${relation} = ${normalizedId};`,
-        `sort ${GAME_SORTS[normalizedSort]};`,
-        `limit ${fetchLimit};`,
-      ].join('\n'),
+    const pageSize = Math.min(
+      MAX_QUERY_LIMIT,
+      Math.max(100, normalizedLimit * 4),
     );
+    const uniqueGames = new Map();
 
-    return sortGames(
-      games.filter((game) =>
-        isRankableIgdbGame(game, { gameTypes: normalizedGameTypes }),
-      ),
-      normalizedSort,
-    ).slice(
-      0,
-      normalizedLimit,
+    for (let offset = 0; offset < MAX_RELATION_GAME_ROWS; offset += pageSize) {
+      const games = await request(
+        'games',
+        [
+          `fields ${GAME_FIELDS};`,
+          `where version_parent = null & ${relation} = ${normalizedId};`,
+          `sort ${GAME_SORTS[normalizedSort]};`,
+          `limit ${pageSize};`,
+          ...(offset > 0 ? [`offset ${offset};`] : []),
+        ].join('\n'),
+      );
+
+      for (const game of games) {
+        if (
+          Number.isSafeInteger(game?.id) &&
+          isRankableIgdbGame(game, { gameTypes: normalizedGameTypes })
+        ) {
+          uniqueGames.set(game.id, game);
+        }
+      }
+
+      const rankableGames = sortGames([...uniqueGames.values()], normalizedSort);
+
+      if (rankableGames.length >= normalizedLimit || games.length < pageSize) {
+        return rankableGames.slice(0, normalizedLimit);
+      }
+    }
+
+    throw new Error(
+      `IGDB ${relation} ${normalizedId} has more than ${MAX_RELATION_GAME_ROWS} game records; refusing to return a potentially incomplete candidate pool.`,
     );
   }
 
@@ -524,33 +545,20 @@ export function createIgdbProvider({
     sort = 'popular',
     gameTypes = CORE_IGDB_GAME_TYPES,
   }) {
-    const normalizedLimit = normalizeLimit(limit, 100);
-    const normalizedGameTypes = normalizeIgdbGameTypes(gameTypes);
-    const franchise = await getFranchiseById(id);
+    const normalizedId = normalizePositiveId(id, 'IGDB franchise ID');
+    const franchise = await getFranchiseById(normalizedId);
 
     if (!franchise) {
       return [];
     }
 
-    const gameIds = Array.isArray(franchise.games)
-      ? [...new Set(franchise.games.filter((gameId) => Number.isSafeInteger(gameId)))]
-      : [];
-
-    if (gameIds.length === 0) {
-      return [];
-    }
-
-    if (gameIds.length > MAX_QUERY_LIMIT) {
-      throw new Error(
-        `IGDB franchise ${franchise.name} contains more than ${MAX_QUERY_LIMIT} games; pagination support is required before this source can be generated safely.`,
-      );
-    }
-
-    const games = await getGamesByIds(gameIds);
-    const rankableGames = games.filter((game) =>
-      isRankableIgdbGame(game, { gameTypes: normalizedGameTypes }),
-    );
-    return sortGames(rankableGames, sort).slice(0, normalizedLimit);
+    return getGamesByRelation({
+      relation: 'franchises',
+      id: normalizedId,
+      limit,
+      sort,
+      gameTypes,
+    });
   }
 
   async function getGamesByCompanyId({

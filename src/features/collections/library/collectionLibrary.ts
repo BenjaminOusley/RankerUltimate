@@ -387,6 +387,7 @@ export function addGeneratedCollectionToLibrary(
   state: CollectionLibraryState,
   sourceCollections: readonly RankCollection[],
   collection: RankCollection,
+  selectedItemKeys: ReadonlySet<string> | null = null,
 ): CollectionLibraryState {
   const source = collection.candidateSource;
 
@@ -405,6 +406,12 @@ export function addGeneratedCollectionToLibrary(
 
   const trimmedDescription = collection.description?.trim();
 
+  const excludedItemKeys = selectedItemKeys
+    ? collection.items
+        .map(getCollectionLibraryItemKey)
+        .filter((itemKey) => !selectedItemKeys.has(itemKey))
+    : [];
+
   const generatedCollection: GeneratedCollectionRecord = {
     id: collection.id,
     name: collection.name.trim(),
@@ -414,7 +421,7 @@ export function addGeneratedCollectionToLibrary(
         }
       : {}),
     candidateSource: source,
-    excludedItemKeys: [],
+    excludedItemKeys,
   };
 
   return {

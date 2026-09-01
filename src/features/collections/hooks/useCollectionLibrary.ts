@@ -97,7 +97,10 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
   }, []);
 
   const createGeneratedCollection = useCallback(
-    async (collection: RankCollection) => {
+    async (
+      collection: RankCollection,
+      selectedItemKeys: ReadonlySet<string> | null = null,
+    ) => {
       if (!isRefreshableCollectionSource(collection.candidateSource)) {
         throw new Error('Generated collection is missing its source definition.');
       }
@@ -119,7 +122,12 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
       );
 
       setLibraryState((previous) =>
-        addGeneratedCollectionToLibrary(previous, sourceDefinitions, collection),
+        addGeneratedCollectionToLibrary(
+          previous,
+          sourceDefinitions,
+          collection,
+          selectedItemKeys,
+        ),
       );
 
       return collection.id;

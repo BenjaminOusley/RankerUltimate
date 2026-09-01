@@ -37,6 +37,13 @@ function normalizeWhitespace(value) {
   return value.replace(/\s+/gu, ' ').trim();
 }
 
+
+const RELATION_ONLY_PATTERN = /^(?:the\s+)?(?:genre|franchise|series|platform|console|company|developer|publisher|studio|director|actor|actress)$/iu;
+
+function isRelationOnlyClarification(value) {
+  return RELATION_ONLY_PATTERN.test(normalizeWhitespace(value));
+}
+
 function uniqueMediaTypes(mediaTypes) {
   return SUPPORTED_MEDIA_TYPES.filter((mediaType) => mediaTypes.includes(mediaType));
 }
@@ -189,6 +196,7 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
     detectedMediaTypes.length > 0 ? detectedMediaTypes : previousContext.mediaTypes;
 
   let subject = extractedSubject || previousContext.subject;
+  let requestText = normalizedText;
 
   if (
     extractedSubject &&
@@ -196,9 +204,16 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
     detectedMediaTypes.length === 0 &&
     previousContext.mediaTypes.length > 0
   ) {
-    // When the user is answering a "which <media>?" question, their new answer is the
-    // useful subject/constraint and should replace the earlier broad wording.
-    subject = extractedSubject;
+    if (isRelationOnlyClarification(extractedSubject)) {
+      // Planner clarifications such as "the company" or "franchise" describe
+      // the relationship of the existing subject rather than replacing it.
+      subject = previousContext.subject;
+      requestText = `${previousContext.subject} ${normalizedText}`;
+    } else {
+      // When the user is answering a "which <media>?" question, their new answer is the
+      // useful subject/constraint and should replace the earlier broad wording.
+      subject = extractedSubject;
+    }
   }
 
   const nextContext = {
@@ -236,7 +251,7 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
     ok: true,
     result: {
       status: 'ready-for-planning',
-      requestText: normalizedText,
+      requestText,
       subject,
       mediaTypes,
       context: nextContext,

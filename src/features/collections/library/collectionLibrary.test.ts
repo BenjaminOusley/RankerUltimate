@@ -205,6 +205,31 @@ describe('runtime generated collections', () => {
     expect(shell.candidateSource).toEqual(generatedCollection.candidateSource);
   });
 
+  it('stores review-time deselections as generated collection exclusions', () => {
+    const selectedItemKeys = new Set([
+      getCollectionLibraryItemKey(generatedCollection.items[0]),
+    ]);
+
+    const state = addGeneratedCollectionToLibrary(
+      emptyState(),
+      baseCollections,
+      generatedCollection,
+      selectedItemKeys,
+    );
+
+    expect(state.generatedCollections[0].excludedItemKeys).toEqual([
+      getCollectionLibraryItemKey(generatedCollection.items[1]),
+    ]);
+
+    const materialized = materializeCollections(
+      [...baseCollections, generatedCollection],
+      state,
+    );
+    const nolan = materialized.find((collection) => collection.id === 'nolan-movies');
+
+    expect(nolan?.items.map((item) => item.name)).toEqual(['Inception']);
+  });
+
   it('materializes a runtime generated collection from its source candidates', () => {
     const state = addGeneratedCollectionToLibrary(
       emptyState(),

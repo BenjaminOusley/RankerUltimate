@@ -83,6 +83,45 @@ describe('collection request resolver foundation', () => {
     expect(second.result.mediaTypes).toEqual(['game']);
   });
 
+  it('keeps the existing subject when a planner clarification only names the relationship', () => {
+    const resolution = resolveCollectionRequestTurn({
+      text: 'the company',
+      context: {
+        subject: 'Nintendo',
+        mediaTypes: ['game'],
+      },
+    });
+
+    expect(resolution).toEqual({
+      ok: true,
+      result: {
+        status: 'ready-for-planning',
+        requestText: 'Nintendo the company',
+        subject: 'Nintendo',
+        mediaTypes: ['game'],
+        context: {
+          subject: 'Nintendo',
+          mediaTypes: ['game'],
+        },
+      },
+    });
+  });
+
+  it('still replaces a broad subject with a genuinely more specific clarification', () => {
+    const resolution = resolveCollectionRequestTurn({
+      text: 'Marvel Studios company',
+      context: {
+        subject: 'MCU',
+        mediaTypes: ['movie'],
+      },
+    });
+
+    expect(resolution.ok).toBe(true);
+    expect(resolution.result.status).toBe('ready-for-planning');
+    expect(resolution.result.subject).toBe('Marvel Studios company');
+    expect(resolution.result.requestText).toBe('Marvel Studios company');
+  });
+
   it('resolves a sufficiently constrained one-turn request without clarification', () => {
     const resolution = resolveCollectionRequestTurn({ text: 'Halo games' });
 

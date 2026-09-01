@@ -395,4 +395,68 @@ describe('IGDB provider', () => {
     expect(body).toContain('where id = 12;');
   });
 
+  it('paginates large franchise candidate pools instead of failing above 500 associated games', async () => {
+    const apiBodies = [];
+    let apiRequestNumber = 0;
+
+    const provider = createIgdbProvider({
+      clientId: 'client-id',
+      clientSecret: 'client-secret',
+      async fetchImpl(url, init) {
+        if (String(url).includes('id.twitch.tv')) {
+          return response({
+            json: {
+              access_token: 'token',
+              expires_in: 3600,
+            },
+          });
+        }
+
+        apiRequestNumber += 1;
+        apiBodies.push(init.body);
+
+        if (apiRequestNumber === 1) {
+          return response({
+            json: [{ id: 99, name: 'Mario', slug: 'mario' }],
+          });
+        }
+
+        if (apiRequestNumber === 2) {
+          return response({
+            json: Array.from({ length: 100 }, (_, index) => ({
+              id: 1_000 + index,
+              name: `Mario add-on ${index}`,
+              game_type: { type: 'DLC / Addon' },
+              game_status: { status: 'Released' },
+              total_rating_count: 10_000 - index,
+            })),
+          });
+        }
+
+        return response({
+          json: [
+            {
+              id: 2_000,
+              name: 'Super Mario Bros.',
+              game_type: { type: 'Main Game' },
+              game_status: { status: 'Released' },
+              total_rating_count: 9_000,
+            },
+          ],
+        });
+      },
+    });
+
+    const games = await provider.getGamesByFranchiseId({
+      id: 99,
+      limit: 1,
+      sort: 'popular',
+    });
+
+    expect(games.map((game) => game.id)).toEqual([2_000]);
+    expect(apiBodies[1]).toContain('where version_parent = null & franchises = 99;');
+    expect(apiBodies[1]).toContain('limit 100;');
+    expect(apiBodies[2]).toContain('offset 100;');
+  });
+
 });
