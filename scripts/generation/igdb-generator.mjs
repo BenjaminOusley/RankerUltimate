@@ -1,12 +1,15 @@
 import {
   CORE_IGDB_GAME_TYPES,
   DLC_EXPANSION_IGDB_GAME_TYPES,
+  DLC_IGDB_GAME_TYPES,
+  EXPANSION_IGDB_GAME_TYPES,
+  SEASON_IGDB_GAME_TYPES,
   createIgdbRankItem,
   normalizeIgdbGameTypes,
 } from '../providers/igdb.mjs';
 
 const MAX_COLLECTION_LIMIT = 250;
-const MODES = new Set(['genre', 'franchise', 'platform', 'company']);
+const MODES = new Set(['genre', 'franchise', 'platform', 'company', 'parent-game']);
 const SORTS = new Set(['popular', 'rating', 'release-asc', 'release-desc', 'name']);
 
 function isObject(value) {
@@ -94,6 +97,10 @@ async function loadResolvedEntity(igdb, request) {
     return igdb.getPlatformById(request.igdbId);
   }
 
+  if (request.mode === 'parent-game') {
+    return igdb.getGameById(request.igdbId);
+  }
+
   return igdb.getCompanyById(request.igdbId);
 }
 
@@ -127,6 +134,15 @@ async function loadGames(igdb, request) {
     });
   }
 
+  if (request.mode === 'parent-game') {
+    return igdb.getGamesByParentGameId({
+      id: request.igdbId,
+      limit: request.limit,
+      sort: request.sort,
+      gameTypes: request.gameTypes,
+    });
+  }
+
   return igdb.getGamesByCompanyId({
     id: request.igdbId,
     limit: request.limit,
@@ -135,24 +151,66 @@ async function loadGames(igdb, request) {
   });
 }
 
+function gameTypesEqual(left, right) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  const rightSet = new Set(right);
+
+  return left.every((gameType) => rightSet.has(gameType));
+}
+
+function collectionContentLabel(gameTypes) {
+  if (gameTypesEqual(gameTypes, DLC_IGDB_GAME_TYPES)) {
+    return 'DLC';
+  }
+
+  if (gameTypesEqual(gameTypes, EXPANSION_IGDB_GAME_TYPES)) {
+    return 'Expansions';
+  }
+
+  if (gameTypesEqual(gameTypes, SEASON_IGDB_GAME_TYPES)) {
+    return 'Seasons';
+  }
+
+  if (gameTypesEqual(gameTypes, DLC_EXPANSION_IGDB_GAME_TYPES)) {
+    return 'DLC';
+  }
+
+  return 'Games';
+}
+
 function createCollection(request, resolvedEntity, items) {
   const entityName = resolvedEntity.name;
+  const contentLabel = collectionContentLabel(request.gameTypes);
+  const contentScoped = contentLabel !== 'Games';
 
   let description;
 
-  if (request.mode === 'genre') {
-    description = `${entityName} games from IGDB.`;
+  if (request.mode === 'parent-game') {
+    description = `${contentLabel} for ${entityName}.`;
+  } else if (request.mode === 'genre') {
+    description = contentScoped
+      ? `${contentLabel} in the ${entityName} game genre.`
+      : `${entityName} games from IGDB.`;
   } else if (request.mode === 'franchise') {
-    description = `Games in the ${entityName} franchise.`;
+    description = contentScoped
+      ? `${contentLabel} in the ${entityName} franchise.`
+      : `Games in the ${entityName} franchise.`;
   } else if (request.mode === 'platform') {
-    description = `Games released on ${entityName}.`;
+    description = contentScoped
+      ? `${contentLabel} released on ${entityName}.`
+      : `Games released on ${entityName}.`;
   } else {
-    description = `Games associated with ${entityName}.`;
+    description = contentScoped
+      ? `${contentLabel} associated with ${entityName}.`
+      : `Games associated with ${entityName}.`;
   }
 
   return {
     id: `${request.collectionId}-games`,
-    name: `${entityName} Games`,
+    name: `${entityName} ${contentLabel}`,
     description,
     candidateSource: {
       kind: 'generated',

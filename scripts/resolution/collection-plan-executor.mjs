@@ -137,6 +137,7 @@ export function buildGenerationRequestFromPlannedSource(source, collectionId) {
       igdbId: source.resolvedId,
       limit: source.parameters.limit,
       sort: source.parameters.sort,
+      gameTypes: source.parameters.gameTypes,
       includeDlcExpansions: source.parameters.includeDlcExpansions,
     });
 

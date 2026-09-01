@@ -8,6 +8,8 @@ const MAX_RELATION_GAME_ROWS = 5_000;
 
 const GAME_FIELDS =
   'id,name,slug,first_release_date,cover.image_id,total_rating,total_rating_count,game_type.type,game_status.status,version_parent';
+const GAME_SEARCH_FIELDS =
+  `${GAME_FIELDS},dlcs,expansions,standalone_expansions`;
 
 const GAME_SORTS = {
   popular: 'total_rating_count desc',
@@ -24,15 +26,25 @@ export const CORE_IGDB_GAME_TYPES = Object.freeze([
   'expanded-game',
 ]);
 
+export const EXPANSION_IGDB_GAME_TYPES = Object.freeze([
+  'standalone-expansion',
+  'expansion',
+]);
+
+export const DLC_IGDB_GAME_TYPES = Object.freeze(['dlc-addon']);
+
 export const DLC_EXPANSION_IGDB_GAME_TYPES = Object.freeze([
   'standalone-expansion',
   'dlc-addon',
   'expansion',
 ]);
 
+export const SEASON_IGDB_GAME_TYPES = Object.freeze(['season']);
+
 const KNOWN_IGDB_GAME_TYPES = new Set([
   ...CORE_IGDB_GAME_TYPES,
   ...DLC_EXPANSION_IGDB_GAME_TYPES,
+  ...SEASON_IGDB_GAME_TYPES,
 ]);
 
 const EXCLUDED_GAME_STATUSES = new Set([
@@ -133,6 +145,7 @@ function normalizeIgdbGameType(value) {
   if (label === 'remake') return 'remake';
   if (label === 'remaster') return 'remaster';
   if (label === 'expanded game') return 'expanded-game';
+  if (label === 'season') return 'season';
 
   return label;
 }
@@ -394,7 +407,7 @@ export function createIgdbProvider({
       'games',
       [
         `search ${quoted(normalizedSearch)};`,
-        `fields ${GAME_FIELDS};`,
+        `fields ${GAME_SEARCH_FIELDS};`,
         'where version_parent = null;',
         `limit ${fetchLimit};`,
       ].join('\n'),
@@ -564,6 +577,119 @@ export function createIgdbProvider({
     );
   }
 
+  async function getGamesByParentGameId({
+    id,
+    limit = 100,
+    sort = 'popular',
+    gameTypes = CORE_IGDB_GAME_TYPES,
+  }) {
+    const normalizedId = normalizePositiveId(id, 'IGDB parent game ID');
+    const normalizedLimit = normalizeLimit(limit, 100);
+    const normalizedSort = normalizeGameSort(sort);
+    const normalizedGameTypes = normalizeIgdbGameTypes(gameTypes);
+    const parentListFields = new Map([
+      ['dlc-addon', 'dlcs'],
+      ['expansion', 'expansions'],
+      ['standalone-expansion', 'standalone_expansions'],
+    ]);
+    const authoritativeIds = new Set();
+    const reverseGameTypes = [];
+
+    const parentResults = await request(
+      'games',
+      [
+        `fields ${GAME_SEARCH_FIELDS};`,
+        `where id = ${normalizedId};`,
+        'limit 1;',
+      ].join('\n'),
+    );
+    const parentGame = parentResults[0] ?? null;
+
+    if (!parentGame) {
+      return [];
+    }
+
+    for (const gameType of normalizedGameTypes) {
+      const field = parentListFields.get(gameType);
+
+      if (!field) {
+        reverseGameTypes.push(gameType);
+        continue;
+      }
+
+      for (const childId of Array.isArray(parentGame[field]) ? parentGame[field] : []) {
+        if (Number.isSafeInteger(childId) && childId > 0) {
+          authoritativeIds.add(childId);
+        }
+      }
+    }
+
+    const uniqueGames = new Map();
+    const authoritativeIdList = [...authoritativeIds];
+
+    for (let offset = 0; offset < authoritativeIdList.length; offset += MAX_QUERY_LIMIT) {
+      const batchIds = authoritativeIdList.slice(offset, offset + MAX_QUERY_LIMIT);
+      const games = await getGamesByIds(batchIds);
+
+      for (const game of games) {
+        if (
+          Number.isSafeInteger(game?.id) &&
+          isRankableIgdbGame(game, { gameTypes: normalizedGameTypes })
+        ) {
+          uniqueGames.set(game.id, game);
+        }
+      }
+    }
+
+    if (reverseGameTypes.length > 0) {
+      const pageSize = Math.min(
+        MAX_QUERY_LIMIT,
+        Math.max(100, normalizedLimit * 4),
+      );
+
+      for (
+        let offset = 0;
+        offset < MAX_RELATION_GAME_ROWS;
+        offset += pageSize
+      ) {
+        const games = await request(
+          'games',
+          [
+            `fields ${GAME_FIELDS};`,
+            `where version_parent = null & parent_game = ${normalizedId};`,
+            `sort ${GAME_SORTS[normalizedSort]};`,
+            `limit ${pageSize};`,
+            ...(offset > 0 ? [`offset ${offset};`] : []),
+          ].join('\n'),
+        );
+
+        for (const game of games) {
+          if (
+            Number.isSafeInteger(game?.id) &&
+            isRankableIgdbGame(game, { gameTypes: reverseGameTypes })
+          ) {
+            uniqueGames.set(game.id, game);
+          }
+        }
+
+        if (games.length < pageSize) {
+          break;
+        }
+
+        if (offset + pageSize >= MAX_RELATION_GAME_ROWS) {
+          throw new Error(
+            `IGDB parent game ${normalizedId} has more than ${MAX_RELATION_GAME_ROWS} child game records; refusing to return a potentially incomplete candidate pool.`,
+          );
+        }
+      }
+    }
+
+    return sortGames([...uniqueGames.values()], normalizedSort).slice(
+      0,
+      normalizedLimit,
+    );
+  }
+
   async function getGamesByFranchiseId({
     id,
     limit = 100,
@@ -684,6 +810,7 @@ export function createIgdbProvider({
     getGamesByIds,
     getGameById,
     getGamesByRelation,
+    getGamesByParentGameId,
     getGamesByFranchiseId,
     getGamesByCompanyId,
   };

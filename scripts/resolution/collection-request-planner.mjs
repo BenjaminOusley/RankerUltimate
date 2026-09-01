@@ -1,9 +1,22 @@
 import { findIgdbEntityMatches } from '../generation/igdb-entity-search.mjs';
+import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+  DLC_IGDB_GAME_TYPES,
+  EXPANSION_IGDB_GAME_TYPES,
+  SEASON_IGDB_GAME_TYPES,
+} from '../providers/igdb.mjs';
 import { normalizeTitle } from '../providers/tmdb.mjs';
 
 const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv', 'game']);
 const DEFAULT_LIMIT = 50;
 const MAX_COLLECTION_LIMIT = 250;
+const OPTIONAL_IGDB_GAME_TYPES = Object.freeze([
+  ...DLC_EXPANSION_IGDB_GAME_TYPES,
+  ...SEASON_IGDB_GAME_TYPES,
+]);
+const GAME_CONTENT_LIST_PATTERN =
+  '(?:dlcs?|expansions?|seasons?)(?:\\s*(?:,|and|or|\\/|&)\\s*(?:dlcs?|expansions?|seasons?))*';
 
 function normalizeWhitespace(value) {
   return value.replace(/\s+/gu, ' ').trim();
@@ -52,13 +65,116 @@ function entityNamesMatch(query, candidate, { allowSimplePlural = false } = {}) 
   );
 }
 
+function getGameReleaseYear(game) {
+  if (!Number.isFinite(game?.first_release_date)) {
+    return null;
+  }
 
-function parseRequestedLimit(text) {
+  const date = new Date(game.first_release_date * 1000);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return String(date.getUTCFullYear());
+}
+
+function parseParentGameSelector(value) {
+  const normalized = normalizeWhitespace(value);
+  const match = normalized.match(/^(.*?)(?:\s*\((\d{4})\)|\s+(\d{4}))$/u);
+
+  if (!match) {
+    return {
+      title: normalized,
+      year: null,
+    };
+  }
+
+  return {
+    title: normalizeWhitespace(match[1]),
+    year: match[2] ?? match[3] ?? null,
+  };
+}
+
+function gameTypePriority(game) {
+  const type = normalizeComparable(game?.game_type?.type ?? '');
+
+  if (type === 'main game') {
+    return 0;
+  }
+
+  if (type === 'expanded game') {
+    return 1;
+  }
+
+  if (type === 'remaster') {
+    return 2;
+  }
+
+  if (type === 'remake') {
+    return 3;
+  }
+
+  return 4;
+}
+
+function preferCanonicalParentGames(games) {
+  if (games.length <= 1) {
+    return games;
+  }
+
+  const bestPriority = Math.min(...games.map(gameTypePriority));
+  const preferred = games.filter((game) => gameTypePriority(game) === bestPriority);
+
+  return preferred.length > 0 ? preferred : games;
+}
+
+function getGameContentScopeLabel(gameTypes) {
+  const selected = new Set(gameTypes);
+  const hasDlcAddon = DLC_IGDB_GAME_TYPES.some((gameType) => selected.has(gameType));
+  const hasExpansion = EXPANSION_IGDB_GAME_TYPES.some((gameType) =>
+    selected.has(gameType),
+  );
+  const hasSeason = SEASON_IGDB_GAME_TYPES.some((gameType) => selected.has(gameType));
+
+  // In normal game language, “DLC” is an umbrella term that also includes
+  // downloadable expansions. Keep the provider taxonomy explicit in gameTypes,
+  // but keep clarification copy aligned with the user's terminology.
+  if (hasDlcAddon && !hasSeason) {
+    return 'DLC';
+  }
+
+  const labels = [];
+
+  if (hasExpansion) {
+    labels.push('expansions');
+  }
+
+  if (hasSeason) {
+    labels.push('seasons');
+  }
+
+  if (labels.length === 0) {
+    return 'content';
+  }
+
+  if (labels.length === 1) {
+    return labels[0];
+  }
+
+  return `${labels[0]} and ${labels[1]}`;
+}
+
+function parseRequestedLimit(text, mediaType) {
   const normalized = normalizeComparable(text);
   const patterns = [
     /\b(?:top|best)\s+(\d{1,4})\b/u,
     /\b(\d{1,4})\s+(?:most\s+popular|highest\s+rated|best)\b/u,
   ];
+
+  if (mediaType === 'game') {
+    patterns.push(/^(\d{1,4})\s+.+\bgames?\b/u);
+  }
 
   for (const pattern of patterns) {
     const match = normalized.match(pattern);
@@ -77,34 +193,73 @@ function parseRequestedLimit(text) {
   return null;
 }
 
-function stripRequestedLimit(value) {
-  return value
+function stripRequestedLimit(value, requestedLimit) {
+  let stripped = value
     .replace(/^(?:the\s+)?(?:top|best)\s+\d{1,4}\s+/iu, '')
-    .replace(/^(?:the\s+)?\d{1,4}\s+(?:most\s+popular|highest\s+rated|best)\s+/iu, '')
-    .trim();
+    .replace(/^(?:the\s+)?\d{1,4}\s+(?:most\s+popular|highest\s+rated|best)\s+/iu, '');
+
+  if (requestedLimit !== null) {
+    stripped = stripped.replace(/^\d{1,4}\s+/u, '');
+  }
+
+  return stripped.trim();
 }
 
-function parseIncludeDlcExpansionsHint(text) {
+function parseMentionedGameTypes(text) {
   const normalized = normalizeComparable(text);
+  const wantsDlc = /\bdlcs?\b/u.test(normalized);
+  const wantsExpansions = /\bexpansions?\b/u.test(normalized);
+  const wantsSeasons = /\bseasons?\b/u.test(normalized);
+  const dlcTypes = new Set(DLC_EXPANSION_IGDB_GAME_TYPES);
+  const expansionTypes = new Set(EXPANSION_IGDB_GAME_TYPES);
+  const seasonTypes = new Set(SEASON_IGDB_GAME_TYPES);
 
-  return (
-    /\b(?:include|including|with|plus)\b[^,.]{0,40}\b(?:dlc|dlcs|expansion|expansions)\b/u.test(
-      normalized,
-    ) ||
-    /\b(?:dlc|dlcs|expansion|expansions)\b[^,.]{0,20}\bincluded\b/u.test(normalized)
+  return OPTIONAL_IGDB_GAME_TYPES.filter(
+    (gameType) =>
+      (wantsDlc && dlcTypes.has(gameType)) ||
+      (wantsExpansions && expansionTypes.has(gameType)) ||
+      (wantsSeasons && seasonTypes.has(gameType)),
   );
+}
+
+function parseGameContentScope(text) {
+  const normalized = normalizeComparable(text);
+  const mentionedTypes = parseMentionedGameTypes(normalized);
+
+  if (mentionedTypes.length === 0) {
+    return [...CORE_IGDB_GAME_TYPES];
+  }
+
+  if (/\b(?:without|exclude|excluding)\b/u.test(normalized)) {
+    return [...CORE_IGDB_GAME_TYPES];
+  }
+
+  if (
+    /\b(?:include|including|with|plus)\b/u.test(normalized) ||
+    /\bincluded\b/u.test(normalized)
+  ) {
+    return [...CORE_IGDB_GAME_TYPES, ...mentionedTypes];
+  }
+
+  return mentionedTypes;
 }
 
 function stripGameContentScopeModifiers(value) {
   return value
     .replace(
-      /\s+(?:including|include|with|plus|without)\s+(?:(?:dlc|dlcs)(?:\s*(?:and|\/|&)\s*)?)?(?:expansion|expansions)?\s*$/iu,
+      new RegExp(
+        '\\s+(?:including|include|with|plus|without|excluding|exclude)\\s+' +
+          GAME_CONTENT_LIST_PATTERN +
+          '\\s*$',
+        'iu',
+      ),
       '',
     )
     .replace(
-      /\s+(?:including|include|with|plus|without)\s+(?:expansion|expansions)(?:\s*(?:and|\/|&)\s*(?:dlc|dlcs))?\s*$/iu,
+      new RegExp('\\s+' + GAME_CONTENT_LIST_PATTERN + '\\s+included\\s*$', 'iu'),
       '',
     )
+    .replace(new RegExp('\\s+' + GAME_CONTENT_LIST_PATTERN + '\\s*$', 'iu'), '')
     .trim();
 }
 
@@ -176,11 +331,10 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
   let query = normalizeWhitespace(subject);
   const combinedText = `${requestText} ${subject}`;
   const relationHint = parseRelationHint(combinedText, mediaType);
-  const requestedLimit = parseRequestedLimit(combinedText);
-  const includeDlcExpansions =
-    mediaType === 'game' && parseIncludeDlcExpansionsHint(combinedText);
+  const requestedLimit = parseRequestedLimit(combinedText, mediaType);
+  const gameTypes = mediaType === 'game' ? parseGameContentScope(combinedText) : null;
 
-  query = stripRequestedLimit(query);
+  query = stripRequestedLimit(query, requestedLimit);
 
   if (mediaType === 'game') {
     query = stripGameContentScopeModifiers(query);
@@ -196,16 +350,23 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
       /\s+(?:franchise|series|genre|platform|console|company|developer|publisher|studio)$/iu,
       '',
     )
-    .replace(/^(?:franchise|series|genre|platform|console|company|developer|publisher|studio)\s+/iu, '')
+    .replace(
+      /^(?:franchise|series|genre|platform|console|company|developer|publisher|studio)\s+/iu,
+      '',
+    )
     .replace(/\s+feature\s+films?$/iu, '')
     .trim();
+
+  if (mediaType === 'game') {
+    query = stripGameContentScopeModifiers(query);
+  }
 
   return {
     query: query || normalizeWhitespace(subject),
     relationHint,
     sort: parseSortHint(combinedText, mediaType),
     requestedLimit,
-    includeDlcExpansions,
+    gameTypes,
   };
 }
 
@@ -260,11 +421,18 @@ function createTmdbParameters(mediaType, sort, limit) {
   };
 }
 
-function createIgdbParameters(sort, limit, includeDlcExpansions) {
+function createIgdbParameters(sort, limit, gameTypes) {
+  const selected = new Set(gameTypes);
+  const includesCore = CORE_IGDB_GAME_TYPES.every((gameType) => selected.has(gameType));
+  const includesDlcExpansions = DLC_EXPANSION_IGDB_GAME_TYPES.every((gameType) =>
+    selected.has(gameType),
+  );
+
   return {
     limit,
     sort,
-    includeDlcExpansions,
+    gameTypes,
+    includeDlcExpansions: includesCore && includesDlcExpansions,
   };
 }
 
@@ -280,7 +448,9 @@ function createTmdbPlan({ mediaType, mode, query, entity, sort, limit }) {
   };
 }
 
-function createIgdbPlan({ mode, query, entity, sort, limit, includeDlcExpansions }) {
+function createIgdbPlan({ mode, query, entity, sort, limit, gameTypes }) {
+  const resolvedYear = mode === 'parent-game' ? getGameReleaseYear(entity) : null;
+
   return {
     provider: 'igdb',
     mediaType: 'game',
@@ -288,7 +458,8 @@ function createIgdbPlan({ mode, query, entity, sort, limit, includeDlcExpansions
     query,
     resolvedId: entity.id,
     resolvedName: entity.name,
-    parameters: createIgdbParameters(sort, limit, includeDlcExpansions),
+    ...(resolvedYear ? { resolvedYear } : {}),
+    parameters: createIgdbParameters(sort, limit, gameTypes),
   };
 }
 
@@ -299,6 +470,10 @@ function toPlanningMatch(plan) {
     mode: plan.mode,
     id: plan.resolvedId,
     name: plan.resolvedName,
+    ...(plan.resolvedYear ? { resolvedYear: plan.resolvedYear } : {}),
+    ...(plan.mode === 'parent-game'
+      ? { gameTypes: [...(plan.parameters?.gameTypes ?? [])] }
+      : {}),
   };
 }
 
@@ -314,7 +489,16 @@ function clarificationForUnsupportedLimit({ requestedLimit, subject }) {
 
 function clarificationForMatches({ subject, mediaType, matches }) {
   const mediaLabel = mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'TV' : 'game';
-  const examples = matches.slice(0, 4).map((match) => `${match.name} ${match.mode}`);
+  const examples = matches.slice(0, 4).map((match) => {
+    if (match.mode === 'parent-game') {
+      const year = match.resolvedYear ? ` (${match.resolvedYear})` : '';
+      const scopeLabel = getGameContentScopeLabel(match.gameTypes ?? []);
+
+      return `${match.name}${year} ${scopeLabel}`;
+    }
+
+    return `${match.name} ${match.mode}`;
+  });
 
   return {
     status: 'clarification',
@@ -330,7 +514,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
     return {
       status: 'clarification',
       reason: 'unresolved-entity',
-      question: `I couldn't safely map “${subject}” to one IGDB genre, franchise, platform, or company. Please make the request more specific — for example, “${subject} franchise” or name the exact platform/company you mean.`,
+      question: `I couldn't safely map “${subject}” to one IGDB game title, genre, franchise, platform, or company. Please make the request more specific — for example, “${subject} franchise” or name the exact game/platform/company you mean.`,
       examples: [`${subject} franchise`, `${subject} genre`, `${subject} platform`],
       matches: [],
     };
@@ -350,6 +534,109 @@ function clarificationForNoMatch({ subject, mediaType }) {
   };
 }
 
+function clarificationForCompanyPlatformBrand({
+  subject,
+  companyPlan,
+  platformPlans,
+}) {
+  const platformExamples = platformPlans
+    .slice(0, 3)
+    .map((plan) => `${plan.resolvedName} platform`);
+
+  return {
+    status: 'clarification',
+    reason: 'ambiguous-entity',
+    question: `I found “${subject}” as a game company, but it also matches a family of game platforms. Do you mean games associated with ${companyPlan.resolvedName} the company, or games from a specific platform?`,
+    examples: [`${companyPlan.resolvedName} company`, ...platformExamples],
+    matches: [toPlanningMatch(companyPlan), ...platformPlans.map(toPlanningMatch)],
+  };
+}
+
+function isExclusiveGameContentScope(gameTypes) {
+  const selected = new Set(gameTypes);
+
+  return !CORE_IGDB_GAME_TYPES.some((gameType) => selected.has(gameType));
+}
+
+function parentGameHasRequestedContent(game, gameTypes) {
+  const selected = new Set(gameTypes);
+
+  const hasDlc =
+    selected.has('dlc-addon') &&
+    Array.isArray(game?.dlcs) &&
+    game.dlcs.length > 0;
+  const hasExpansion =
+    (selected.has('expansion') &&
+      Array.isArray(game?.expansions) &&
+      game.expansions.length > 0) ||
+    (selected.has('standalone-expansion') &&
+      Array.isArray(game?.standalone_expansions) &&
+      game.standalone_expansions.length > 0);
+
+  return hasDlc || hasExpansion;
+}
+
+async function findExactParentGamePlans({ igdb, query, sort, limit, gameTypes }) {
+  if (typeof igdb.searchGames !== 'function') {
+    return [];
+  }
+
+  const selector = parseParentGameSelector(query);
+  const games = await igdb.searchGames(selector.title, 20);
+  const exactGames = games.filter(
+    (game) =>
+      Number.isSafeInteger(game?.id) &&
+      game.id > 0 &&
+      typeof game?.name === 'string' &&
+      entityNamesMatch(selector.title, game.name) &&
+      (selector.year === null || getGameReleaseYear(game) === selector.year),
+  );
+
+  let resolvedGames = exactGames;
+
+  if (exactGames.length > 1) {
+    let contentMatches = [];
+
+    if (typeof igdb.getGamesByParentGameId === 'function') {
+      for (const game of exactGames) {
+        const children = await igdb.getGamesByParentGameId({
+          id: game.id,
+          limit: 1,
+          sort,
+          gameTypes,
+        });
+
+        if (children.length > 0) {
+          contentMatches.push(game);
+        }
+      }
+    }
+
+    if (contentMatches.length === 0) {
+      contentMatches = exactGames.filter((game) =>
+        parentGameHasRequestedContent(game, gameTypes),
+      );
+    }
+
+    if (contentMatches.length > 0) {
+      resolvedGames = contentMatches;
+    }
+
+    resolvedGames = preferCanonicalParentGames(resolvedGames);
+  }
+
+  return resolvedGames.map((game) =>
+    createIgdbPlan({
+      mode: 'parent-game',
+      query: selector.title,
+      entity: game,
+      sort,
+      limit,
+      gameTypes,
+    }),
+  );
+}
+
 async function findGamePlans({ igdb, subject, requestText }) {
   if (!igdb) {
     throw new Error('IGDB provider is required to plan game collections.');
@@ -360,7 +647,7 @@ async function findGamePlans({ igdb, subject, requestText }) {
     relationHint,
     sort,
     requestedLimit,
-    includeDlcExpansions,
+    gameTypes,
   } = cleanPlanningQuery(subject, requestText, 'game');
   const limit = requestedLimit ?? DEFAULT_LIMIT;
 
@@ -375,6 +662,26 @@ async function findGamePlans({ igdb, subject, requestText }) {
       }),
     };
   }
+
+  if (!relationHint && isExclusiveGameContentScope(gameTypes)) {
+    const parentGamePlans = await findExactParentGamePlans({
+      igdb,
+      query,
+      sort,
+      limit,
+      gameTypes,
+    });
+
+    if (parentGamePlans.length > 0) {
+      return {
+        plans: dedupePlans(parentGamePlans),
+        relatedPlatformPlans: [],
+        relationHint,
+        limitClarification: null,
+      };
+    }
+  }
+
   const modes = relationHint
     ? [relationHint]
     : ['genre', 'franchise', 'platform', 'company'];
@@ -415,7 +722,7 @@ async function findGamePlans({ igdb, subject, requestText }) {
             entity: match,
             sort,
             limit,
-            includeDlcExpansions,
+            gameTypes,
           }),
         );
         continue;
@@ -433,7 +740,7 @@ async function findGamePlans({ igdb, subject, requestText }) {
             entity: match,
             sort,
             limit,
-            includeDlcExpansions,
+            gameTypes,
           }),
         );
       }
@@ -445,27 +752,6 @@ async function findGamePlans({ igdb, subject, requestText }) {
     relatedPlatformPlans: dedupePlans(relatedPlatformPlans),
     relationHint,
     limitClarification: null,
-  };
-}
-
-function clarificationForCompanyPlatformBrand({
-  subject,
-  companyPlan,
-  platformPlans,
-}) {
-  const platformExamples = platformPlans
-    .slice(0, 3)
-    .map((plan) => `${plan.resolvedName} platform`);
-
-  return {
-    status: 'clarification',
-    reason: 'ambiguous-entity',
-    question: `I found “${subject}” as a game company, but it also matches a family of game platforms. Do you mean games associated with ${companyPlan.resolvedName} the company, or games from a specific platform?`,
-    examples: [`${companyPlan.resolvedName} company`, ...platformExamples],
-    matches: [
-      toPlanningMatch(companyPlan),
-      ...platformPlans.map(toPlanningMatch),
-    ],
   };
 }
 

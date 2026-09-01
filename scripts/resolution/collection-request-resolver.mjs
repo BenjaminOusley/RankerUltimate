@@ -28,6 +28,8 @@ const MEDIA_PATTERNS = [
   },
 ];
 
+const GAME_CONTENT_SCOPE_PATTERN = /\b(?:dlcs?|expansions?|seasons?)\b/iu;
+
 const LEADING_FILLER_PATTERN = new RegExp(
   String.raw`^(?:please\s+)?(?:i\s+(?:want|would\s+like|wanna)\s+(?:to\s+)?(?:rank\s+)?|rank\s+|give\s+me\s+|make\s+(?:me\s+)?(?:a\s+)?(?:collection\s+(?:of\s+)?)?|create\s+(?:me\s+)?(?:a\s+)?(?:collection\s+(?:of\s+)?)?)+`,
   'iu',
@@ -58,6 +60,10 @@ export function detectCollectionRequestMediaTypes(text) {
     for (const pattern of descriptor.patterns) {
       pattern.lastIndex = 0;
     }
+  }
+
+  if (detected.length === 0 && GAME_CONTENT_SCOPE_PATTERN.test(text)) {
+    detected.push('game');
   }
 
   return uniqueMediaTypes(detected);

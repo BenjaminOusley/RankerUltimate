@@ -49,16 +49,30 @@ export type TmdbPlannedSource = {
   };
 };
 
+export type IgdbGameType =
+  | 'main-game'
+  | 'remake'
+  | 'remaster'
+  | 'expanded-game'
+  | 'standalone-expansion'
+  | 'dlc-addon'
+  | 'expansion'
+  | 'season';
+
+export type IgdbPlannedMode = GameGenerationMode | 'parent-game';
+
 export type IgdbPlannedSource = {
   provider: 'igdb';
   mediaType: 'game';
-  mode: GameGenerationMode;
+  mode: IgdbPlannedMode;
   query: string;
   resolvedId: number;
   resolvedName: string;
   parameters: {
     limit: number;
     sort: GameGenerationSort;
+    gameTypes: IgdbGameType[];
+    /** @deprecated gameTypes is authoritative; kept for transient-plan compatibility. */
     includeDlcExpansions: boolean;
   };
 };
@@ -74,7 +88,7 @@ export type CollectionSourcePlan = {
 export type CollectionPlanningMatch = {
   provider: 'tmdb' | 'igdb';
   mediaType: GenerationMediaType;
-  mode: TmdbGenerationMode | GameGenerationMode;
+  mode: TmdbGenerationMode | IgdbPlannedMode;
   id: number;
   name: string;
 };
