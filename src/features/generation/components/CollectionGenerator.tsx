@@ -2,6 +2,11 @@ import { useState } from 'react';
 
 import styles from './CollectionGenerator.module.css';
 
+import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+} from '../types';
+
 import type {
   CompanyGenerationMode,
   CompanyMatch,
@@ -195,7 +200,11 @@ export function CollectionGenerator({
   );
 
   const [includeDlcExpansions, setIncludeDlcExpansions] = useState(
-    initialRequest?.mediaType === 'game' ? initialRequest.includeDlcExpansions : false,
+    initialRequest?.mediaType === 'game'
+      ? DLC_EXPANSION_IGDB_GAME_TYPES.every((gameType) =>
+          initialRequest.gameTypes.includes(gameType),
+        )
+      : false,
   );
 
   const [error, setError] = useState<string | null>(null);
@@ -289,7 +298,9 @@ export function CollectionGenerator({
           limit: parsedLimit,
           igdbId,
           sort: isGameSort(sort) ? sort : 'popular',
-          includeDlcExpansions,
+          gameTypes: includeDlcExpansions
+            ? [...CORE_IGDB_GAME_TYPES, ...DLC_EXPANSION_IGDB_GAME_TYPES]
+            : [...CORE_IGDB_GAME_TYPES],
         };
 
         const generatedCollectionId = await onGenerate(request);

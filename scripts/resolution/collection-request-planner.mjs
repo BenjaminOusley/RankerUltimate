@@ -422,17 +422,10 @@ function createTmdbParameters(mediaType, sort, limit) {
 }
 
 function createIgdbParameters(sort, limit, gameTypes) {
-  const selected = new Set(gameTypes);
-  const includesCore = CORE_IGDB_GAME_TYPES.every((gameType) => selected.has(gameType));
-  const includesDlcExpansions = DLC_EXPANSION_IGDB_GAME_TYPES.every((gameType) =>
-    selected.has(gameType),
-  );
-
   return {
     limit,
     sort,
     gameTypes,
-    includeDlcExpansions: includesCore && includesDlcExpansions,
   };
 }
 

@@ -59,14 +59,17 @@ describe('IGDB collection generation', () => {
     expect(result.request.gameTypes).toEqual([...CORE_IGDB_GAME_TYPES]);
   });
 
-  it('adds DLC and expansion types only when explicitly requested', () => {
+  it('accepts explicit DLC and expansion game types', () => {
     const result = validateIgdbGenerationRequest({
       mode: 'franchise',
       query: 'Destiny',
       collectionId: 'generated-destiny',
       igdbId: 1,
       limit: 50,
-      includeDlcExpansions: true,
+      gameTypes: [
+        ...CORE_IGDB_GAME_TYPES,
+        ...DLC_EXPANSION_IGDB_GAME_TYPES,
+      ],
     });
 
     expect(result.ok).toBe(true);

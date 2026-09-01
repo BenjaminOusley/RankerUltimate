@@ -34,10 +34,7 @@ function validateRequest(request) {
   }
 
   const query = requireNonEmptyString(request.query, 'IGDB generation query');
-  const collectionId = requireNonEmptyString(
-    request.collectionId,
-    'IGDB collection ID',
-  );
+  const collectionId = requireNonEmptyString(request.collectionId, 'IGDB collection ID');
 
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(collectionId)) {
     throw new Error('IGDB collection ID must be a lowercase slug.');
@@ -59,19 +56,7 @@ function validateRequest(request) {
     throw new Error(`Unsupported IGDB collection sort: ${sort}`);
   }
 
-  if (
-    request.includeDlcExpansions !== undefined &&
-    typeof request.includeDlcExpansions !== 'boolean'
-  ) {
-    throw new Error('Include DLC / expansions must be true or false.');
-  }
-
-  const gameTypes = normalizeIgdbGameTypes(
-    request.gameTypes ??
-      (request.includeDlcExpansions
-        ? [...CORE_IGDB_GAME_TYPES, ...DLC_EXPANSION_IGDB_GAME_TYPES]
-        : CORE_IGDB_GAME_TYPES),
-  );
+  const gameTypes = normalizeIgdbGameTypes(request.gameTypes ?? CORE_IGDB_GAME_TYPES);
 
   return {
     mode: request.mode,
@@ -242,14 +227,10 @@ export async function generateIgdbCollection({ request, igdb, logger = console }
   const resolvedEntity = await loadResolvedEntity(igdb, normalizedRequest);
 
   if (!resolvedEntity) {
-    throw new Error(
-      `IGDB ${normalizedRequest.mode} ${normalizedRequest.igdbId} was not found.`,
-    );
+    throw new Error(`IGDB ${normalizedRequest.mode} ${normalizedRequest.igdbId} was not found.`);
   }
 
-  logger.log(
-    `✓ ${normalizedRequest.mode}: ${resolvedEntity.name} [IGDB ${resolvedEntity.id}]`,
-  );
+  logger.log(`✓ ${normalizedRequest.mode}: ${resolvedEntity.name} [IGDB ${resolvedEntity.id}]`);
 
   const games = await loadGames(igdb, normalizedRequest);
   const uniqueGames = [...new Map(games.map((game) => [game.id, game])).values()];

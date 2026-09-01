@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+} from '../providers/igdb.mjs';
 import { planCollectionRequest } from './collection-request-planner.mjs';
 
 function createFakeTmdb() {
@@ -129,7 +133,7 @@ describe('collection request planner', () => {
       resolvedName: 'Halo',
       parameters: {
         sort: 'popular',
-        includeDlcExpansions: false,
+        gameTypes: [...CORE_IGDB_GAME_TYPES],
       },
     });
   });
@@ -188,7 +192,10 @@ describe('collection request planner', () => {
       resolvedName: 'Halo',
       parameters: {
         limit: 100,
-        includeDlcExpansions: true,
+        gameTypes: [
+          ...CORE_IGDB_GAME_TYPES,
+          ...DLC_EXPANSION_IGDB_GAME_TYPES,
+        ],
       },
     });
   });

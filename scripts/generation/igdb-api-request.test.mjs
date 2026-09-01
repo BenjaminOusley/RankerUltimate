@@ -14,7 +14,7 @@ describe('IGDB API generation validation', () => {
         limit: 50,
         igdbId: 5,
         sort: 'popular',
-        includeDlcExpansions: false,
+        gameTypes: [...CORE_IGDB_GAME_TYPES],
       }),
     ).toEqual({
       ok: true,

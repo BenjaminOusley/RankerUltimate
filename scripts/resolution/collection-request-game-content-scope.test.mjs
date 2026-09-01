@@ -356,7 +356,6 @@ describe('conversational game content scopes', () => {
       query: 'Halo',
       parameters: {
         gameTypes: [...CORE_IGDB_GAME_TYPES],
-        includeDlcExpansions: false,
       },
     });
 
@@ -368,7 +367,6 @@ describe('conversational game content scopes', () => {
           ...CORE_IGDB_GAME_TYPES,
           ...DLC_EXPANSION_IGDB_GAME_TYPES,
         ],
-        includeDlcExpansions: true,
       },
     });
 
@@ -377,7 +375,6 @@ describe('conversational game content scopes', () => {
       query: 'Halo',
       parameters: {
         gameTypes: [...CORE_IGDB_GAME_TYPES],
-        includeDlcExpansions: false,
       },
     });
   });

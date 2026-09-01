@@ -2,6 +2,7 @@ import type {
   GameGenerationMode,
   GameGenerationSort,
   GenerationMediaType,
+  IgdbGameType,
   TmdbGenerationMode,
   TmdbGenerationSort,
 } from './types';
@@ -49,16 +50,6 @@ export type TmdbPlannedSource = {
   };
 };
 
-export type IgdbGameType =
-  | 'main-game'
-  | 'remake'
-  | 'remaster'
-  | 'expanded-game'
-  | 'standalone-expansion'
-  | 'dlc-addon'
-  | 'expansion'
-  | 'season';
-
 export type IgdbPlannedMode = GameGenerationMode | 'parent-game';
 
 export type IgdbPlannedSource = {
@@ -72,8 +63,6 @@ export type IgdbPlannedSource = {
     limit: number;
     sort: GameGenerationSort;
     gameTypes: IgdbGameType[];
-    /** @deprecated gameTypes is authoritative; kept for transient-plan compatibility. */
-    includeDlcExpansions: boolean;
   };
 };
 

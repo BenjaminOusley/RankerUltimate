@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+} from '../providers/igdb.mjs';
+import {
   buildGenerationRequestFromPlannedSource,
   executeCollectionPlan,
 } from './collection-plan-executor.mjs';
@@ -40,7 +44,10 @@ function igdbSource(overrides = {}) {
     parameters: {
       limit: 50,
       sort: 'popular',
-      includeDlcExpansions: true,
+      gameTypes: [
+        ...CORE_IGDB_GAME_TYPES,
+        ...DLC_EXPANSION_IGDB_GAME_TYPES,
+      ],
     },
     ...overrides,
   };
@@ -99,6 +106,10 @@ describe('collection plan executor', () => {
       igdbId: 92,
       limit: 50,
       sort: 'popular',
+      gameTypes: [
+        ...CORE_IGDB_GAME_TYPES,
+        ...DLC_EXPANSION_IGDB_GAME_TYPES,
+      ],
     });
   });
 

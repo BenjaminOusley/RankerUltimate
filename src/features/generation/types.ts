@@ -22,6 +22,29 @@ export type GameGenerationSort =
 
 export type GenerationSort = TmdbGenerationSort | GameGenerationSort;
 
+export type IgdbGameType =
+  | 'main-game'
+  | 'remake'
+  | 'remaster'
+  | 'expanded-game'
+  | 'standalone-expansion'
+  | 'dlc-addon'
+  | 'expansion'
+  | 'season';
+
+export const CORE_IGDB_GAME_TYPES: IgdbGameType[] = [
+  'main-game',
+  'remake',
+  'remaster',
+  'expanded-game',
+];
+
+export const DLC_EXPANSION_IGDB_GAME_TYPES: IgdbGameType[] = [
+  'standalone-expansion',
+  'dlc-addon',
+  'expansion',
+];
+
 type GenerationRequestBase = {
   query: string;
   collectionId: string;
@@ -46,7 +69,7 @@ export type IgdbGenerationRequest = GenerationRequestBase & {
   mode: GameGenerationMode;
   igdbId: number;
   sort: GameGenerationSort;
-  includeDlcExpansions: boolean;
+  gameTypes: IgdbGameType[];
 };
 
 export type GenerationRequest = TmdbGenerationRequest | IgdbGenerationRequest;

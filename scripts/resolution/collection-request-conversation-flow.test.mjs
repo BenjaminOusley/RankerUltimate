@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import {
+  CORE_IGDB_GAME_TYPES,
+  DLC_EXPANSION_IGDB_GAME_TYPES,
+} from '../providers/igdb.mjs';
 import { planCollectionRequest } from './collection-request-planner.mjs';
 import {
   extractCollectionRequestSubject,
@@ -75,7 +79,10 @@ describe('conversational collection request flow', () => {
       parameters: {
         limit: 100,
         sort: 'popular',
-        includeDlcExpansions: true,
+        gameTypes: [
+          ...CORE_IGDB_GAME_TYPES,
+          ...DLC_EXPANSION_IGDB_GAME_TYPES,
+        ],
       },
     });
   });

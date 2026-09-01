@@ -138,7 +138,6 @@ export function buildGenerationRequestFromPlannedSource(source, collectionId) {
       limit: source.parameters.limit,
       sort: source.parameters.sort,
       gameTypes: source.parameters.gameTypes,
-      includeDlcExpansions: source.parameters.includeDlcExpansions,
     });
 
     if (!validation.ok) {
