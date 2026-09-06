@@ -86,6 +86,29 @@ describe('Hardcover generated collection source', () => {
     });
   });
 
+  it('reconstructs an individual genre-book source from persisted provider IDs', () => {
+    const individualSource = {
+      ...source,
+      definition: {
+        ...source.definition,
+        mode: 'tag-books',
+      },
+    };
+
+    expect(
+      buildBookGenerationRequestFromSource('saved-fantasy-books', individualSource),
+    ).toMatchObject({
+      ok: true,
+      request: {
+        mode: 'tag-books',
+        hardcoverId: 10,
+        resolvedName: 'Fantasy',
+        tagSlug: 'fantasy',
+        tagCategorySlug: 'genre',
+      },
+    });
+  });
+
   it('refreshes through the persisted Hardcover ID and preserves the library collection ID', async () => {
     const hardcover = {
       getBooksByTag: vi.fn(async () => [

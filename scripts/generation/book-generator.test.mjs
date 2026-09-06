@@ -299,6 +299,70 @@ describe('book generator', () => {
     });
   });
 
+  it('generates popular individual conceptual books for a genre tag', async () => {
+    const getBooksByTag = vi.fn(async () => [
+      {
+        count: 20,
+        book: book({
+          id: 1,
+          title: 'Popular Fantasy Book',
+          readers: 5000,
+          ratings: 3000,
+          releaseYear: 2001,
+          image: 'popular.jpg',
+        }),
+      },
+      {
+        count: 2,
+        book: book({
+          id: 2,
+          title: 'Weak Fantasy Match',
+          readers: 10000,
+          ratings: 5000,
+          releaseYear: 2002,
+          image: 'weak.jpg',
+        }),
+      },
+    ].map((row, index) => ({
+      ...row,
+      book: {
+        ...row.book,
+        taggable_counts: [{ count: index === 0 ? 20 : 20 }],
+      },
+    })));
+
+    const result = await generateBookCollection({
+      request: {
+        mediaType: 'book',
+        mode: 'tag-books',
+        query: 'Fantasy',
+        collectionId: 'generated-fantasy-books-test',
+        hardcoverId: 2,
+        resolvedName: 'Fantasy',
+        limit: 2,
+        sort: 'popular',
+        tagSlug: 'fantasy',
+        tagCategorySlug: 'genre',
+        candidateLimit: 150,
+      },
+      hardcover: { getBooksByTag },
+      logger: { log: vi.fn() },
+    });
+
+    expect(result.collection.name).toBe('Fantasy Books');
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Popular Fantasy Book',
+      'Weak Fantasy Match',
+    ]);
+    expect(result.collection.items.every((item) => item.source.type === 'book')).toBe(true);
+    expect(result.collection.candidateSource.definition).toMatchObject({
+      mode: 'tag-books',
+      hardcoverId: 2,
+      tagSlug: 'fantasy',
+      tagCategorySlug: 'genre',
+    });
+  });
+
   it('backs tag queries down to smaller pages after a Hardcover 408 timeout', async () => {
     const timeout = new Error('Hardcover HTTP 408: {\"error\":\"Request timeout\"}');
     timeout.status = 408;
@@ -365,7 +429,7 @@ describe('book generator', () => {
       if (tagId === 20) {
         return [
           {
-            count: 5,
+            count: 10,
             book: {
               id: 1,
               title: 'Direct drama match',
@@ -458,13 +522,26 @@ describe('book generator', () => {
         tagCategorySlug: 'tag',
         semanticCategory: 'drama',
         tagSources: [
-          { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
-          { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+          {
+            id: 20,
+            slug: 'drama',
+            categorySlug: 'tag',
+            weight: 1,
+            qualifies: true,
+          },
+          {
+            id: 21,
+            slug: 'plays',
+            categorySlug: 'genre',
+            weight: 0.85,
+            qualifies: true,
+          },
           {
             id: 22,
             slug: 'literary-fiction',
             categorySlug: 'genre',
-            weight: 0.45,
+            weight: 0.25,
+            qualifies: false,
           },
         ],
         candidateLimit: 150,
@@ -477,7 +554,6 @@ describe('book generator', () => {
     expect(result.collection.items.map((item) => item.name)).toEqual([
       'Drama Series',
       'Play Series',
-      'Literary Series',
     ]);
     expect(result.collection.description).toBe(
       'Popular book series associated with Drama.',
@@ -485,13 +561,26 @@ describe('book generator', () => {
     expect(result.collection.candidateSource.definition).toMatchObject({
       semanticCategory: 'drama',
       tagSources: [
-        { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
-        { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+        {
+          id: 20,
+          slug: 'drama',
+          categorySlug: 'tag',
+          weight: 1,
+          qualifies: true,
+        },
+        {
+          id: 21,
+          slug: 'plays',
+          categorySlug: 'genre',
+          weight: 0.85,
+          qualifies: true,
+        },
         {
           id: 22,
           slug: 'literary-fiction',
           categorySlug: 'genre',
-          weight: 0.45,
+          weight: 0.25,
+          qualifies: false,
         },
       ],
     });
@@ -547,6 +636,232 @@ describe('book generator', () => {
     expect(getAuthorContributionsPage).toHaveBeenCalledTimes(2);
     expect(result.collection.items.map((item) => item.name)).toEqual([
       'Aardvark Book',
+    ]);
+  });
+
+  it('suppresses broader umbrella series when specific child series contain the same sampled books', async () => {
+    const author = { id: 1, name: 'Example Author' };
+    const umbrella = {
+      id: 100,
+      name: 'Example Universe',
+      primary_books_count: 20,
+      books_count: 20,
+      author,
+    };
+    const childA = {
+      id: 101,
+      name: 'Example Saga',
+      primary_books_count: 3,
+      books_count: 3,
+      author,
+    };
+    const childB = {
+      id: 102,
+      name: 'Example Chronicles',
+      primary_books_count: 4,
+      books_count: 4,
+      author,
+    };
+    const memberships = (series) => [
+      { series: umbrella },
+      { series },
+    ];
+    const getBooksByTag = vi.fn(async () => [
+      {
+        count: 10,
+        book: {
+          id: 1,
+          title: 'Universe Lead',
+          users_read_count: 10000,
+          featured_book_series: { series: umbrella },
+          book_series: memberships(childA),
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+      {
+        count: 10,
+        book: {
+          id: 2,
+          title: 'Saga Two',
+          users_read_count: 6000,
+          featured_book_series: { series: childA },
+          book_series: memberships(childA),
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+      {
+        count: 10,
+        book: {
+          id: 3,
+          title: 'Chronicles One',
+          users_read_count: 5500,
+          featured_book_series: { series: childB },
+          book_series: memberships(childB),
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+      {
+        count: 10,
+        book: {
+          id: 4,
+          title: 'Chronicles Two',
+          users_read_count: 5000,
+          featured_book_series: { series: childB },
+          book_series: memberships(childB),
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+    ]);
+
+    const result = await generateBookCollection({
+      request: {
+        mediaType: 'book',
+        mode: 'tag-series',
+        query: 'Fantasy',
+        collectionId: 'generated-overlap-test',
+        hardcoverId: 2,
+        resolvedName: 'Fantasy',
+        limit: 2,
+        sort: 'popular',
+        tagSlug: 'fantasy',
+        tagCategorySlug: 'genre',
+        candidateLimit: 150,
+      },
+      hardcover: { getBooksByTag },
+      logger: { log: vi.fn() },
+    });
+
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Example Saga',
+      'Example Chronicles',
+    ]);
+    expect(result.collection.items.some((item) => item.name === 'Example Universe')).toBe(false);
+  });
+
+  it('does not rank explicit one-book groupings as book series when a real multi-book series is available', async () => {
+    const getBooksByTag = vi.fn(async () => [
+      {
+        count: 10,
+        book: {
+          id: 1,
+          title: 'Standalone grouping',
+          users_read_count: 10000,
+          featured_book_series: {
+            series: {
+              id: 200,
+              name: 'Standalone Group',
+              primary_books_count: 1,
+              books_count: 1,
+              author: { id: 2, name: 'Standalone Author' },
+            },
+          },
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+      {
+        count: 10,
+        book: {
+          id: 2,
+          title: 'Actual series book',
+          users_read_count: 5000,
+          featured_book_series: {
+            series: {
+              id: 201,
+              name: 'Actual Series',
+              primary_books_count: 2,
+              books_count: 2,
+              author: { id: 3, name: 'Series Author' },
+            },
+          },
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+    ]);
+
+    const result = await generateBookCollection({
+      request: {
+        mediaType: 'book',
+        mode: 'tag-series',
+        query: 'Fantasy',
+        collectionId: 'generated-series-quality-test',
+        hardcoverId: 2,
+        resolvedName: 'Fantasy',
+        limit: 1,
+        sort: 'popular',
+        tagSlug: 'fantasy',
+        tagCategorySlug: 'genre',
+        candidateLimit: 150,
+      },
+      hardcover: { getBooksByTag },
+      logger: { log: vi.fn() },
+    });
+
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Actual Series',
+    ]);
+  });
+
+
+  it('drops large series that have only one matching candidate book', async () => {
+    const getBooksByTag = vi.fn(async () => [
+      {
+        count: 10,
+        book: {
+          id: 1,
+          title: 'One matching book',
+          users_read_count: 9000,
+          featured_book_series: {
+            series: {
+              id: 300,
+              name: 'Loose Large Grouping',
+              primary_books_count: 12,
+              books_count: 12,
+              author: { id: 4, name: 'Example Author' },
+            },
+          },
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+      {
+        count: 10,
+        book: {
+          id: 2,
+          title: 'Trilogy opener',
+          users_read_count: 4000,
+          featured_book_series: {
+            series: {
+              id: 301,
+              name: 'Focused Trilogy',
+              primary_books_count: 3,
+              books_count: 3,
+              author: { id: 5, name: 'Focused Author' },
+            },
+          },
+          taggable_counts: [{ count: 10 }],
+        },
+      },
+    ]);
+
+    const result = await generateBookCollection({
+      request: {
+        mediaType: 'book',
+        mode: 'tag-series',
+        query: 'Fantasy',
+        collectionId: 'generated-weak-series-test',
+        hardcoverId: 2,
+        resolvedName: 'Fantasy',
+        limit: 1,
+        sort: 'popular',
+        tagSlug: 'fantasy',
+        tagCategorySlug: 'genre',
+        candidateLimit: 150,
+      },
+      hardcover: { getBooksByTag },
+      logger: { log: vi.fn() },
+    });
+
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Focused Trilogy',
     ]);
   });
 

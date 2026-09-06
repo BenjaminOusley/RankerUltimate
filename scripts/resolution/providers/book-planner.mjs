@@ -12,16 +12,19 @@ const TAG_ALIAS_SLUGS = new Map([
   ['science fiction', 'science-fiction'],
 ]);
 
-const SEMANTIC_BOOK_CATEGORIES = new Map([
+const AMBIGUOUS_BOOK_CATEGORIES = new Map([
   [
     'drama',
     {
-      key: 'drama',
       displayName: 'Drama',
-      sources: [
-        { slug: 'drama', categorySlug: 'tag', weight: 1 },
-        { slug: 'plays', categorySlug: 'genre', weight: 0.85 },
-        { slug: 'literary-fiction', categorySlug: 'genre', weight: 0.45 },
+      options: [
+        { slug: 'literary-fiction', categorySlug: 'genre', label: 'Literary Fiction' },
+        {
+          slug: 'contemporary-fiction',
+          categorySlug: 'genre',
+          label: 'Contemporary Fiction',
+        },
+        { slug: 'plays', categorySlug: 'genre', label: 'Plays' },
       ],
     },
   ],
@@ -187,12 +190,32 @@ function parseRelationHint(text) {
     return 'author';
   }
 
+  if (/\b(?:genre|subject|mood|tag)\b/u.test(normalized)) {
+    return 'tag';
+  }
+
   if (/\b(?:series|saga)\b/u.test(normalized)) {
     return 'series';
   }
 
-  if (/\b(?:genre|subject|mood|tag)\b/u.test(normalized)) {
-    return 'tag-series';
+  return null;
+}
+
+function parseTagTargetHint(text) {
+  const normalized = normalizeHardcoverText(text);
+
+  if (
+    /\b(?:individual|single)\s+(?:books?|titles?)\b/u.test(normalized) ||
+    /\bbooks?\s+(?:themselves|individually)\b/u.test(normalized)
+  ) {
+    return 'books';
+  }
+
+  if (
+    /\bbook\s+series\b/u.test(normalized) ||
+    /\bseries\s+of\s+books\b/u.test(normalized)
+  ) {
+    return 'series';
   }
 
   return null;
@@ -225,6 +248,7 @@ function cleanBookQuery(subject, requestText) {
   const normalizedCombinedText = normalizeHardcoverText(combinedText);
   const requestedLimit = parseRequestedLimit(combinedText);
   const relationHint = parseRelationHint(combinedText);
+  const tagTargetHint = parseTagTargetHint(combinedText);
   const preferExactSeries =
     relationHint === 'series' &&
     /\bmain(?:\s+book)?\s+(?:series|saga)\b/u.test(normalizedCombinedText);
@@ -234,6 +258,7 @@ function cleanBookQuery(subject, requestText) {
     .replace(/^(?:books?\s+)?(?:by|written\s+by|authored\s+by)\s+/iu, '')
     .replace(/^(?:the\s+)?(?:author|series|saga|genre|subject|mood|tag)\s+/iu, '')
     .replace(/\s+(?:author|series|saga|genre|subject|mood|tag)$/iu, '')
+    .replace(/\s+(?:individual|single)$/iu, '')
     .replace(/\s+main$/iu, '')
     .replace(
       /^(?:the\s+)?(?:(?:most\s+)?popular|(?:highest|best|top)\s+rated|newest|latest|most\s+recent|oldest|earliest)\s+/iu,
@@ -244,6 +269,7 @@ function cleanBookQuery(subject, requestText) {
   return {
     query: query || normalizeWhitespace(subject),
     relationHint,
+    tagTargetHint,
     requestedLimit,
     authorSort: parseAuthorSort(combinedText),
     preferExactSeries,
@@ -276,40 +302,40 @@ function tagDisplayName(tag) {
   return raw.replace(/\b[a-z]/gu, (character) => character.toUpperCase());
 }
 
-function getSemanticBookCategory(query, requestText) {
+function getAmbiguousBookCategory(query, requestText) {
   const normalizedQuery = normalizeHardcoverText(query);
-  const explicitProviderTag = /\b(?:tag|mood)\b/iu.test(requestText);
+  const explicitProviderTaxonomy = /\b(?:genre|subject|tag|mood)\b/iu.test(requestText);
 
-  if (explicitProviderTag) {
+  if (explicitProviderTaxonomy) {
     return null;
   }
 
-  return SEMANTIC_BOOK_CATEGORIES.get(normalizedQuery) ?? null;
+  return AMBIGUOUS_BOOK_CATEGORIES.get(normalizedQuery) ?? null;
 }
 
-function resolveSemanticTagSources(category, tags) {
-  const resolved = [];
+async function buildAmbiguousBookCategoryClarification(hardcover, category) {
+  const tags = await hardcover.findTagsBySlugs(
+    category.options.map((option) => option.slug),
+  );
+  const availableOptions = category.options.filter((option) =>
+    tags.some(
+      (tag) =>
+        String(tag?.slug ?? '') === option.slug &&
+        tag?.tag_category?.slug === option.categorySlug,
+    ),
+  );
 
-  for (const source of category.sources) {
-    const tag = tags.find(
-      (entry) =>
-        String(entry?.slug ?? '') === source.slug &&
-        entry?.tag_category?.slug === source.categorySlug,
-    );
-
-    if (!tag) {
-      continue;
-    }
-
-    resolved.push({
-      id: Number(tag.id),
-      slug: tag.slug,
-      categorySlug: source.categorySlug,
-      weight: source.weight,
-    });
+  if (availableOptions.length === 0) {
+    return null;
   }
 
-  return resolved;
+  return {
+    status: 'clarification',
+    reason: 'ambiguous-entity',
+    question: `“${category.displayName}” is not a single standard Hardcover book genre. Which meaning do you want?`,
+    examples: availableOptions.map((option) => `${option.label} books`),
+    matches: [],
+  };
 }
 
 function createSeriesPlan({ query, series, limit }) {
@@ -351,6 +377,7 @@ function createTagPlan({
   query,
   tag,
   limit,
+  mode = 'tag-series',
   resolvedName = tagDisplayName(tag),
   semanticCategory = null,
   tagSources = null,
@@ -358,7 +385,7 @@ function createTagPlan({
   return {
     provider: 'hardcover',
     mediaType: 'book',
-    mode: 'tag-series',
+    mode,
     query,
     resolvedId: Number(tag.id),
     resolvedName,
@@ -392,6 +419,7 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
   const {
     query,
     relationHint,
+    tagTargetHint,
     requestedLimit,
     authorSort,
     preferExactSeries,
@@ -411,41 +439,29 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
   const defaultLimit = DEFAULT_BOOK_COLLECTION_LIMIT;
   const explicitLimit = requestedLimit ?? null;
 
-  if (!relationHint || relationHint === 'tag-series') {
-    const semanticCategory = getSemanticBookCategory(query, requestText);
+  const shouldTryTags =
+    !relationHint ||
+    relationHint === 'tag' ||
+    tagTargetHint !== null;
 
-    if (semanticCategory) {
-      const tags = await hardcover.findTagsBySlugs(
-        semanticCategory.sources.map((source) => source.slug),
+  if (shouldTryTags) {
+    const ambiguousCategory = getAmbiguousBookCategory(query, requestText);
+
+    if (ambiguousCategory) {
+      const clarification = await buildAmbiguousBookCategoryClarification(
+        hardcover,
+        ambiguousCategory,
       );
-      const tagSources = resolveSemanticTagSources(semanticCategory, tags);
-      const primarySource = tagSources[0] ?? null;
-      const primaryTag = primarySource
-        ? tags.find(
-            (tag) =>
-              Number(tag.id) === primarySource.id &&
-              tag.tag_category?.slug === primarySource.categorySlug,
-          )
-        : null;
 
-      if (primaryTag) {
-        plans.push(
-          createTagPlan({
-            query,
-            tag: primaryTag,
-            limit: explicitLimit ?? DEFAULT_BOOK_TAG_SERIES_LIMIT,
-            resolvedName: semanticCategory.displayName,
-            semanticCategory: semanticCategory.key,
-            tagSources,
-          }),
-        );
-
+      if (clarification) {
         return {
-          plans: dedupePlans(plans),
+          plans: [],
           query,
           relationHint,
+          tagTargetHint,
           requestedLimit,
           unsupportedLimit: false,
+          clarification,
         };
       }
     }
@@ -456,31 +472,49 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
         return false;
       }
 
-      if (relationHint === 'tag-series' && /\bgenre\b/iu.test(requestText)) {
+      if (relationHint === 'tag' && /\bgenre\b/iu.test(requestText)) {
         return tag.tag_category?.slug === 'genre';
       }
 
       return true;
     });
 
-    for (const tag of matchingTags) {
-      plans.push(
-        createTagPlan({
-          query,
-          tag,
-          limit: explicitLimit ?? DEFAULT_BOOK_TAG_SERIES_LIMIT,
-        }),
-      );
-    }
+    const exactCategoryMatch = matchingTags.some((tag) =>
+      ['genre', 'mood', 'tag'].includes(tag.tag_category?.slug),
+    );
 
-    if (
-      relationHint === null &&
-      matchingTags.some((tag) => ['genre', 'mood'].includes(tag.tag_category?.slug))
-    ) {
+    if (exactCategoryMatch) {
+      for (const tag of matchingTags) {
+        const limit = explicitLimit ?? DEFAULT_BOOK_TAG_SERIES_LIMIT;
+
+        if (tagTargetHint !== 'series') {
+          plans.push(
+            createTagPlan({
+              query,
+              tag,
+              limit,
+              mode: 'tag-books',
+            }),
+          );
+        }
+
+        if (tagTargetHint !== 'books') {
+          plans.push(
+            createTagPlan({
+              query,
+              tag,
+              limit,
+              mode: 'tag-series',
+            }),
+          );
+        }
+      }
+
       return {
         plans: dedupePlans(plans),
         query,
         relationHint,
+        tagTargetHint,
         requestedLimit,
         unsupportedLimit: false,
       };
@@ -524,6 +558,7 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
     plans: dedupePlans(plans),
     query,
     relationHint,
+    tagTargetHint,
     requestedLimit,
     unsupportedLimit: false,
   };

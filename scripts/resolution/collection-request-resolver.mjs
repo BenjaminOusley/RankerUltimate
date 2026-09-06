@@ -155,7 +155,7 @@ function subjectClarification(mediaTypes) {
   if (mediaTypes.length === 1 && mediaTypes[0] === 'book') {
     return {
       question:
-        'Which books do you want to rank? For example, a book series, books by an author, or popular series from a genre or subject.',
+        'Which books do you want to rank? For example, a book series, books by an author, or popular individual books or series from a genre or subject.',
       examples: ['Dune books', 'Stephen King books', 'fantasy books', 'drama books'],
     };
   }

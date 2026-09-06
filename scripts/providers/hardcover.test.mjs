@@ -141,6 +141,7 @@ describe('Hardcover provider', () => {
       expect(body.query).toContain('books(where: {id: {_in: $bookIds}})');
       expect(body.query).toContain('slug: {_eq: $categorySlug}');
       expect(body.query).toContain('limit: 1');
+      expect(body.query).toContain('book_series');
 
       return jsonResponse({
         data: {
@@ -148,6 +149,15 @@ describe('Hardcover provider', () => {
             {
               id: 10,
               taggable_counts: [{ count: 8 }],
+              book_series: [
+                {
+                  series: {
+                    id: 20,
+                    name: 'Example Series',
+                    primary_books_count: 3,
+                  },
+                },
+              ],
             },
           ],
         },
@@ -180,6 +190,15 @@ describe('Hardcover provider', () => {
             },
           },
           taggable_counts: [{ count: 8 }],
+          book_series: [
+            {
+              series: {
+                id: 20,
+                name: 'Example Series',
+                primary_books_count: 3,
+              },
+            },
+          ],
         },
       },
     ]);

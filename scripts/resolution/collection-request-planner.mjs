@@ -467,6 +467,7 @@ function toPlanningMatch(plan) {
     ...(plan.query ? { query: plan.query } : {}),
     ...(plan.resolvedAuthorName ? { authorName: plan.resolvedAuthorName } : {}),
     ...(plan.resolvedYear ? { resolvedYear: plan.resolvedYear } : {}),
+    ...(Number.isInteger(plan.parameters?.limit) ? { limit: plan.parameters.limit } : {}),
     ...(plan.mode === 'parent-game'
       ? { gameTypes: [...(plan.parameters?.gameTypes ?? [])] }
       : {}),
@@ -480,6 +481,38 @@ function clarificationForUnsupportedLimit({ requestedLimit, subject }) {
     question: `You asked for ${requestedLimit} items, but RankerUltimate currently supports up to ${MAX_COLLECTION_LIMIT} items in one generated collection. Ask for ${MAX_COLLECTION_LIMIT} or fewer for now.`,
     examples: [`top ${MAX_COLLECTION_LIMIT} ${subject}`, `top 100 ${subject}`],
     matches: [],
+  };
+}
+
+function clarificationForBookCategoryTarget({ subject, matches }) {
+  const individual = matches.find((match) => match.mode === 'tag-books');
+  const series = matches.find((match) => match.mode === 'tag-series');
+
+  if (!individual || !series) {
+    return null;
+  }
+
+  if (individual.id !== series.id || individual.name !== series.name) {
+    return null;
+  }
+
+  const requestedLimit =
+    Number.isInteger(individual.limit) && individual.limit === series.limit
+      ? individual.limit
+      : null;
+  const prefix = requestedLimit && requestedLimit !== DEFAULT_LIMIT
+    ? `top ${requestedLimit} `
+    : '';
+
+  return {
+    status: 'clarification',
+    reason: 'ambiguous-entity',
+    question: `Do you want individual ${individual.name} books, or ${series.name} book series?`,
+    examples: [
+      `${prefix}${individual.name} individual books`,
+      `${prefix}${series.name} book series`,
+    ],
+    matches,
   };
 }
 
@@ -517,6 +550,10 @@ function clarificationForMatches({ subject, mediaType, matches }) {
         }
 
         return `${match.name} book series`;
+      }
+
+      if (match.mode === 'tag-books') {
+        return `${match.name} individual books`;
       }
 
       const relationLabel = match.mode === 'author' ? 'author' : 'book subject';
@@ -945,7 +982,20 @@ async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb, h
       });
     }
 
+    if (bookResult.clarification) {
+      return bookResult.clarification;
+    }
+
     const plans = dedupePlans(bookResult.plans);
+    const planningMatches = plans.map(toPlanningMatch);
+    const categoryTargetClarification = clarificationForBookCategoryTarget({
+      subject,
+      matches: planningMatches,
+    });
+
+    if (categoryTargetClarification) {
+      return categoryTargetClarification;
+    }
 
     if (plans.length === 1) {
       return {
@@ -958,7 +1008,7 @@ async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb, h
       return clarificationForMatches({
         subject,
         mediaType,
-        matches: plans.map(toPlanningMatch),
+        matches: planningMatches,
       });
     }
 

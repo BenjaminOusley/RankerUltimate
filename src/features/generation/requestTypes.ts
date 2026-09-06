@@ -68,7 +68,7 @@ export type IgdbPlannedSource = {
   };
 };
 
-export type BookPlannedMode = 'series' | 'author' | 'tag-series';
+export type BookPlannedMode = 'series' | 'author' | 'tag-books' | 'tag-series';
 export type BookGenerationSort =
   | 'series-order'
   | 'popular'
@@ -89,6 +89,14 @@ export type HardcoverPlannedSource = {
     sort: BookGenerationSort;
     tagSlug?: string;
     tagCategorySlug?: string;
+    semanticCategory?: string;
+    tagSources?: Array<{
+      id: number;
+      slug: string;
+      categorySlug: string;
+      weight: number;
+      qualifies?: boolean;
+    }>;
     candidateLimit?: number;
   };
 };
@@ -111,6 +119,7 @@ export type CollectionPlanningMatch = {
   id: number;
   name: string;
   authorName?: string;
+  limit?: number;
 };
 
 export type CollectionPlanningClarification = {

@@ -496,11 +496,33 @@ export function createHardcoverProvider({
               id
               canonical_id
               title
+              slug
+              release_date
+              release_year
+              compilation
+              is_partial_book
               users_read_count
               ratings_count
+              rating
               image {
                 id
                 url
+              }
+              canonical {
+                id
+                title
+                slug
+                release_date
+                release_year
+                compilation
+                is_partial_book
+                users_read_count
+                ratings_count
+                rating
+                image {
+                  id
+                  url
+                }
               }
               featured_book_series {
                 position
@@ -570,6 +592,22 @@ export function createHardcoverProvider({
                 ) {
                   count
                 }
+                book_series {
+                  series {
+                    id
+                    canonical_id
+                    name
+                    slug
+                    books_count
+                    primary_books_count
+                    is_completed
+                    author {
+                      id
+                      name
+                      slug
+                    }
+                  }
+                }
               }
             }
           `,
@@ -601,10 +639,12 @@ export function createHardcoverProvider({
         const id = normalizeId(book?.id);
 
         if (id !== null) {
-          profilesByBookId.set(
-            id,
-            Array.isArray(book?.taggable_counts) ? book.taggable_counts : [],
-          );
+          profilesByBookId.set(id, {
+            taggableCounts: Array.isArray(book?.taggable_counts)
+              ? book.taggable_counts
+              : [],
+            bookSeries: Array.isArray(book?.book_series) ? book.book_series : [],
+          });
         }
       }
     }
@@ -616,11 +656,14 @@ export function createHardcoverProvider({
         return row;
       }
 
+      const profile = profilesByBookId.get(bookId);
+
       return {
         ...row,
         book: {
           ...row.book,
-          taggable_counts: profilesByBookId.get(bookId) ?? [],
+          taggable_counts: profile?.taggableCounts ?? [],
+          book_series: profile?.bookSeries ?? [],
         },
       };
     });

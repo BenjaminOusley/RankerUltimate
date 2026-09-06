@@ -11,7 +11,7 @@ function createHardcover({ tags = [], series = [], authors = [] } = {}) {
 }
 
 describe('book collection planner', () => {
-  it('defaults a book genre to popular series and keeps the default limit setting-ready', async () => {
+  it('offers individual books and book series for a broad book genre', async () => {
     const hardcover = createHardcover({
       tags: [
         {
@@ -30,45 +30,94 @@ describe('book collection planner', () => {
     });
 
     expect(result.plans).toEqual([
-      {
-        provider: 'hardcover',
-        mediaType: 'book',
-        mode: 'tag-series',
-        query: 'fantasy',
+      expect.objectContaining({
+        mode: 'tag-books',
         resolvedId: 10,
         resolvedName: 'Fantasy',
-        parameters: {
-          limit: 50,
-          sort: 'popular',
-          tagSlug: 'fantasy',
-          tagCategorySlug: 'genre',
-          candidateLimit: 150,
-        },
-      },
+        parameters: expect.objectContaining({ limit: 50, sort: 'popular' }),
+      }),
+      expect.objectContaining({
+        mode: 'tag-series',
+        resolvedId: 10,
+        resolvedName: 'Fantasy',
+        parameters: expect.objectContaining({ limit: 50, sort: 'popular' }),
+      }),
     ]);
     expect(hardcover.searchSeries).not.toHaveBeenCalled();
     expect(hardcover.searchAuthors).not.toHaveBeenCalled();
   });
 
-  it('resolves broad Drama into a normalized multi-tag series category', async () => {
+  it('lets an explicit individual-book clarification choose genre Works directly', async () => {
     const hardcover = createHardcover({
       tags: [
         {
-          id: 20,
-          tag: 'drama',
-          slug: 'drama',
-          tag_category: { slug: 'tag' },
+          id: 10,
+          tag: 'Fantasy',
+          slug: 'fantasy',
+          tag_category: { slug: 'genre' },
+        },
+      ],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Fantasy individual',
+      requestText: 'Fantasy individual books',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'tag-books',
+      resolvedId: 10,
+      resolvedName: 'Fantasy',
+    });
+  });
+
+  it('lets an explicit book-series clarification choose genre series directly', async () => {
+    const hardcover = createHardcover({
+      tags: [
+        {
+          id: 10,
+          tag: 'Fantasy',
+          slug: 'fantasy',
+          tag_category: { slug: 'genre' },
+        },
+      ],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Fantasy series',
+      requestText: 'Fantasy book series',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'tag-series',
+      resolvedId: 10,
+      resolvedName: 'Fantasy',
+    });
+  });
+
+  it('clarifies Drama instead of inventing a synthetic book genre', async () => {
+    const hardcover = createHardcover({
+      tags: [
+        {
+          id: 22,
+          tag: 'Literary Fiction',
+          slug: 'literary-fiction',
+          tag_category: { slug: 'genre' },
+        },
+        {
+          id: 23,
+          tag: 'Contemporary Fiction',
+          slug: 'contemporary-fiction',
+          tag_category: { slug: 'genre' },
         },
         {
           id: 21,
           tag: 'Plays',
           slug: 'plays',
-          tag_category: { slug: 'genre' },
-        },
-        {
-          id: 22,
-          tag: 'Literary Fiction',
-          slug: 'literary-fiction',
           tag_category: { slug: 'genre' },
         },
       ],
@@ -80,31 +129,19 @@ describe('book collection planner', () => {
       requestText: 'drama books',
     });
 
-    expect(result.plans[0]).toMatchObject({
-      mode: 'tag-series',
-      resolvedName: 'Drama',
-      parameters: {
-        tagCategorySlug: 'tag',
-        semanticCategory: 'drama',
-        tagSources: [
-          { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
-          { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
-          {
-            id: 22,
-            slug: 'literary-fiction',
-            categorySlug: 'genre',
-            weight: 0.45,
-          },
-        ],
-      },
+    expect(result.plans).toEqual([]);
+    expect(result.clarification).toEqual({
+      status: 'clarification',
+      reason: 'ambiguous-entity',
+      question: '“Drama” is not a single standard Hardcover book genre. Which meaning do you want?',
+      examples: ['Literary Fiction books', 'Contemporary Fiction books', 'Plays books'],
+      matches: [],
     });
     expect(hardcover.findTagsBySlugs).toHaveBeenCalledWith([
-      'drama',
-      'plays',
       'literary-fiction',
+      'contemporary-fiction',
+      'plays',
     ]);
-    expect(hardcover.searchSeries).not.toHaveBeenCalled();
-    expect(hardcover.searchAuthors).not.toHaveBeenCalled();
   });
 
   it('keeps multiple genuinely plausible Dune series choices instead of silently merging them', async () => {

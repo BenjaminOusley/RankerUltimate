@@ -45,6 +45,21 @@ describe('book collection plan execution', () => {
     });
   });
 
+  it('maps an individual genre-book plan into the book generator contract', () => {
+    const source = bookSource({ mode: 'tag-books' });
+
+    expect(
+      buildGenerationRequestFromPlannedSource(source, collectionId),
+    ).toMatchObject({
+      mediaType: 'book',
+      mode: 'tag-books',
+      hardcoverId: 10,
+      resolvedName: 'Fantasy',
+      tagSlug: 'fantasy',
+      tagCategorySlug: 'genre',
+    });
+  });
+
   it('preserves normalized semantic tag sources in the generation contract', () => {
     const source = bookSource({
       query: 'drama',

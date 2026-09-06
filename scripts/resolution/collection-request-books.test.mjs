@@ -58,7 +58,7 @@ describe('conversational book collection requests', () => {
     expect(result.result.examples).toContain('books');
   });
 
-  it('plans fantasy books as popular Fantasy series', async () => {
+  it('clarifies whether a broad book genre means individual books or series', async () => {
     const resolution = resolveCollectionRequestTurn({ text: 'fantasy books' });
 
     expect(resolution.ok).toBe(true);
@@ -70,24 +70,102 @@ describe('conversational book collection requests', () => {
     });
 
     expect(planned).toMatchObject({
+      status: 'clarification',
+      reason: 'ambiguous-entity',
+      question: 'Do you want individual Fantasy books, or Fantasy book series?',
+      examples: ['Fantasy individual books', 'Fantasy book series'],
+      context: {
+        subject: 'fantasy',
+        mediaTypes: ['book'],
+      },
+    });
+  });
+
+  it('plans an explicit individual-book genre request', async () => {
+    const resolution = resolveCollectionRequestTurn({ text: 'Fantasy individual books' });
+
+    const planned = await planCollectionRequest({
+      request: resolution.result,
+      hardcover: createFakeHardcover(),
+    });
+
+    expect(planned).toMatchObject({
       status: 'planned',
-      mediaTypes: ['book'],
       plan: {
         kind: 'single',
         sources: [
           {
             provider: 'hardcover',
             mediaType: 'book',
-            mode: 'tag-series',
+            mode: 'tag-books',
             resolvedName: 'Fantasy',
-            parameters: {
-              limit: 50,
-              sort: 'popular',
-              tagCategorySlug: 'genre',
-            },
           },
         ],
       },
+    });
+  });
+
+  it('plans an explicit genre-series request', async () => {
+    const resolution = resolveCollectionRequestTurn({ text: 'Fantasy book series' });
+
+    const planned = await planCollectionRequest({
+      request: resolution.result,
+      hardcover: createFakeHardcover(),
+    });
+
+    expect(planned).toMatchObject({
+      status: 'planned',
+      plan: {
+        sources: [
+          {
+            provider: 'hardcover',
+            mode: 'tag-series',
+            resolvedName: 'Fantasy',
+          },
+        ],
+      },
+    });
+  });
+
+  it('clarifies what Drama means instead of synthesizing a fake genre', async () => {
+    const hardcover = createFakeHardcover();
+    hardcover.findTagsBySlugs = async (slugs) => {
+      if (slugs.includes('literary-fiction')) {
+        return [
+          {
+            id: 899,
+            tag: 'Literary Fiction',
+            slug: 'literary-fiction',
+            tag_category: { slug: 'genre' },
+          },
+          {
+            id: 7346,
+            tag: 'Contemporary Fiction',
+            slug: 'contemporary-fiction',
+            tag_category: { slug: 'genre' },
+          },
+          {
+            id: 2302,
+            tag: 'Plays',
+            slug: 'plays',
+            tag_category: { slug: 'genre' },
+          },
+        ];
+      }
+
+      return [];
+    };
+
+    const resolution = resolveCollectionRequestTurn({ text: 'drama books' });
+    const planned = await planCollectionRequest({
+      request: resolution.result,
+      hardcover,
+    });
+
+    expect(planned).toMatchObject({
+      status: 'clarification',
+      question: '“Drama” is not a single standard Hardcover book genre. Which meaning do you want?',
+      examples: ['Literary Fiction books', 'Contemporary Fiction books', 'Plays books'],
     });
   });
 
