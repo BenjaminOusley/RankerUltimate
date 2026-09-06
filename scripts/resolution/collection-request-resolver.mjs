@@ -1,4 +1,4 @@
-const SUPPORTED_MEDIA_TYPES = ['movie', 'tv', 'game'];
+const SUPPORTED_MEDIA_TYPES = ['movie', 'tv', 'game', 'book'];
 
 const MEDIA_PATTERNS = [
   {
@@ -26,6 +26,10 @@ const MEDIA_PATTERNS = [
       /\bgames?\b/giu,
     ],
   },
+  {
+    mediaType: 'book',
+    patterns: [/\bbooks?\b/giu],
+  },
 ];
 
 const GAME_CONTENT_SCOPE_PATTERN = /\b(?:dlcs?|expansions?|seasons?)\b/iu;
@@ -39,7 +43,7 @@ function normalizeWhitespace(value) {
   return value.replace(/\s+/gu, ' ').trim();
 }
 
-const RELATION_ONLY_PATTERN = /^(?:the\s+)?(?:genre|franchise|series|platform|console|company|developer|publisher|studio|director|actor|actress)$/iu;
+const RELATION_ONLY_PATTERN = /^(?:the\s+)?(?:genre|subject|mood|franchise|series|platform|console|company|developer|publisher|studio|director|actor|actress|author)$/iu;
 
 function isRelationOnlyClarification(value) {
   return RELATION_ONLY_PATTERN.test(normalizeWhitespace(value));
@@ -100,7 +104,11 @@ function mediaLabel(mediaTypes) {
       return 'TV shows';
     }
 
-    return 'games';
+    if (mediaType === 'game') {
+      return 'games';
+    }
+
+    return 'books';
   });
 
   if (labels.length === 1) {
@@ -144,6 +152,14 @@ function subjectClarification(mediaTypes) {
     };
   }
 
+  if (mediaTypes.length === 1 && mediaTypes[0] === 'book') {
+    return {
+      question:
+        'Which books do you want to rank? For example, a book series, books by an author, or popular series from a genre or subject.',
+      examples: ['Dune books', 'Stephen King books', 'fantasy books', 'drama books'],
+    };
+  }
+
   return {
     question: `What ${mediaLabel(mediaTypes)} do you want to rank? Give me the subject, franchise, genre, company, person, platform, or other constraint you have in mind.`,
     examples: ['Star Wars', 'horror', 'Halo', 'Nintendo'],
@@ -154,8 +170,8 @@ function mediaClarification(subject) {
   const subjectPhrase = subject ? ` from “${subject}”` : '';
 
   return {
-    question: `What kind of things do you want to rank${subjectPhrase}? For example: movies, TV shows, games, or a combination.`,
-    examples: ['movies', 'TV shows', 'games', 'movies and TV shows'],
+    question: `What kind of things do you want to rank${subjectPhrase}? For example: movies, TV shows, games, books, or a combination.`,
+    examples: ['movies', 'TV shows', 'games', 'books', 'movies and TV shows'],
   };
 }
 

@@ -1,4 +1,5 @@
 import { findIgdbEntityMatches } from '../generation/igdb-entity-search.mjs';
+import { findBookPlans } from './providers/book-planner.mjs';
 import {
   CORE_IGDB_GAME_TYPES,
   DLC_EXPANSION_IGDB_GAME_TYPES,
@@ -8,7 +9,7 @@ import {
 } from '../providers/igdb.mjs';
 import { normalizeTitle } from '../providers/tmdb.mjs';
 
-const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv', 'game']);
+const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv', 'game', 'book']);
 const DEFAULT_LIMIT = 50;
 const MAX_COLLECTION_LIMIT = 250;
 const OPTIONAL_IGDB_GAME_TYPES = Object.freeze([
@@ -463,6 +464,8 @@ function toPlanningMatch(plan) {
     mode: plan.mode,
     id: plan.resolvedId,
     name: plan.resolvedName,
+    ...(plan.query ? { query: plan.query } : {}),
+    ...(plan.resolvedAuthorName ? { authorName: plan.resolvedAuthorName } : {}),
     ...(plan.resolvedYear ? { resolvedYear: plan.resolvedYear } : {}),
     ...(plan.mode === 'parent-game'
       ? { gameTypes: [...(plan.parameters?.gameTypes ?? [])] }
@@ -481,13 +484,44 @@ function clarificationForUnsupportedLimit({ requestedLimit, subject }) {
 }
 
 function clarificationForMatches({ subject, mediaType, matches }) {
-  const mediaLabel = mediaType === 'movie' ? 'movie' : mediaType === 'tv' ? 'TV' : 'game';
+  const mediaLabel =
+    mediaType === 'movie'
+      ? 'movie'
+      : mediaType === 'tv'
+        ? 'TV'
+        : mediaType === 'game'
+          ? 'game'
+          : 'book';
   const examples = matches.slice(0, 4).map((match) => {
     if (match.mode === 'parent-game') {
       const year = match.resolvedYear ? ` (${match.resolvedYear})` : '';
       const scopeLabel = getGameContentScopeLabel(match.gameTypes ?? []);
 
       return `${match.name}${year} ${scopeLabel}`;
+    }
+
+    if (match.provider === 'hardcover') {
+      if (match.mode === 'series') {
+        const isExactBaseSeries =
+          match.query && entityNamesMatch(match.query, match.name);
+        const hasBroaderSeries = matches.some(
+          (other) =>
+            other.provider === 'hardcover' &&
+            other.mode === 'series' &&
+            other.id !== match.id &&
+            entityNameStartsWith(match.name, other.name),
+        );
+
+        if (isExactBaseSeries && hasBroaderSeries) {
+          return `${match.name} main book series`;
+        }
+
+        return `${match.name} book series`;
+      }
+
+      const relationLabel = match.mode === 'author' ? 'author' : 'book subject';
+
+      return `${match.name} ${relationLabel}`;
     }
 
     return `${match.name} ${match.mode}`;
@@ -509,6 +543,16 @@ function clarificationForNoMatch({ subject, mediaType }) {
       reason: 'unresolved-entity',
       question: `I couldn't safely map “${subject}” to one IGDB game title, genre, franchise, platform, or company. Please make the request more specific — for example, “${subject} franchise” or name the exact game/platform/company you mean.`,
       examples: [`${subject} franchise`, `${subject} genre`, `${subject} platform`],
+      matches: [],
+    };
+  }
+
+  if (mediaType === 'book') {
+    return {
+      status: 'clarification',
+      reason: 'unresolved-entity',
+      question: `I couldn't safely map “${subject}” to a Hardcover book series, author, or genre/subject tag. Please make the request more specific.`,
+      examples: [`${subject} book series`, `books by ${subject}`, `${subject} books`],
       matches: [],
     };
   }
@@ -886,7 +930,41 @@ function dedupePlans(plans) {
   return [...unique.values()];
 }
 
-async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb }) {
+async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb, hardcover }) {
+  if (mediaType === 'book') {
+    const bookResult = await findBookPlans({
+      hardcover,
+      subject,
+      requestText,
+    });
+
+    if (bookResult.unsupportedLimit) {
+      return clarificationForUnsupportedLimit({
+        requestedLimit: bookResult.requestedLimit,
+        subject: bookResult.query,
+      });
+    }
+
+    const plans = dedupePlans(bookResult.plans);
+
+    if (plans.length === 1) {
+      return {
+        status: 'planned',
+        source: plans[0],
+      };
+    }
+
+    if (plans.length > 1) {
+      return clarificationForMatches({
+        subject,
+        mediaType,
+        matches: plans.map(toPlanningMatch),
+      });
+    }
+
+    return clarificationForNoMatch({ subject, mediaType });
+  }
+
   if (mediaType === 'game') {
     const {
       plans,
@@ -961,7 +1039,12 @@ async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb })
   return clarificationForNoMatch({ subject, mediaType });
 }
 
-export async function planCollectionRequest({ request, tmdb = null, igdb = null }) {
+export async function planCollectionRequest({
+  request,
+  tmdb = null,
+  igdb = null,
+  hardcover = null,
+}) {
   const normalizedRequest = normalizeReadyRequest(request);
   const plannedSources = [];
 
@@ -972,6 +1055,7 @@ export async function planCollectionRequest({ request, tmdb = null, igdb = null 
       requestText: normalizedRequest.requestText,
       tmdb,
       igdb,
+      hardcover,
     });
 
     if (result.status !== 'planned') {

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import process from 'node:process';
 
+import { createHardcoverProvider } from '../scripts/providers/hardcover.mjs';
 import { createIgdbProvider } from '../scripts/providers/igdb.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
 import { executeCollectionPlan } from '../scripts/resolution/collection-plan-executor.mjs';
@@ -26,7 +27,7 @@ function getRequiredProviders(plannedRequest) {
   return new Set(
     sources
       .map((source) => (isObject(source) ? source.provider : null))
-      .filter((provider) => provider === 'tmdb' || provider === 'igdb'),
+      .filter((provider) => provider === 'tmdb' || provider === 'igdb' || provider === 'hardcover'),
   );
 }
 
@@ -58,6 +59,7 @@ export default {
     const tmdbToken = process.env.TMDB_READ_ACCESS_TOKEN;
     const igdbClientId = process.env.IGDB_CLIENT_ID;
     const igdbClientSecret = process.env.IGDB_CLIENT_SECRET;
+    const hardcoverToken = process.env.HARDCOVER_API_TOKEN;
 
     if (requiredProviders.has('tmdb') && !tmdbToken) {
       return json({ error: 'TMDB collection generation is not configured.' }, 500);
@@ -65,6 +67,10 @@ export default {
 
     if (requiredProviders.has('igdb') && (!igdbClientId || !igdbClientSecret)) {
       return json({ error: 'IGDB collection generation is not configured.' }, 500);
+    }
+
+    if (requiredProviders.has('hardcover') && !hardcoverToken) {
+      return json({ error: 'Hardcover book collection generation is not configured.' }, 500);
     }
 
     try {
@@ -76,6 +82,11 @@ export default {
           ? createIgdbProvider({
               clientId: igdbClientId,
               clientSecret: igdbClientSecret,
+            })
+          : null,
+        hardcover: requiredProviders.has('hardcover')
+          ? createHardcoverProvider({
+              token: hardcoverToken,
             })
           : null,
       });

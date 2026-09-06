@@ -1,6 +1,7 @@
 import process from 'node:process';
 
 import { planCollectionRequest } from '../scripts/resolution/collection-request-planner.mjs';
+import { createHardcoverProvider } from '../scripts/providers/hardcover.mjs';
 import { createIgdbProvider } from '../scripts/providers/igdb.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
 
@@ -67,10 +68,12 @@ export default {
       : [];
     const needsTmdb = mediaTypes.some((mediaType) => mediaType === 'movie' || mediaType === 'tv');
     const needsIgdb = mediaTypes.includes('game');
+    const needsHardcover = mediaTypes.includes('book');
 
     const tmdbToken = process.env.TMDB_READ_ACCESS_TOKEN;
     const igdbClientId = process.env.IGDB_CLIENT_ID;
     const igdbClientSecret = process.env.IGDB_CLIENT_SECRET;
+    const hardcoverToken = process.env.HARDCOVER_API_TOKEN;
 
     if (needsTmdb && !tmdbToken) {
       return json({ error: 'TMDB collection planning is not configured.' }, 500);
@@ -78,6 +81,10 @@ export default {
 
     if (needsIgdb && (!igdbClientId || !igdbClientSecret)) {
       return json({ error: 'IGDB collection planning is not configured.' }, 500);
+    }
+
+    if (needsHardcover && !hardcoverToken) {
+      return json({ error: 'Hardcover book collection planning is not configured.' }, 500);
     }
 
     try {
@@ -88,6 +95,11 @@ export default {
           ? createIgdbProvider({
               clientId: igdbClientId,
               clientSecret: igdbClientSecret,
+            })
+          : null,
+        hardcover: needsHardcover
+          ? createHardcoverProvider({
+              token: hardcoverToken,
             })
           : null,
       });

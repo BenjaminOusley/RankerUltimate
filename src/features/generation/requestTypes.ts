@@ -7,9 +7,11 @@ import type {
   TmdbGenerationSort,
 } from './types';
 
+export type CollectionRequestMediaType = GenerationMediaType | 'book';
+
 export type CollectionRequestContext = {
   subject: string | null;
-  mediaTypes: GenerationMediaType[];
+  mediaTypes: CollectionRequestMediaType[];
 };
 
 export type CollectionRequestClarification = {
@@ -23,7 +25,7 @@ export type CollectionRequestReadyForPlanning = {
   status: 'ready-for-planning';
   requestText: string;
   subject: string;
-  mediaTypes: GenerationMediaType[];
+  mediaTypes: CollectionRequestMediaType[];
   context: CollectionRequestContext;
 };
 
@@ -66,7 +68,35 @@ export type IgdbPlannedSource = {
   };
 };
 
-export type PlannedCollectionSource = TmdbPlannedSource | IgdbPlannedSource;
+export type BookPlannedMode = 'series' | 'author' | 'tag-series';
+export type BookGenerationSort =
+  | 'series-order'
+  | 'popular'
+  | 'rating'
+  | 'release-asc'
+  | 'release-desc'
+  | 'name';
+
+export type HardcoverPlannedSource = {
+  provider: 'hardcover';
+  mediaType: 'book';
+  mode: BookPlannedMode;
+  query: string;
+  resolvedId: number;
+  resolvedName: string;
+  parameters: {
+    limit: number;
+    sort: BookGenerationSort;
+    tagSlug?: string;
+    tagCategorySlug?: string;
+    candidateLimit?: number;
+  };
+};
+
+export type PlannedCollectionSource =
+  | TmdbPlannedSource
+  | IgdbPlannedSource
+  | HardcoverPlannedSource;
 
 export type CollectionSourcePlan = {
   kind: 'single' | 'composite';
@@ -75,11 +105,12 @@ export type CollectionSourcePlan = {
 };
 
 export type CollectionPlanningMatch = {
-  provider: 'tmdb' | 'igdb';
-  mediaType: GenerationMediaType;
-  mode: TmdbGenerationMode | IgdbPlannedMode;
+  provider: 'tmdb' | 'igdb' | 'hardcover';
+  mediaType: CollectionRequestMediaType;
+  mode: TmdbGenerationMode | IgdbPlannedMode | BookPlannedMode;
   id: number;
   name: string;
+  authorName?: string;
 };
 
 export type CollectionPlanningClarification = {
@@ -95,7 +126,7 @@ export type CollectionRequestPlanned = {
   status: 'planned';
   requestText: string;
   subject: string;
-  mediaTypes: GenerationMediaType[];
+  mediaTypes: CollectionRequestMediaType[];
   plan: CollectionSourcePlan;
 };
 

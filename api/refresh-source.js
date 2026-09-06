@@ -4,8 +4,10 @@ import {
   refreshGeneratedCollectionSource,
   validateRefreshSourceRequest,
 } from '../scripts/sources/refresh-generated-collection.mjs';
+import { refreshBookCollectionSource } from '../scripts/sources/providers/book-source.mjs';
 import { refreshIgdbCollectionSource } from '../scripts/sources/providers/igdb-source.mjs';
 import { refreshTmdbCollectionSource } from '../scripts/sources/providers/tmdb-source.mjs';
+import { createHardcoverProvider } from '../scripts/providers/hardcover.mjs';
 import { createIgdbProvider } from '../scripts/providers/igdb.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
 
@@ -51,6 +53,22 @@ function createSourceRefreshers() {
         igdb: createIgdbProvider({
           clientId,
           clientSecret,
+        }),
+        logger,
+      });
+    },
+    hardcover({ collectionId, source, logger }) {
+      const token = process.env.HARDCOVER_API_TOKEN;
+
+      if (!token) {
+        throw new Error('The Hardcover collection source is not configured.');
+      }
+
+      return refreshBookCollectionSource({
+        collectionId,
+        source,
+        hardcover: createHardcoverProvider({
+          token,
         }),
         logger,
       });

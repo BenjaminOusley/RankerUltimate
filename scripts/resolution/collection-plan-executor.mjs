@@ -1,9 +1,10 @@
+import { generateBookCollection, validateBookGenerationRequest } from '../generation/book-generator.mjs';
 import { generateIgdbCollection, validateIgdbGenerationRequest } from '../generation/igdb-generator.mjs';
 import { generateTmdbCollection } from '../generation/tmdb-generator.mjs';
 import { validateGenerationRequest } from '../generation/validation.mjs';
 
 const MAX_PLAN_SOURCES = 20;
-const SUPPORTED_PROVIDERS = new Set(['tmdb', 'igdb']);
+const SUPPORTED_PROVIDERS = new Set(['tmdb', 'igdb', 'hardcover']);
 
 function isObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -150,6 +151,36 @@ export function buildGenerationRequestFromPlannedSource(source, collectionId) {
     };
   }
 
+  if (source.provider === 'hardcover') {
+    if (source.mediaType !== 'book') {
+      throw new Error('Hardcover planned source must target books.');
+    }
+
+    if (!isObject(source.parameters)) {
+      throw new Error('Hardcover planned source is missing generation parameters.');
+    }
+
+    const validation = validateBookGenerationRequest({
+      mediaType: 'book',
+      mode: source.mode,
+      query: source.query,
+      collectionId,
+      hardcoverId: source.resolvedId,
+      resolvedName: source.resolvedName,
+      limit: source.parameters.limit,
+      sort: source.parameters.sort,
+      tagSlug: source.parameters.tagSlug,
+      tagCategorySlug: source.parameters.tagCategorySlug,
+      candidateLimit: source.parameters.candidateLimit,
+    });
+
+    if (!validation.ok) {
+      throw new Error(`Invalid planned Hardcover source: ${validation.error}`);
+    }
+
+    return validation.request;
+  }
+
   throw new Error(`Unsupported planned source provider: ${source.provider ?? 'unknown'}`);
 }
 
@@ -195,7 +226,11 @@ function mediaLabel(mediaType) {
     return 'TV Shows';
   }
 
-  return 'Games';
+  if (mediaType === 'game') {
+    return 'Games';
+  }
+
+  return 'Books';
 }
 
 function joinLabels(labels) {
@@ -280,10 +315,12 @@ export async function executeCollectionPlan({
   collectionId,
   tmdb = null,
   igdb = null,
+  hardcover = null,
   today,
   logger = console,
   generateTmdb = generateTmdbCollection,
   generateIgdb = generateIgdbCollection,
+  generateBook = generateBookCollection,
 }) {
   const normalizedRequest = validatePlannedRequest(plannedRequest);
   const normalizedCollectionId = validateCollectionId(collectionId);
@@ -313,14 +350,29 @@ export async function executeCollectionPlan({
       continue;
     }
 
-    if (!igdb) {
-      throw new Error('IGDB provider is required to execute this collection plan.');
+    if (source.provider === 'igdb') {
+      if (!igdb) {
+        throw new Error('IGDB provider is required to execute this collection plan.');
+      }
+
+      results.push(
+        await generateIgdb({
+          request: generationRequest,
+          igdb,
+          logger,
+        }),
+      );
+      continue;
+    }
+
+    if (!hardcover) {
+      throw new Error('Hardcover provider is required to execute this collection plan.');
     }
 
     results.push(
-      await generateIgdb({
+      await generateBook({
         request: generationRequest,
-        igdb,
+        hardcover,
         logger,
       }),
     );
