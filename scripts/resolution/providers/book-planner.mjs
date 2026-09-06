@@ -12,8 +12,19 @@ const TAG_ALIAS_SLUGS = new Map([
   ['science fiction', 'science-fiction'],
 ]);
 
-const SEMANTIC_TAG_CATEGORY_PRIORITY = new Map([
-  ['drama', ['genre', 'mood', 'tag']],
+const SEMANTIC_BOOK_CATEGORIES = new Map([
+  [
+    'drama',
+    {
+      key: 'drama',
+      displayName: 'Drama',
+      sources: [
+        { slug: 'drama', categorySlug: 'tag', weight: 1 },
+        { slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+        { slug: 'literary-fiction', categorySlug: 'genre', weight: 0.45 },
+      ],
+    },
+  ],
 ]);
 
 function normalizeWhitespace(value) {
@@ -265,22 +276,40 @@ function tagDisplayName(tag) {
   return raw.replace(/\b[a-z]/gu, (character) => character.toUpperCase());
 }
 
-function selectPreferredSemanticTags(query, tags) {
-  const priority = SEMANTIC_TAG_CATEGORY_PRIORITY.get(normalizeHardcoverText(query));
+function getSemanticBookCategory(query, requestText) {
+  const normalizedQuery = normalizeHardcoverText(query);
+  const explicitProviderTag = /\b(?:tag|mood)\b/iu.test(requestText);
 
-  if (!priority) {
+  if (explicitProviderTag) {
     return null;
   }
 
-  for (const categorySlug of priority) {
-    const matches = tags.filter((tag) => tag.tag_category?.slug === categorySlug);
+  return SEMANTIC_BOOK_CATEGORIES.get(normalizedQuery) ?? null;
+}
 
-    if (matches.length > 0) {
-      return matches;
+function resolveSemanticTagSources(category, tags) {
+  const resolved = [];
+
+  for (const source of category.sources) {
+    const tag = tags.find(
+      (entry) =>
+        String(entry?.slug ?? '') === source.slug &&
+        entry?.tag_category?.slug === source.categorySlug,
+    );
+
+    if (!tag) {
+      continue;
     }
+
+    resolved.push({
+      id: Number(tag.id),
+      slug: tag.slug,
+      categorySlug: source.categorySlug,
+      weight: source.weight,
+    });
   }
 
-  return [];
+  return resolved;
 }
 
 function createSeriesPlan({ query, series, limit }) {
@@ -318,20 +347,29 @@ function createAuthorPlan({ query, author, limit, sort }) {
   };
 }
 
-function createTagPlan({ query, tag, limit }) {
+function createTagPlan({
+  query,
+  tag,
+  limit,
+  resolvedName = tagDisplayName(tag),
+  semanticCategory = null,
+  tagSources = null,
+}) {
   return {
     provider: 'hardcover',
     mediaType: 'book',
     mode: 'tag-series',
     query,
     resolvedId: Number(tag.id),
-    resolvedName: tagDisplayName(tag),
+    resolvedName,
     parameters: {
       limit,
       sort: 'popular',
       tagSlug: tag.slug,
       tagCategorySlug: tag.tag_category?.slug ?? 'genre',
       candidateLimit: DEFAULT_BOOK_TAG_CANDIDATE_LIMIT,
+      ...(semanticCategory ? { semanticCategory } : {}),
+      ...(Array.isArray(tagSources) && tagSources.length > 0 ? { tagSources } : {}),
     },
   };
 }
@@ -374,8 +412,46 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
   const explicitLimit = requestedLimit ?? null;
 
   if (!relationHint || relationHint === 'tag-series') {
+    const semanticCategory = getSemanticBookCategory(query, requestText);
+
+    if (semanticCategory) {
+      const tags = await hardcover.findTagsBySlugs(
+        semanticCategory.sources.map((source) => source.slug),
+      );
+      const tagSources = resolveSemanticTagSources(semanticCategory, tags);
+      const primarySource = tagSources[0] ?? null;
+      const primaryTag = primarySource
+        ? tags.find(
+            (tag) =>
+              Number(tag.id) === primarySource.id &&
+              tag.tag_category?.slug === primarySource.categorySlug,
+          )
+        : null;
+
+      if (primaryTag) {
+        plans.push(
+          createTagPlan({
+            query,
+            tag: primaryTag,
+            limit: explicitLimit ?? DEFAULT_BOOK_TAG_SERIES_LIMIT,
+            resolvedName: semanticCategory.displayName,
+            semanticCategory: semanticCategory.key,
+            tagSources,
+          }),
+        );
+
+        return {
+          plans: dedupePlans(plans),
+          query,
+          relationHint,
+          requestedLimit,
+          unsupportedLimit: false,
+        };
+      }
+    }
+
     const tags = await hardcover.findTagsBySlugs(tagSlugCandidates(query));
-    let matchingTags = tags.filter((tag) => {
+    const matchingTags = tags.filter((tag) => {
       if (!tagMatchesQuery(query, tag)) {
         return false;
       }
@@ -386,12 +462,6 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
 
       return true;
     });
-    const semanticTags =
-      relationHint === null ? selectPreferredSemanticTags(query, matchingTags) : null;
-
-    if (semanticTags !== null) {
-      matchingTags = semanticTags;
-    }
 
     for (const tag of matchingTags) {
       plans.push(
@@ -405,8 +475,7 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
 
     if (
       relationHint === null &&
-      (semanticTags !== null ||
-        matchingTags.some((tag) => ['genre', 'mood'].includes(tag.tag_category?.slug)))
+      matchingTags.some((tag) => ['genre', 'mood'].includes(tag.tag_category?.slug))
     ) {
       return {
         plans: dedupePlans(plans),

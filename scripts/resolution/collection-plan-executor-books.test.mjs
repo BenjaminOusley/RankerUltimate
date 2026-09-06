@@ -45,6 +45,40 @@ describe('book collection plan execution', () => {
     });
   });
 
+  it('preserves normalized semantic tag sources in the generation contract', () => {
+    const source = bookSource({
+      query: 'drama',
+      resolvedId: 20,
+      resolvedName: 'Drama',
+      parameters: {
+        limit: 50,
+        sort: 'popular',
+        tagSlug: 'drama',
+        tagCategorySlug: 'tag',
+        semanticCategory: 'drama',
+        tagSources: [
+          { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
+          { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+          {
+            id: 22,
+            slug: 'literary-fiction',
+            categorySlug: 'genre',
+            weight: 0.45,
+          },
+        ],
+        candidateLimit: 150,
+      },
+    });
+
+    expect(buildGenerationRequestFromPlannedSource(source, collectionId)).toMatchObject({
+      mode: 'tag-series',
+      hardcoverId: 20,
+      resolvedName: 'Drama',
+      semanticCategory: 'drama',
+      tagSources: source.parameters.tagSources,
+    });
+  });
+
   it('executes a single book plan and preserves the conversational request', async () => {
     const generateBook = vi.fn(async ({ request }) => ({
       collection: {

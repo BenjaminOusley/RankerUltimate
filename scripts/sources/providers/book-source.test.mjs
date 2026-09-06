@@ -47,6 +47,45 @@ describe('Hardcover generated collection source', () => {
     });
   });
 
+  it('reconstructs normalized semantic tag bundles from persisted provider IDs', () => {
+    const semanticSource = {
+      ...source,
+      originalRequest: 'drama books',
+      definition: {
+        ...source.definition,
+        query: 'drama',
+        hardcoverId: 20,
+        resolvedName: 'Drama',
+        tagSlug: 'drama',
+        tagCategorySlug: 'tag',
+        semanticCategory: 'drama',
+        tagSources: [
+          { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
+          { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+          {
+            id: 22,
+            slug: 'literary-fiction',
+            categorySlug: 'genre',
+            weight: 0.45,
+          },
+        ],
+      },
+    };
+
+    expect(
+      buildBookGenerationRequestFromSource('saved-drama-book-series', semanticSource),
+    ).toMatchObject({
+      ok: true,
+      request: {
+        mode: 'tag-series',
+        hardcoverId: 20,
+        resolvedName: 'Drama',
+        semanticCategory: 'drama',
+        tagSources: semanticSource.definition.tagSources,
+      },
+    });
+  });
+
   it('refreshes through the persisted Hardcover ID and preserves the library collection ID', async () => {
     const hardcover = {
       getBooksByTag: vi.fn(async () => [

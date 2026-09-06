@@ -50,7 +50,7 @@ describe('book collection planner', () => {
     expect(hardcover.searchAuthors).not.toHaveBeenCalled();
   });
 
-  it('treats the normalized Drama category as tag-series instead of literal series-name ambiguity', async () => {
+  it('resolves broad Drama into a normalized multi-tag series category', async () => {
     const hardcover = createHardcover({
       tags: [
         {
@@ -58,6 +58,18 @@ describe('book collection planner', () => {
           tag: 'drama',
           slug: 'drama',
           tag_category: { slug: 'tag' },
+        },
+        {
+          id: 21,
+          tag: 'Plays',
+          slug: 'plays',
+          tag_category: { slug: 'genre' },
+        },
+        {
+          id: 22,
+          tag: 'Literary Fiction',
+          slug: 'literary-fiction',
+          tag_category: { slug: 'genre' },
         },
       ],
     });
@@ -73,8 +85,24 @@ describe('book collection planner', () => {
       resolvedName: 'Drama',
       parameters: {
         tagCategorySlug: 'tag',
+        semanticCategory: 'drama',
+        tagSources: [
+          { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
+          { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+          {
+            id: 22,
+            slug: 'literary-fiction',
+            categorySlug: 'genre',
+            weight: 0.45,
+          },
+        ],
       },
     });
+    expect(hardcover.findTagsBySlugs).toHaveBeenCalledWith([
+      'drama',
+      'plays',
+      'literary-fiction',
+    ]);
     expect(hardcover.searchSeries).not.toHaveBeenCalled();
     expect(hardcover.searchAuthors).not.toHaveBeenCalled();
   });

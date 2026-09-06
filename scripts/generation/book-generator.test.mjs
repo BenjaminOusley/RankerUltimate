@@ -357,6 +357,146 @@ describe('book generator', () => {
     ]);
   });
 
+  it('combines normalized semantic category signals without double-counting conceptual books', async () => {
+    const getBooksByTag = vi.fn(async ({ tagId, limit, offset }) => {
+      expect(limit).toBe(100);
+      expect(offset).toBe(0);
+
+      if (tagId === 20) {
+        return [
+          {
+            count: 5,
+            book: {
+              id: 1,
+              title: 'Direct drama match',
+              users_read_count: 1000,
+              image: { url: 'drama.jpg' },
+              featured_book_series: {
+                series: {
+                  id: 200,
+                  name: 'Drama Series',
+                  author: { name: 'Drama Author' },
+                },
+              },
+              taggable_counts: [{ count: 10, tag: { slug: 'drama' } }],
+            },
+          },
+        ];
+      }
+
+      if (tagId === 21) {
+        return [
+          {
+            count: 10,
+            book: {
+              id: 2,
+              title: 'Stage drama match',
+              users_read_count: 600,
+              image: { url: 'plays.jpg' },
+              featured_book_series: {
+                series: {
+                  id: 201,
+                  name: 'Play Series',
+                  author: { name: 'Play Author' },
+                },
+              },
+              taggable_counts: [{ count: 10, tag: { slug: 'plays' } }],
+            },
+          },
+        ];
+      }
+
+      return [
+        {
+          count: 10,
+          book: {
+            id: 1,
+            title: 'Direct drama match',
+            users_read_count: 1000,
+            image: { url: 'drama.jpg' },
+            featured_book_series: {
+              series: {
+                id: 200,
+                name: 'Drama Series',
+                author: { name: 'Drama Author' },
+              },
+            },
+            taggable_counts: [{ count: 10, tag: { slug: 'literary-fiction' } }],
+          },
+        },
+        {
+          count: 10,
+          book: {
+            id: 3,
+            title: 'Broad literary match',
+            users_read_count: 1100,
+            image: { url: 'literary.jpg' },
+            featured_book_series: {
+              series: {
+                id: 202,
+                name: 'Literary Series',
+                author: { name: 'Literary Author' },
+              },
+            },
+            taggable_counts: [{ count: 10, tag: { slug: 'literary-fiction' } }],
+          },
+        },
+      ];
+    });
+
+    const result = await generateBookCollection({
+      request: {
+        mediaType: 'book',
+        mode: 'tag-series',
+        query: 'drama',
+        collectionId: 'generated-drama-test',
+        hardcoverId: 20,
+        resolvedName: 'Drama',
+        limit: 3,
+        sort: 'popular',
+        tagSlug: 'drama',
+        tagCategorySlug: 'tag',
+        semanticCategory: 'drama',
+        tagSources: [
+          { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
+          { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+          {
+            id: 22,
+            slug: 'literary-fiction',
+            categorySlug: 'genre',
+            weight: 0.45,
+          },
+        ],
+        candidateLimit: 150,
+      },
+      hardcover: { getBooksByTag },
+      logger: { log: vi.fn() },
+    });
+
+    expect(getBooksByTag).toHaveBeenCalledTimes(3);
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'Drama Series',
+      'Play Series',
+      'Literary Series',
+    ]);
+    expect(result.collection.description).toBe(
+      'Popular book series associated with Drama.',
+    );
+    expect(result.collection.candidateSource.definition).toMatchObject({
+      semanticCategory: 'drama',
+      tagSources: [
+        { id: 20, slug: 'drama', categorySlug: 'tag', weight: 1 },
+        { id: 21, slug: 'plays', categorySlug: 'genre', weight: 0.85 },
+        {
+          id: 22,
+          slug: 'literary-fiction',
+          categorySlug: 'genre',
+          weight: 0.45,
+        },
+      ],
+    });
+  });
+
   it('loads the full available author pool before applying non-popularity sorts', async () => {
     const getAuthorContributionsPage = vi.fn(async ({ offset }) => ({
       author: {

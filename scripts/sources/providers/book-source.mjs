@@ -47,6 +47,8 @@ export function buildBookGenerationRequestFromSource(collectionId, source) {
     sort: definition.sort,
     tagSlug: definition.tagSlug,
     tagCategorySlug: definition.tagCategorySlug,
+    semanticCategory: definition.semanticCategory,
+    tagSources: definition.tagSources,
     candidateLimit: definition.candidateLimit,
   });
 

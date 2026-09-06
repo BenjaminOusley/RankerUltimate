@@ -171,6 +171,8 @@ export function buildGenerationRequestFromPlannedSource(source, collectionId) {
       sort: source.parameters.sort,
       tagSlug: source.parameters.tagSlug,
       tagCategorySlug: source.parameters.tagCategorySlug,
+      semanticCategory: source.parameters.semanticCategory,
+      tagSources: source.parameters.tagSources,
       candidateLimit: source.parameters.candidateLimit,
     });
 

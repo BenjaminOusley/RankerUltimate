@@ -194,6 +194,49 @@ function createSeriesRankItem(series) {
   };
 }
 
+function normalizeSemanticTagSources(value) {
+  if (value == null) {
+    return null;
+  }
+
+  if (!Array.isArray(value) || value.length === 0 || value.length > 10) {
+    throw new Error('Book semantic tag sources must contain between 1 and 10 entries.');
+  }
+
+  const seen = new Set();
+  const sources = [];
+
+  for (const entry of value) {
+    if (!isObject(entry)) {
+      throw new Error('Book semantic tag sources must be objects.');
+    }
+
+    const id = normalizePositiveId(entry.id, 'Hardcover semantic tag ID');
+    const slug = requireNonEmptyString(entry.slug, 'Hardcover semantic tag slug', 100);
+    const categorySlug = requireNonEmptyString(
+      entry.categorySlug,
+      'Hardcover semantic tag category slug',
+      100,
+    );
+    const weight = Number(entry.weight ?? 1);
+
+    if (!Number.isFinite(weight) || weight <= 0 || weight > 1) {
+      throw new Error('Book semantic tag weight must be greater than 0 and at most 1.');
+    }
+
+    const key = `${id}:${categorySlug}`;
+
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    sources.push({ id, slug, categorySlug, weight });
+  }
+
+  return sources;
+}
+
 function validateRequest(request) {
   if (!isObject(request)) {
     throw new Error('Book generation request must be an object.');
@@ -260,6 +303,12 @@ function validateRequest(request) {
           100,
         )
       : null;
+  const semanticCategory =
+    request.mode === 'tag-series' && request.semanticCategory != null
+      ? requireNonEmptyString(request.semanticCategory, 'Book semantic category', 100)
+      : null;
+  const tagSources =
+    request.mode === 'tag-series' ? normalizeSemanticTagSources(request.tagSources) : null;
 
   let candidateLimit = null;
 
@@ -291,6 +340,8 @@ function validateRequest(request) {
     sort,
     tagSlug,
     tagCategorySlug,
+    ...(semanticCategory ? { semanticCategory } : {}),
+    ...(Array.isArray(tagSources) && tagSources.length > 0 ? { tagSources } : {}),
     candidateLimit,
   };
 }
@@ -462,8 +513,7 @@ async function loadAuthorBooks(hardcover, request) {
 }
 
 function aggregateTagSeries(rows) {
-  const seriesById = new Map();
-  const seenBooks = new Set();
+  const booksByConcept = new Map();
 
   for (const row of rows) {
     const book = row?.book;
@@ -474,12 +524,16 @@ function aggregateTagSeries(rows) {
     }
 
     const bookConceptId = Number(book.canonical_id ?? book.id);
+    const seriesId = Number(series.canonical_id ?? series.id);
 
-    if (!Number.isSafeInteger(bookConceptId) || seenBooks.has(bookConceptId)) {
+    if (
+      !Number.isSafeInteger(bookConceptId) ||
+      bookConceptId < 1 ||
+      !Number.isSafeInteger(seriesId) ||
+      seriesId < 1
+    ) {
       continue;
     }
-
-    seenBooks.add(bookConceptId);
 
     const targetVotes = Number(row.count ?? 0);
     const categoryCounts = Array.isArray(book.taggable_counts)
@@ -488,18 +542,49 @@ function aggregateTagSeries(rows) {
     const strongestCategoryVotes = Math.max(0, ...categoryCounts);
     const strength =
       strongestCategoryVotes > 0 ? targetVotes / strongestCategoryVotes : 0;
+    const semanticWeight = Number(row.semanticWeight ?? 1);
+    const boundedSemanticWeight = Number.isFinite(semanticWeight)
+      ? Math.min(1, Math.max(0, semanticWeight))
+      : 1;
+    const evidence = Math.min(
+      1,
+      Math.max(0, strength * strength * boundedSemanticWeight),
+    );
     const readers = Number(book.users_read_count ?? 0);
-    const weightedReaders = readers * strength * strength;
-    const seriesId = Number(series.canonical_id ?? series.id);
 
-    if (!Number.isSafeInteger(seriesId) || seriesId < 1) {
-      continue;
+    let concept = booksByConcept.get(bookConceptId);
+
+    if (!concept) {
+      concept = {
+        id: bookConceptId,
+        readers,
+        evidence: 0,
+        targetVotes: 0,
+        series: {
+          id: seriesId,
+          canonical_id: series.canonical_id ?? null,
+          name: series.name,
+          slug: series.slug,
+          books_count: series.books_count,
+          primary_books_count: series.primary_books_count,
+          is_completed: series.is_completed,
+          author: series.author ?? null,
+        },
+        image: book.image?.url ?? null,
+        strongestEvidence: -1,
+      };
+      booksByConcept.set(bookConceptId, concept);
     }
 
-    let aggregate = seriesById.get(seriesId);
+    // Multiple semantic signals for the same conceptual book should reinforce
+    // each other without allowing duplicate tags to multiply readership.
+    concept.evidence = 1 - (1 - concept.evidence) * (1 - evidence);
+    concept.targetVotes += targetVotes;
+    concept.readers = Math.max(concept.readers, readers);
 
-    if (!aggregate) {
-      aggregate = {
+    if (evidence > concept.strongestEvidence) {
+      concept.strongestEvidence = evidence;
+      concept.series = {
         id: seriesId,
         canonical_id: series.canonical_id ?? null,
         name: series.name,
@@ -508,6 +593,24 @@ function aggregateTagSeries(rows) {
         primary_books_count: series.primary_books_count,
         is_completed: series.is_completed,
         author: series.author ?? null,
+      };
+
+      if (book.image?.url) {
+        concept.image = book.image.url;
+      }
+    }
+  }
+
+  const seriesById = new Map();
+
+  for (const concept of booksByConcept.values()) {
+    const weightedReaders = concept.readers * concept.evidence;
+    const seriesId = concept.series.id;
+    let aggregate = seriesById.get(seriesId);
+
+    if (!aggregate) {
+      aggregate = {
+        ...concept.series,
         matchedBooks: 0,
         peakReaders: 0,
         peakWeightedReaders: 0,
@@ -520,16 +623,16 @@ function aggregateTagSeries(rows) {
     }
 
     aggregate.matchedBooks += 1;
-    aggregate.peakReaders = Math.max(aggregate.peakReaders, readers);
+    aggregate.peakReaders = Math.max(aggregate.peakReaders, concept.readers);
     aggregate.peakWeightedReaders = Math.max(
       aggregate.peakWeightedReaders,
       weightedReaders,
     );
     aggregate.totalWeightedReaders += weightedReaders;
-    aggregate.totalTargetVotes += targetVotes;
+    aggregate.totalTargetVotes += concept.targetVotes;
 
-    if (weightedReaders > aggregate.representativeWeight && book.image?.url) {
-      aggregate.image = book.image.url;
+    if (weightedReaders > aggregate.representativeWeight && concept.image) {
+      aggregate.image = concept.image;
       aggregate.representativeWeight = weightedReaders;
     }
   }
@@ -562,7 +665,7 @@ function isHardcoverTimeout(error) {
   );
 }
 
-async function loadTagSeries(hardcover, request) {
+async function loadSingleTagSeries(hardcover, request) {
   let candidateLimit = Math.max(
     request.candidateLimit,
     Math.min(request.limit * 2, MAX_BOOK_TAG_CANDIDATE_LIMIT),
@@ -633,6 +736,109 @@ async function loadTagSeries(hardcover, request) {
   };
 }
 
+async function loadSemanticTagSeries(hardcover, request) {
+  let candidateLimit = Math.max(
+    request.candidateLimit,
+    Math.min(request.limit * 2, MAX_BOOK_TAG_CANDIDATE_LIMIT),
+  );
+  const states = request.tagSources.map((source) => ({
+    source,
+    rows: [],
+    pageSize: Math.min(TAG_PAGE_SIZE, candidateLimit),
+    offset: 0,
+    exhausted: false,
+  }));
+  let rankedSeries = [];
+
+  while (candidateLimit !== null) {
+    for (const state of states) {
+      while (state.offset < candidateLimit && !state.exhausted) {
+        const requestedPageSize = Math.min(
+          state.pageSize,
+          candidateLimit - state.offset,
+        );
+        let pageRows;
+
+        try {
+          pageRows = await hardcover.getBooksByTag({
+            tagId: state.source.id,
+            categorySlug: state.source.categorySlug,
+            limit: requestedPageSize,
+            offset: state.offset,
+          });
+        } catch (error) {
+          if (isHardcoverTimeout(error) && state.pageSize > MIN_TAG_PAGE_SIZE) {
+            state.pageSize = Math.max(
+              MIN_TAG_PAGE_SIZE,
+              Math.floor(state.pageSize / 2),
+            );
+            continue;
+          }
+
+          throw error;
+        }
+
+        const normalizedPageRows = Array.isArray(pageRows) ? pageRows : [];
+        state.rows.push(
+          ...normalizedPageRows.map((row) => ({
+            ...row,
+            semanticWeight: state.source.weight,
+            semanticSource: {
+              id: state.source.id,
+              slug: state.source.slug,
+              categorySlug: state.source.categorySlug,
+            },
+          })),
+        );
+        state.offset += normalizedPageRows.length;
+
+        if (normalizedPageRows.length < requestedPageSize) {
+          state.exhausted = true;
+          break;
+        }
+      }
+    }
+
+    rankedSeries = aggregateTagSeries(states.flatMap((state) => state.rows));
+
+    if (rankedSeries.length >= request.limit) {
+      break;
+    }
+
+    if (states.every((state) => state.exhausted)) {
+      break;
+    }
+
+    const nextLimit = nextTagCandidateLimit(candidateLimit);
+
+    if (nextLimit === null || nextLimit === candidateLimit) {
+      break;
+    }
+
+    candidateLimit = nextLimit;
+  }
+
+  return {
+    series: rankedSeries.slice(0, request.limit),
+    candidateCount: states.reduce((total, state) => total + state.rows.length, 0),
+    candidateLimit: Math.max(0, ...states.map((state) => state.offset)),
+    sourceCandidateCounts: states.map((state) => ({
+      id: state.source.id,
+      slug: state.source.slug,
+      categorySlug: state.source.categorySlug,
+      count: state.rows.length,
+    })),
+  };
+}
+
+async function loadTagSeries(hardcover, request) {
+  if (Array.isArray(request.tagSources) && request.tagSources.length > 1) {
+    return loadSemanticTagSeries(hardcover, request);
+  }
+
+  return loadSingleTagSeries(hardcover, request);
+}
+
 function createCollection(request, resolvedEntity, items, extraDefinition = {}) {
   const resolvedName = resolvedEntity?.name ?? request.resolvedName;
   let name;
@@ -641,7 +847,9 @@ function createCollection(request, resolvedEntity, items, extraDefinition = {}) 
 
   if (request.mode === 'tag-series') {
     name = `${resolvedName} Book Series`;
-    description = `Popular book series associated with ${resolvedName} on Hardcover.`;
+    description = request.semanticCategory
+      ? `Popular book series associated with ${resolvedName}.`
+      : `Popular book series associated with ${resolvedName} on Hardcover.`;
     suffix = 'book-series';
   } else if (request.mode === 'author') {
     name = `${resolvedName} Books`;
@@ -676,6 +884,12 @@ function createCollection(request, resolvedEntity, items, extraDefinition = {}) 
               tagSlug: request.tagSlug,
               tagCategorySlug: request.tagCategorySlug,
               candidateLimit: request.candidateLimit,
+              ...(request.semanticCategory
+                ? { semanticCategory: request.semanticCategory }
+                : {}),
+              ...(Array.isArray(request.tagSources) && request.tagSources.length > 0
+                ? { tagSources: request.tagSources }
+                : {}),
             }
           : {}),
         ...extraDefinition,
@@ -767,6 +981,9 @@ export async function generateBookCollection({
   return {
     collection: createCollection(normalizedRequest, resolvedEntity, items, {
       effectiveCandidateLimit: tagResult.candidateLimit,
+      ...(Array.isArray(tagResult.sourceCandidateCounts)
+        ? { sourceCandidateCounts: tagResult.sourceCandidateCounts }
+        : {}),
     }),
     resolvedEntity,
     candidateCount: tagResult.candidateCount,
