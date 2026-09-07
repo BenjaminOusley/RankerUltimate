@@ -3,6 +3,7 @@ export { applyRefinementChoice, buildRefinementPairs } from './refinement';
 export {
   chooseRankingWinner,
   createInitialRankingState,
+  createRankingStateFromOrder,
   getCurrentOpponent,
   shuffleItems,
 } from './ranker';

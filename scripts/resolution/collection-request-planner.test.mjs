@@ -200,10 +200,38 @@ describe('collection request planner', () => {
     });
   });
 
-  it('asks for a smaller count when a conversational request exceeds the current collection cap', async () => {
+  it('supports conversational game counts above 250 up to the IGDB collection cap', async () => {
     const result = await planCollectionRequest({
       request: ready('top 300 Halo', ['game'], 'top 300 Halo games'),
       igdb: createFakeIgdb(),
+    });
+
+    expect(result.status).toBe('planned');
+    expect(result.plan.sources[0]).toMatchObject({
+      provider: 'igdb',
+      mode: 'franchise',
+      resolvedName: 'Halo',
+      parameters: {
+        limit: 300,
+      },
+    });
+  });
+
+  it('asks for a smaller count when a game request exceeds 500', async () => {
+    const result = await planCollectionRequest({
+      request: ready('top 501 Halo', ['game'], 'top 501 Halo games'),
+      igdb: createFakeIgdb(),
+    });
+
+    expect(result.status).toBe('clarification');
+    expect(result.reason).toBe('unsupported-limit');
+    expect(result.question).toContain('500');
+  });
+
+  it('keeps the TMDB collection cap at 250', async () => {
+    const result = await planCollectionRequest({
+      request: ready('top 300 Horror', ['movie'], 'top 300 horror movies'),
+      tmdb: createFakeTmdb(),
     });
 
     expect(result.status).toBe('clarification');
@@ -357,3 +385,5 @@ describe('collection request planner', () => {
     expect(result.matches.map((match) => match.mode).sort()).toEqual(['actor', 'company']);
   });
 });
+
+

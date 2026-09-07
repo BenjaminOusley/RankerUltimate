@@ -14,21 +14,38 @@ import {
   type RankingState,
   type RefinementPair,
 } from '../engine';
-import type { RankingRecoveryPayload, RefinementSnapshot } from '../recovery/rankingRecovery';
+import type { RankingRecoveryPayload } from '../recovery/rankingRecovery';
+import { replayRankingChoices, replayRefinementChoices } from '../recovery/rankingReplay';
+
+function getInitialOrderIds(state: RankingState) {
+  return [...state.ranked, ...(state.current ? [state.current] : []), ...state.remaining].map(
+    (item) => item.id,
+  );
+}
+
+function resolveItemsByIds(items: readonly RankItem[], ids: readonly string[]) {
+  const itemById = new Map(items.map((item) => [item.id, item]));
+  const resolved = ids
+    .map((id) => itemById.get(id))
+    .filter((item): item is RankItem => Boolean(item));
+
+  return resolved.length === ids.length ? resolved : null;
+}
 
 export function useRankingSession() {
   const [collection, setCollection] = useState<RankCollection | null>(null);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [rankingState, setRankingState] = useState<RankingState | null>(null);
-  const [rankingHistory, setRankingHistory] = useState<RankingState[]>([]);
+  const [rankingOrderIds, setRankingOrderIds] = useState<string[]>([]);
+  const [rankingWinnerIds, setRankingWinnerIds] = useState<string[]>([]);
+  const [normalLastState, setNormalLastState] = useState<RankingState | null>(null);
   const [refinementPairs, setRefinementPairs] = useState<RefinementPair[]>([]);
-  const [refinementIndex, setRefinementIndex] = useState(0);
-  const [refinementHistory, setRefinementHistory] = useState<RefinementSnapshot[]>([]);
+  const [refinementWinnerIds, setRefinementWinnerIds] = useState<string[]>([]);
   const [ratingOrder, setRatingOrder] = useState<RankItem[]>([]);
   const [ratingBackScreen, setRatingBackScreen] = useState<RatingBackScreen>('rankingComplete');
 
   const preferenceScores = useMemo(() => {
-    if (!rankingState) {
+    if (!rankingState || rankingState.current) {
       return {};
     }
 
@@ -44,6 +61,7 @@ export function useRankingSession() {
   }, [rankingState]);
 
   const currentOpponent = rankingState?.current ? getCurrentOpponent(rankingState) : null;
+  const refinementIndex = refinementWinnerIds.length;
 
   const displayedPlaced = rankingState
     ? rankingState.mode === 'validation'
@@ -51,45 +69,44 @@ export function useRankingSession() {
       : rankingState.ranked.length
     : 0;
 
-  const normalLastChoice = useMemo(() => {
-    if (!rankingState || rankingState.current) {
+  const normalLastChoice = (() => {
+    if (!rankingState || rankingState.current || !normalLastState) {
       return null;
     }
 
-    const lastState = rankingHistory[rankingHistory.length - 1] ?? null;
-    const lastOpponent = lastState ? getCurrentOpponent(lastState) : null;
-    const lastOutcome = rankingState.outcomes[rankingState.outcomes.length - 1] ?? null;
+    const lastOpponent = getCurrentOpponent(normalLastState);
+    const lastOutcome =
+      [...rankingState.outcomes].reverse().find((outcome) => outcome.phase !== 'refinement') ??
+      null;
 
     return {
-      first: lastState?.current ?? null,
+      first: normalLastState.current,
       second: lastOpponent,
       winnerId: lastOutcome?.winnerId ?? null,
     };
-  }, [rankingHistory, rankingState]);
+  })();
 
   const refinementLastChoice = useMemo(() => {
-    if (!rankingState || refinementIndex < refinementPairs.length) {
+    if (!rankingState || refinementIndex === 0 || refinementIndex < refinementPairs.length) {
       return null;
     }
 
-    const lastSnapshot = refinementHistory[refinementHistory.length - 1] ?? null;
-    const lastPair = lastSnapshot ? refinementPairs[lastSnapshot.refinementIndex] : null;
+    const lastIndex = refinementIndex - 1;
+    const lastPair = refinementPairs[lastIndex] ?? null;
+    const winnerId = refinementWinnerIds[lastIndex] ?? null;
     const first = lastPair
       ? (rankingState.ranked.find((item) => item.id === lastPair.firstId) ?? null)
       : null;
     const second = lastPair
       ? (rankingState.ranked.find((item) => item.id === lastPair.secondId) ?? null)
       : null;
-    const lastOutcome =
-      [...rankingState.outcomes].reverse().find((outcome) => outcome.phase === 'refinement') ??
-      null;
 
     return {
       first,
       second,
-      winnerId: lastOutcome?.winnerId ?? null,
+      winnerId,
     };
-  }, [rankingState, refinementHistory, refinementIndex, refinementPairs]);
+  }, [rankingState, refinementIndex, refinementPairs, refinementWinnerIds]);
 
   const currentRefinementItems = useMemo(() => {
     if (!rankingState || refinementIndex >= refinementPairs.length) {
@@ -107,10 +124,11 @@ export function useRankingSession() {
     setCollection(null);
     setSelectedItemIds(new Set());
     setRankingState(null);
-    setRankingHistory([]);
+    setRankingOrderIds([]);
+    setRankingWinnerIds([]);
+    setNormalLastState(null);
     setRefinementPairs([]);
-    setRefinementIndex(0);
-    setRefinementHistory([]);
+    setRefinementWinnerIds([]);
     setRatingOrder([]);
   }
 
@@ -130,11 +148,14 @@ export function useRankingSession() {
       return false;
     }
 
-    setRankingState(createInitialRankingState(selectedItems));
-    setRankingHistory([]);
+    const initialState = createInitialRankingState(selectedItems);
+
+    setRankingState(initialState);
+    setRankingOrderIds(getInitialOrderIds(initialState));
+    setRankingWinnerIds([]);
+    setNormalLastState(null);
     setRefinementPairs([]);
-    setRefinementIndex(0);
-    setRefinementHistory([]);
+    setRefinementWinnerIds([]);
     setRatingOrder([]);
     return true;
   }
@@ -144,18 +165,39 @@ export function useRankingSession() {
       return;
     }
 
-    setRankingHistory((previous) => [...previous, rankingState]);
-    setRankingState(chooseRankingWinner(rankingState, winner.id));
-  }
+    const nextState = chooseRankingWinner(rankingState, winner.id);
 
-  function undoNormal() {
-    if (rankingHistory.length === 0) {
+    if (nextState === rankingState) {
       return;
     }
 
-    const previousState = rankingHistory[rankingHistory.length - 1];
-    setRankingState(previousState);
-    setRankingHistory((previous) => previous.slice(0, -1));
+    setNormalLastState(rankingState);
+    setRankingWinnerIds((previous) => [...previous, winner.id]);
+    setRankingState(nextState);
+  }
+
+  function undoNormal() {
+    if (!collection || rankingWinnerIds.length === 0) {
+      return;
+    }
+
+    const orderedItems = resolveItemsByIds(collection.items, rankingOrderIds);
+
+    if (!orderedItems) {
+      return;
+    }
+
+    const nextWinnerIds = rankingWinnerIds.slice(0, -1);
+
+    try {
+      const replay = replayRankingChoices(orderedItems, nextWinnerIds);
+
+      setRankingState(replay.state);
+      setRankingWinnerIds(nextWinnerIds);
+      setNormalLastState(replay.lastState);
+    } catch {
+      return;
+    }
   }
 
   function startRefinement() {
@@ -165,8 +207,7 @@ export function useRankingSession() {
 
     const pairs = buildRefinementPairs(rankingState.ranked, rankingState.outcomes);
     setRefinementPairs(pairs);
-    setRefinementIndex(0);
-    setRefinementHistory([]);
+    setRefinementWinnerIds([]);
     return pairs.length > 0;
   }
 
@@ -188,25 +229,42 @@ export function useRankingSession() {
       phase: 'refinement',
     };
 
-    setRefinementHistory((previous) => [...previous, { rankingState, refinementIndex }]);
     setRankingState({
       ...rankingState,
       ranked: applyRefinementChoice(rankingState.ranked, pair, winnerId),
       outcomes: [...rankingState.outcomes, outcome],
       comparisons: rankingState.comparisons + 1,
     });
-    setRefinementIndex((previous) => previous + 1);
+    setRefinementWinnerIds((previous) => [...previous, winnerId]);
   }
 
   function undoRefinement() {
-    if (refinementHistory.length === 0) {
+    if (!collection || refinementWinnerIds.length === 0) {
       return;
     }
 
-    const snapshot = refinementHistory[refinementHistory.length - 1];
-    setRankingState(snapshot.rankingState);
-    setRefinementIndex(snapshot.refinementIndex);
-    setRefinementHistory((previous) => previous.slice(0, -1));
+    const orderedItems = resolveItemsByIds(collection.items, rankingOrderIds);
+
+    if (!orderedItems) {
+      return;
+    }
+
+    const nextRefinementWinnerIds = refinementWinnerIds.slice(0, -1);
+
+    try {
+      const normalReplay = replayRankingChoices(orderedItems, rankingWinnerIds);
+      const restoredState = replayRefinementChoices(
+        normalReplay.state,
+        refinementPairs,
+        nextRefinementWinnerIds,
+      );
+
+      setRankingState(restoredState);
+      setNormalLastState(normalReplay.lastState);
+      setRefinementWinnerIds(nextRefinementWinnerIds);
+    } catch {
+      return;
+    }
   }
 
   function openRatings(backScreen: RatingBackScreen) {
@@ -219,21 +277,39 @@ export function useRankingSession() {
     return true;
   }
 
-  function restoreFromRecovery(payload: RankingRecoveryPayload, restoredCollection: RankCollection) {
-    const itemById = new Map(restoredCollection.items.map((item) => [item.id, item]));
-    const restoredRatingOrder = payload.ratingOrderIds
-      .map((id) => itemById.get(id))
-      .filter((item): item is RankItem => Boolean(item));
+  function restoreFromRecovery(
+    payload: RankingRecoveryPayload,
+    restoredCollection: RankCollection,
+  ) {
+    const orderedItems = resolveItemsByIds(restoredCollection.items, payload.rankingOrderIds);
+    const restoredRatingOrder = resolveItemsByIds(restoredCollection.items, payload.ratingOrderIds);
 
-    setCollection(restoredCollection);
-    setSelectedItemIds(new Set(payload.selectedItemIds));
-    setRankingState(payload.rankingState);
-    setRankingHistory(payload.rankingHistory);
-    setRefinementPairs(payload.refinementPairs);
-    setRefinementIndex(payload.refinementIndex);
-    setRefinementHistory(payload.refinementHistory);
-    setRatingOrder(restoredRatingOrder);
-    setRatingBackScreen(payload.ratingBackScreen);
+    if (!orderedItems || orderedItems.length < 2 || !restoredRatingOrder) {
+      return false;
+    }
+
+    try {
+      const normalReplay = replayRankingChoices(orderedItems, payload.rankingWinnerIds);
+      const restoredState = replayRefinementChoices(
+        normalReplay.state,
+        payload.refinementPairs,
+        payload.refinementWinnerIds,
+      );
+
+      setCollection(restoredCollection);
+      setSelectedItemIds(new Set(payload.selectedItemIds));
+      setRankingState(restoredState);
+      setRankingOrderIds([...payload.rankingOrderIds]);
+      setRankingWinnerIds([...payload.rankingWinnerIds]);
+      setNormalLastState(normalReplay.lastState);
+      setRefinementPairs([...payload.refinementPairs]);
+      setRefinementWinnerIds([...payload.refinementWinnerIds]);
+      setRatingOrder(restoredRatingOrder);
+      setRatingBackScreen(payload.ratingBackScreen);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   return {
@@ -241,10 +317,11 @@ export function useRankingSession() {
     selectedItemIds,
     setSelectedItemIds,
     rankingState,
-    rankingHistory,
+    rankingOrderIds,
+    rankingWinnerIds,
     refinementPairs,
+    refinementWinnerIds,
     refinementIndex,
-    refinementHistory,
     ratingOrder,
     ratingBackScreen,
     preferenceScores,

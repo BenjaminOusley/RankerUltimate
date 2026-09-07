@@ -28,8 +28,8 @@ function App() {
     return (
       <ResumeRankingScreen
         collectionName={resumeCollection?.name ?? 'Previous ranking'}
-        placedItems={app.resumePrompt.rankingState.ranked.length}
-        comparisons={app.resumePrompt.rankingState.comparisons}
+        placedItems={app.resumePrompt.placedItems}
+        comparisons={app.resumePrompt.comparisons}
         onResume={app.resumeInterruptedRanking}
         onDiscard={app.discardInterruptedRanking}
       />
@@ -134,7 +134,7 @@ function App() {
           placedCount={session.displayedPlaced}
           totalItems={session.selectedItemIds.size}
           comparisons={session.rankingState.comparisons}
-          canUndo={session.rankingHistory.length > 0}
+          canUndo={session.rankingWinnerIds.length > 0}
           onChoose={session.chooseNormal}
           onUndo={session.undoNormal}
         />
@@ -202,7 +202,7 @@ function App() {
           second={session.currentRefinementItems.second}
           index={session.refinementIndex}
           total={session.refinementPairs.length}
-          canUndo={session.refinementHistory.length > 0}
+          canUndo={session.refinementWinnerIds.length > 0}
           onChoose={session.chooseRefinement}
           onUndo={session.undoRefinement}
         />

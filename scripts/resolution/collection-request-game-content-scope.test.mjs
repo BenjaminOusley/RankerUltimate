@@ -31,9 +31,7 @@ function createFakeIgdb() {
       return match ? [match] : [];
     },
     async searchGenres(query) {
-      return String(query).toLocaleLowerCase() === 'shooter'
-        ? [{ id: 5, name: 'Shooter' }]
-        : [];
+      return String(query).toLocaleLowerCase() === 'shooter' ? [{ id: 5, name: 'Shooter' }] : [];
     },
     async searchFranchises(query) {
       if (/halo/iu.test(query)) {
@@ -363,10 +361,7 @@ describe('conversational game content scopes', () => {
       mode: 'franchise',
       query: 'Halo',
       parameters: {
-        gameTypes: [
-          ...CORE_IGDB_GAME_TYPES,
-          ...DLC_EXPANSION_IGDB_GAME_TYPES,
-        ],
+        gameTypes: [...CORE_IGDB_GAME_TYPES, ...DLC_EXPANSION_IGDB_GAME_TYPES],
       },
     });
 
@@ -379,12 +374,28 @@ describe('conversational game content scopes', () => {
     });
   });
 
-  it('preserves the existing bare numeric collection-limit behavior', async () => {
+  it('accepts bare numeric game limits within the IGDB maximum', async () => {
     const result = await resolveAndPlan('300 Halo games');
 
     expect(result).toMatchObject({
-      status: 'clarification',
-      reason: 'unsupported-limit',
+      status: 'planned',
+      plan: {
+        sources: [
+          {
+            provider: 'igdb',
+            mediaType: 'game',
+            mode: 'franchise',
+            query: 'Halo',
+            resolvedId: 30,
+            resolvedName: 'Halo',
+            parameters: {
+              limit: 300,
+              sort: 'popular',
+              gameTypes: [...CORE_IGDB_GAME_TYPES],
+            },
+          },
+        ],
+      },
     });
   });
 
@@ -583,5 +594,4 @@ describe('conversational game content scopes', () => {
     expect(bodies[1]).toContain('where version_parent = null & parent_game = 21;');
     expect(games.map((game) => game.id)).toEqual([77]);
   });
-
 });

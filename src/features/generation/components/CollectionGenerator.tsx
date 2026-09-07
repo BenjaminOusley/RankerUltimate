@@ -68,17 +68,20 @@ const gameModes: SelectOption<GameGenerationMode>[] = [
 ];
 
 const tmdbSorts: SelectOption<TmdbGenerationSort>[] = [
-  { value: 'release-asc', label: 'Release Date — Oldest First' },
-  { value: 'release-desc', label: 'Release Date — Newest First' },
+  { value: 'release-asc', label: 'Release Date â€” Oldest First' },
+  { value: 'release-desc', label: 'Release Date â€” Newest First' },
   { value: 'popularity', label: 'Popularity' },
 ];
+
+const MAX_TMDB_COLLECTION_LIMIT = 250;
+const MAX_IGDB_COLLECTION_LIMIT = 500;
 
 const gameSorts: SelectOption<GameGenerationSort>[] = [
   { value: 'popular', label: 'Popularity' },
   { value: 'rating', label: 'Highest Rated' },
-  { value: 'release-asc', label: 'Release Date — Oldest First' },
-  { value: 'release-desc', label: 'Release Date — Newest First' },
-  { value: 'name', label: 'Name — A–Z' },
+  { value: 'release-asc', label: 'Release Date â€” Oldest First' },
+  { value: 'release-desc', label: 'Release Date â€” Newest First' },
+  { value: 'name', label: 'Name â€” Aâ€“Z' },
 ];
 
 function createRuntimeCollectionId() {
@@ -115,6 +118,12 @@ function getModes(mediaType: GenerationMediaType) {
   }
 
   return mediaType === 'tv' ? tvModes : movieModes;
+}
+
+function getMaximumCollectionLimit(mediaType: GenerationMediaType) {
+  return mediaType === 'game'
+    ? MAX_IGDB_COLLECTION_LIMIT
+    : MAX_TMDB_COLLECTION_LIMIT;
 }
 
 function getSearchPlaceholder(mediaType: GenerationMediaType, mode: GenerationMode) {
@@ -253,9 +262,16 @@ export function CollectionGenerator({
     }
 
     const parsedLimit = Number(limit);
+    const maximumCollectionLimit = getMaximumCollectionLimit(mediaType);
 
-    if (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 250) {
-      setError('Maximum results must be between 1 and 250.');
+    if (
+      !Number.isInteger(parsedLimit) ||
+      parsedLimit < 1 ||
+      parsedLimit > maximumCollectionLimit
+    ) {
+      setError(
+        `Maximum results must be between 1 and ${maximumCollectionLimit}.`,
+      );
       return;
     }
 
@@ -437,6 +453,7 @@ export function CollectionGenerator({
 
   const visibleSorts = mediaType === 'game' ? gameSorts : tmdbSorts;
   const visibleModes = getModes(mediaType);
+  const maximumCollectionLimit = getMaximumCollectionLimit(mediaType);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -451,6 +468,13 @@ export function CollectionGenerator({
               const nextModes = getModes(nextMediaType);
 
               setMediaType(nextMediaType);
+
+              const nextMaximumCollectionLimit =
+                getMaximumCollectionLimit(nextMediaType);
+
+              if (Number(limit) > nextMaximumCollectionLimit) {
+                setLimit(String(nextMaximumCollectionLimit));
+              }
 
               if (!nextModes.some((option) => option.value === mode)) {
                 setMode('genre');
@@ -559,7 +583,7 @@ export function CollectionGenerator({
           <input
             type="number"
             min="1"
-            max="250"
+            max={maximumCollectionLimit}
             value={limit}
             onChange={(event) => setLimit(event.target.value)}
           />
@@ -644,7 +668,7 @@ export function CollectionGenerator({
                   <strong>{person.name}</strong>
                   <span className={styles.matchDepartment}>{person.department}</span>
                   {person.knownFor.length > 0 && (
-                    <span className={styles.matchKnownFor}>{person.knownFor.join(' • ')}</span>
+                    <span className={styles.matchKnownFor}>{person.knownFor.join(' â€¢ ')}</span>
                   )}
                 </span>
               </label>
@@ -758,3 +782,5 @@ export function CollectionGenerator({
     </form>
   );
 }
+
+

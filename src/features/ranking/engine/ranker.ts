@@ -20,13 +20,8 @@ export function shuffleItems<T>(items: readonly T[], random: () => number = Math
   return shuffled;
 }
 
-export function createInitialRankingState(
-  items: readonly RankItem[],
-  random: () => number = Math.random,
-): RankingState {
-  const randomized = shuffleItems(items, random);
-
-  if (randomized.length === 0) {
+export function createRankingStateFromOrder(items: readonly RankItem[]): RankingState {
+  if (items.length === 0) {
     return {
       ranked: [],
       remaining: [],
@@ -41,9 +36,9 @@ export function createInitialRankingState(
     };
   }
 
-  if (randomized.length === 1) {
+  if (items.length === 1) {
     return {
-      ranked: [randomized[0]],
+      ranked: [items[0]],
       remaining: [],
       current: null,
       low: 0,
@@ -57,9 +52,9 @@ export function createInitialRankingState(
   }
 
   return {
-    ranked: [randomized[0]],
-    current: randomized[1],
-    remaining: randomized.slice(2),
+    ranked: [items[0]],
+    current: items[1],
+    remaining: items.slice(2),
     low: 0,
     high: 1,
     comparisons: 0,
@@ -68,6 +63,13 @@ export function createInitialRankingState(
     validationPair: null,
     validationChecked: false,
   };
+}
+
+export function createInitialRankingState(
+  items: readonly RankItem[],
+  random: () => number = Math.random,
+): RankingState {
+  return createRankingStateFromOrder(shuffleItems(items, random));
 }
 
 export function getCurrentOpponent(state: RankingState): RankItem | null {

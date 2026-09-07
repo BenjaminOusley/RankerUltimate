@@ -1,4 +1,5 @@
 import { findIgdbEntityMatches } from '../generation/igdb-entity-search.mjs';
+import { MAX_BOOK_COLLECTION_LIMIT } from '../generation/book-defaults.mjs';
 import { findBookPlans } from './providers/book-planner.mjs';
 import {
   CORE_IGDB_GAME_TYPES,
@@ -11,7 +12,8 @@ import { normalizeTitle } from '../providers/tmdb.mjs';
 
 const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv', 'game', 'book']);
 const DEFAULT_LIMIT = 50;
-const MAX_COLLECTION_LIMIT = 250;
+const MAX_TMDB_COLLECTION_LIMIT = 250;
+const MAX_IGDB_COLLECTION_LIMIT = 500;
 const OPTIONAL_IGDB_GAME_TYPES = Object.freeze([
   ...DLC_EXPANSION_IGDB_GAME_TYPES,
   ...SEASON_IGDB_GAME_TYPES,
@@ -138,7 +140,7 @@ function getGameContentScopeLabel(gameTypes) {
   );
   const hasSeason = SEASON_IGDB_GAME_TYPES.some((gameType) => selected.has(gameType));
 
-  // In normal game language, “DLC” is an umbrella term that also includes
+  // In normal game language, â€œDLCâ€ is an umbrella term that also includes
   // downloadable expansions. Keep the provider taxonomy explicit in gameTypes,
   // but keep clarification copy aligned with the user's terminology.
   if (hasDlcAddon && !hasSeason) {
@@ -474,12 +476,12 @@ function toPlanningMatch(plan) {
   };
 }
 
-function clarificationForUnsupportedLimit({ requestedLimit, subject }) {
+function clarificationForUnsupportedLimit({ requestedLimit, subject, maximumLimit }) {
   return {
     status: 'clarification',
     reason: 'unsupported-limit',
-    question: `You asked for ${requestedLimit} items, but RankerUltimate currently supports up to ${MAX_COLLECTION_LIMIT} items in one generated collection. Ask for ${MAX_COLLECTION_LIMIT} or fewer for now.`,
-    examples: [`top ${MAX_COLLECTION_LIMIT} ${subject}`, `top 100 ${subject}`],
+    question: `You asked for ${requestedLimit} items, but this generated collection currently supports up to ${maximumLimit} items. Ask for ${maximumLimit} or fewer for now.`,
+    examples: [`top ${maximumLimit} ${subject}`, `top 100 ${subject}`],
     matches: [],
   };
 }
@@ -571,7 +573,7 @@ function clarificationForMatches({ subject, mediaType, matches }) {
   return {
     status: 'clarification',
     reason: 'ambiguous-entity',
-    question: `I found more than one plausible ${mediaLabel} match for “${subject}”. Please clarify what you mean in your own words.`,
+    question: `I found more than one plausible ${mediaLabel} match for â€œ${subject}â€. Please clarify what you mean in your own words.`,
     examples,
     matches,
   };
@@ -582,7 +584,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
     return {
       status: 'clarification',
       reason: 'unresolved-entity',
-      question: `I couldn't safely map “${subject}” to one IGDB game title, genre, franchise, platform, or company. Please make the request more specific — for example, “${subject} franchise” or name the exact game/platform/company you mean.`,
+      question: `I couldn't safely map â€œ${subject}â€ to one IGDB game title, genre, franchise, platform, or company. Please make the request more specific â€” for example, â€œ${subject} franchiseâ€ or name the exact game/platform/company you mean.`,
       examples: [`${subject} franchise`, `${subject} genre`, `${subject} platform`],
       matches: [],
     };
@@ -592,7 +594,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
     return {
       status: 'clarification',
       reason: 'unresolved-entity',
-      question: `I couldn't safely map “${subject}” to a Hardcover book series, author, or genre/subject tag. Please make the request more specific.`,
+      question: `I couldn't safely map â€œ${subject}â€ to a Hardcover book series, author, or genre/subject tag. Please make the request more specific.`,
       examples: [`${subject} book series`, `books by ${subject}`, `${subject} books`],
       matches: [],
     };
@@ -603,7 +605,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
   return {
     status: 'clarification',
     reason: 'unresolved-entity',
-    question: `I couldn't safely map “${subject}” to a supported ${mediaLabel} genre, company, or person yet. Please make the request more specific.`,
+    question: `I couldn't safely map â€œ${subject}â€ to a supported ${mediaLabel} genre, company, or person yet. Please make the request more specific.`,
     examples:
       mediaType === 'movie'
         ? [`${subject} genre`, `${subject} studio`, `movies starring ${subject}`]
@@ -624,7 +626,7 @@ function clarificationForCompanyPlatformBrand({
   return {
     status: 'clarification',
     reason: 'ambiguous-entity',
-    question: `I found “${subject}” as a game company, but it also matches a family of game platforms. Do you mean games associated with ${companyPlan.resolvedName} the company, or games from a specific platform?`,
+    question: `I found â€œ${subject}â€ as a game company, but it also matches a family of game platforms. Do you mean games associated with ${companyPlan.resolvedName} the company, or games from a specific platform?`,
     examples: [`${companyPlan.resolvedName} company`, ...platformExamples],
     matches: [toPlanningMatch(companyPlan), ...platformPlans.map(toPlanningMatch)],
   };
@@ -729,7 +731,7 @@ async function findGamePlans({ igdb, subject, requestText }) {
   } = cleanPlanningQuery(subject, requestText, 'game');
   const limit = requestedLimit ?? DEFAULT_LIMIT;
 
-  if (limit > MAX_COLLECTION_LIMIT) {
+  if (limit > MAX_IGDB_COLLECTION_LIMIT) {
     return {
       plans: [],
       relatedPlatformPlans: [],
@@ -737,6 +739,7 @@ async function findGamePlans({ igdb, subject, requestText }) {
       limitClarification: clarificationForUnsupportedLimit({
         requestedLimit: limit,
         subject: query,
+        maximumLimit: MAX_IGDB_COLLECTION_LIMIT,
       }),
     };
   }
@@ -867,12 +870,13 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
   );
   const limit = requestedLimit ?? DEFAULT_LIMIT;
 
-  if (limit > MAX_COLLECTION_LIMIT) {
+  if (limit > MAX_TMDB_COLLECTION_LIMIT) {
     return {
       plans: [],
       limitClarification: clarificationForUnsupportedLimit({
         requestedLimit: limit,
         subject: query,
+        maximumLimit: MAX_TMDB_COLLECTION_LIMIT,
       }),
     };
   }
@@ -983,6 +987,7 @@ async function planOneMediaType({ mediaType, subject, requestText, tmdb, igdb, h
       return clarificationForUnsupportedLimit({
         requestedLimit: bookResult.requestedLimit,
         subject: bookResult.query,
+        maximumLimit: MAX_BOOK_COLLECTION_LIMIT,
       });
     }
 
@@ -1137,3 +1142,5 @@ export async function planCollectionRequest({
     },
   };
 }
+
+

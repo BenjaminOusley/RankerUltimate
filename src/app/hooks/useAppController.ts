@@ -40,15 +40,16 @@ export function useAppController() {
     }
 
     saveRankingRecovery({
-      version: 1,
+      version: 2,
       collectionId: session.collection.id,
       selectedItemIds: [...session.selectedItemIds],
-      rankingState: session.rankingState,
-      rankingHistory: session.rankingHistory,
+      rankingOrderIds: session.rankingOrderIds,
+      rankingWinnerIds: session.rankingWinnerIds,
+      placedItems: session.displayedPlaced,
+      comparisons: session.rankingState.comparisons,
       screen: screen as RankingRecoveryPayload['screen'],
       refinementPairs: session.refinementPairs,
-      refinementIndex: session.refinementIndex,
-      refinementHistory: session.refinementHistory,
+      refinementWinnerIds: session.refinementWinnerIds,
       ratingOrderIds: session.ratingOrder.map((item) => item.id),
       ratingBackScreen: session.ratingBackScreen,
     });
@@ -57,11 +58,12 @@ export function useAppController() {
     screen,
     session.collection,
     session.rankingState,
-    session.rankingHistory,
+    session.rankingOrderIds,
+    session.rankingWinnerIds,
     session.selectedItemIds,
+    session.displayedPlaced,
     session.refinementPairs,
-    session.refinementIndex,
-    session.refinementHistory,
+    session.refinementWinnerIds,
     session.ratingOrder,
     session.ratingBackScreen,
   ]);
@@ -129,7 +131,13 @@ export function useAppController() {
       return;
     }
 
-    session.restoreFromRecovery(resumePrompt, restoredCollection);
+    if (!session.restoreFromRecovery(resumePrompt, restoredCollection)) {
+      clearRankingRecovery();
+      setResumePrompt(null);
+      setScreen('home');
+      return;
+    }
+
     const restoredScreen = resumePrompt.screen;
     setResumePrompt(null);
     setScreen(restoredScreen);

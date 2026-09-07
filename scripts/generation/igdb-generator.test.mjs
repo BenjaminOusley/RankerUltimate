@@ -45,6 +45,34 @@ describe('IGDB collection generation', () => {
   });
 
 
+  it('accepts game collection limits up to 500 and rejects larger requests', () => {
+    const accepted = validateIgdbGenerationRequest({
+      mode: 'franchise',
+      query: 'Halo',
+      collectionId: 'generated-halo-500',
+      igdbId: 24,
+      limit: 500,
+      sort: 'popular',
+    });
+
+    expect(accepted.ok).toBe(true);
+    expect(accepted.request.limit).toBe(500);
+
+    const rejected = validateIgdbGenerationRequest({
+      mode: 'franchise',
+      query: 'Halo',
+      collectionId: 'generated-halo-501',
+      igdbId: 24,
+      limit: 501,
+      sort: 'popular',
+    });
+
+    expect(rejected).toEqual({
+      ok: false,
+      error: 'IGDB collection limit must be between 1 and 500.',
+    });
+  });
+
   it('defaults broad game collections to popularity instead of raw rating', () => {
     const result = validateIgdbGenerationRequest({
       mode: 'genre',
@@ -176,3 +204,5 @@ describe('IGDB collection generation', () => {
     expect(result.collection.name).toBe('Halo Games');
   });
 });
+
+

@@ -8,7 +8,7 @@ import {
   normalizeIgdbGameTypes,
 } from '../providers/igdb.mjs';
 
-const MAX_COLLECTION_LIMIT = 250;
+const MAX_IGDB_COLLECTION_LIMIT = 500;
 const MODES = new Set(['genre', 'franchise', 'platform', 'company', 'parent-game']);
 const SORTS = new Set(['popular', 'rating', 'release-asc', 'release-desc', 'name']);
 
@@ -46,8 +46,8 @@ function validateRequest(request) {
 
   const limit = request.limit ?? 50;
 
-  if (!Number.isInteger(limit) || limit < 1 || limit > MAX_COLLECTION_LIMIT) {
-    throw new Error(`IGDB collection limit must be between 1 and ${MAX_COLLECTION_LIMIT}.`);
+  if (!Number.isInteger(limit) || limit < 1 || limit > MAX_IGDB_COLLECTION_LIMIT) {
+    throw new Error(`IGDB collection limit must be between 1 and ${MAX_IGDB_COLLECTION_LIMIT}.`);
   }
 
   const sort = request.sort ?? 'popular';
@@ -230,7 +230,7 @@ export async function generateIgdbCollection({ request, igdb, logger = console }
     throw new Error(`IGDB ${normalizedRequest.mode} ${normalizedRequest.igdbId} was not found.`);
   }
 
-  logger.log(`✓ ${normalizedRequest.mode}: ${resolvedEntity.name} [IGDB ${resolvedEntity.id}]`);
+  logger.log(`âœ“ ${normalizedRequest.mode}: ${resolvedEntity.name} [IGDB ${resolvedEntity.id}]`);
 
   const games = await loadGames(igdb, normalizedRequest);
   const uniqueGames = [...new Map(games.map((game) => [game.id, game])).values()];
@@ -266,3 +266,5 @@ export function validateIgdbGenerationRequest(request) {
     };
   }
 }
+
+
