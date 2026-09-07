@@ -17,10 +17,23 @@ function createFakeHardcover() {
         ];
       }
 
+      if (slugs.includes('stephen-king')) {
+        return [
+          {
+            id: 999,
+            tag: 'Stephen King',
+            slug: 'stephen-king',
+            tag_category: { slug: 'tag' },
+          },
+        ];
+      }
+
       return [];
     },
-    async searchSeries() {
-      return [];
+    async searchSeries(query) {
+      return query.toLowerCase() === 'stephen king'
+        ? [{ id: 7000, name: 'Stephen King', readers_count: 500 }]
+        : [];
     },
     async searchAuthors(query) {
       return query.toLowerCase() === 'stephen king'
@@ -45,6 +58,28 @@ describe('conversational book collection requests', () => {
           subject: 'Stephen King',
           mediaTypes: ['book'],
         },
+      },
+    });
+  });
+
+  it('prefers the exact author for "Stephen King books" even when Hardcover has a same-name generic tag', async () => {
+    const resolution = resolveCollectionRequestTurn({ text: 'Stephen King books' });
+    const planned = await planCollectionRequest({
+      request: resolution.result,
+      hardcover: createFakeHardcover(),
+    });
+
+    expect(planned).toMatchObject({
+      status: 'planned',
+      plan: {
+        sources: [
+          {
+            provider: 'hardcover',
+            mode: 'author',
+            resolvedId: 154441,
+            resolvedName: 'Stephen King',
+          },
+        ],
       },
     });
   });
@@ -166,6 +201,62 @@ describe('conversational book collection requests', () => {
       status: 'clarification',
       question: '“Drama” is not a single standard Hardcover book genre. Which meaning do you want?',
       examples: ['Literary Fiction books', 'Contemporary Fiction books', 'Plays books'],
+    });
+  });
+
+  it('plans Stephen King author-series directly instead of looping against a same-name Series entity', async () => {
+    const resolution = resolveCollectionRequestTurn({
+      text: 'Stephen King book series',
+    });
+
+    const planned = await planCollectionRequest({
+      request: resolution.result,
+      hardcover: createFakeHardcover(),
+    });
+
+    expect(planned).toMatchObject({
+      status: 'planned',
+      plan: {
+        sources: [
+          {
+            provider: 'hardcover',
+            mode: 'author-series',
+            resolvedId: 154441,
+            resolvedName: 'Stephen King',
+          },
+        ],
+      },
+    });
+  });
+
+  it('plans book series by an author when the user asks for author series', async () => {
+    const hardcover = createFakeHardcover();
+    hardcover.searchAuthors = async (query) =>
+      query.toLowerCase() === 'brandon sanderson'
+        ? [{ id: 204214, name: 'Brandon Sanderson', books_count: 268 }]
+        : [];
+
+    const resolution = resolveCollectionRequestTurn({
+      text: 'Brandon Sanderson book series',
+    });
+
+    const planned = await planCollectionRequest({
+      request: resolution.result,
+      hardcover,
+    });
+
+    expect(planned).toMatchObject({
+      status: 'planned',
+      plan: {
+        sources: [
+          {
+            provider: 'hardcover',
+            mode: 'author-series',
+            resolvedId: 204214,
+            resolvedName: 'Brandon Sanderson',
+          },
+        ],
+      },
     });
   });
 

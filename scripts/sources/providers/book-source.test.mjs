@@ -163,4 +163,32 @@ describe('Hardcover generated collection source', () => {
       type: 'book-series',
     });
   });
+
+  it('reconstructs persisted author-series sources without re-resolving the author', () => {
+    const result = buildBookGenerationRequestFromSource('library-author-series', {
+      definition: {
+        schemaVersion: 1,
+        collectionId: 'generated-author-series',
+        mediaType: 'book',
+        mode: 'author-series',
+        query: 'Brandon Sanderson',
+        hardcoverId: 204214,
+        resolvedName: 'Brandon Sanderson',
+        limit: 50,
+        sort: 'popular',
+      },
+    });
+
+    expect(result).toMatchObject({
+      ok: true,
+      request: {
+        mode: 'author-series',
+        hardcoverId: 204214,
+        resolvedName: 'Brandon Sanderson',
+        limit: 50,
+        sort: 'popular',
+      },
+    });
+  });
+
 });

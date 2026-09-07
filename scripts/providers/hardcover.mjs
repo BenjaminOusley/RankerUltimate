@@ -73,8 +73,7 @@ export function createHardcoverProvider({
   token,
   fetchImpl = globalThis.fetch,
   now = () => Date.now(),
-  sleepImpl = (milliseconds) =>
-    new Promise((resolve) => setTimeout(resolve, milliseconds)),
+  sleepImpl = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
   minimumRequestIntervalMs = DEFAULT_REQUEST_INTERVAL_MS,
 } = {}) {
   const normalizedToken = requireNonEmptyString(token, 'Hardcover API token');
@@ -87,10 +86,7 @@ export function createHardcoverProvider({
     throw new Error('Hardcover timing helpers must be functions.');
   }
 
-  if (
-    !Number.isFinite(minimumRequestIntervalMs) ||
-    minimumRequestIntervalMs < 0
-  ) {
+  if (!Number.isFinite(minimumRequestIntervalMs) || minimumRequestIntervalMs < 0) {
     throw new Error('Hardcover request interval must be zero or greater.');
   }
 
@@ -177,25 +173,12 @@ export function createHardcoverProvider({
 
   async function searchEntities(query, queryType, limit = 10) {
     const normalizedQuery = requireNonEmptyString(query, 'Hardcover search query');
-    const normalizedLimit = normalizeLimit(
-      limit,
-      MAX_SEARCH_LIMIT,
-      'Hardcover search limit',
-    );
+    const normalizedLimit = normalizeLimit(limit, MAX_SEARCH_LIMIT, 'Hardcover search limit');
 
     const data = await graphql(
       `
-        query RankerUltimateHardcoverSearch(
-          $query: String!,
-          $queryType: String!,
-          $perPage: Int!
-        ) {
-          search(
-            query: $query,
-            query_type: $queryType,
-            page: 1,
-            per_page: $perPage
-          ) {
+        query RankerUltimateHardcoverSearch($query: String!, $queryType: String!, $perPage: Int!) {
+          search(query: $query, query_type: $queryType, page: 1, per_page: $perPage) {
             results
           }
         }
@@ -226,7 +209,11 @@ export function createHardcoverProvider({
     const normalizedSlugs = [
       ...new Set(
         slugs
-          .map((slug) => String(slug ?? '').trim().toLowerCase())
+          .map((slug) =>
+            String(slug ?? '')
+              .trim()
+              .toLowerCase(),
+          )
           .filter(Boolean),
       ),
     ];
@@ -238,10 +225,7 @@ export function createHardcoverProvider({
     const data = await graphql(
       `
         query RankerUltimateHardcoverTags($slugs: [String!]!) {
-          tags(
-            where: {slug: {_in: $slugs}},
-            order_by: {count: desc}
-          ) {
+          tags(where: { slug: { _in: $slugs } }, order_by: { count: desc }) {
             id
             tag
             slug
@@ -297,12 +281,7 @@ export function createHardcoverProvider({
                 slug
               }
             }
-            book_series(
-              order_by: [
-                {position: asc},
-                {book_id: asc}
-              ]
-            ) {
+            book_series(order_by: [{ position: asc }, { book_id: asc }]) {
               id
               position
               featured
@@ -353,20 +332,12 @@ export function createHardcoverProvider({
 
   async function getAuthorContributionsPage({ id, limit = 100, offset = 0 }) {
     const normalizedId = normalizePositiveInteger(id, 'Hardcover author ID');
-    const normalizedLimit = normalizeLimit(
-      limit,
-      MAX_PAGE_LIMIT,
-      'Hardcover author page limit',
-    );
+    const normalizedLimit = normalizeLimit(limit, MAX_PAGE_LIMIT, 'Hardcover author page limit');
     const normalizedOffset = normalizeOffset(offset);
 
     const data = await graphql(
       `
-        query RankerUltimateHardcoverAuthorBooks(
-          $id: Int!,
-          $limit: Int!,
-          $offset: Int!
-        ) {
+        query RankerUltimateHardcoverAuthorBooks($id: Int!, $limit: Int!, $offset: Int!) {
           authors_by_pk(id: $id) {
             id
             canonical_id
@@ -382,14 +353,9 @@ export function createHardcoverProvider({
               users_count
             }
             contributions(
-              where: {
-                book: {id: {_is_null: false}}
-              },
-              order_by: [
-                {book: {users_read_count: desc}},
-                {id: asc}
-              ],
-              limit: $limit,
+              where: { book: { id: { _is_null: false } } }
+              order_by: [{ book: { users_read_count: desc } }, { id: asc }]
+              limit: $limit
               offset: $offset
             ) {
               id
@@ -455,17 +421,390 @@ export function createHardcoverProvider({
     };
   }
 
+  async function getAuthorSeriesContributionsPage({ id, limit = 100, offset = 0 }) {
+    const normalizedId = normalizePositiveInteger(id, 'Hardcover author ID');
+    const normalizedLimit = normalizeLimit(limit, MAX_PAGE_LIMIT, 'Hardcover author page limit');
+    const normalizedOffset = normalizeOffset(offset);
+
+    const data = await graphql(
+      `
+        query RankerUltimateHardcoverAuthorSeriesBooks($id: Int!, $limit: Int!, $offset: Int!) {
+          authors_by_pk(id: $id) {
+            id
+            canonical_id
+            name
+            slug
+            books_count
+            users_count
+            canonical {
+              id
+              name
+              slug
+              books_count
+              users_count
+            }
+            contributions(
+              where: { book: { id: { _is_null: false } } }
+              order_by: [{ book: { users_read_count: desc } }, { id: asc }]
+              limit: $limit
+              offset: $offset
+            ) {
+              id
+              contributor_role {
+                contributor_role_category_id
+              }
+              book {
+                id
+                canonical_id
+                title
+                compilation
+                is_partial_book
+                users_read_count
+                ratings_count
+                image {
+                  url
+                }
+                book_series(order_by: [{ position: asc }, { series_id: asc }]) {
+                  position
+                  featured
+                  compilation
+                  series {
+                    id
+                    canonical_id
+                    name
+                    slug
+                    books_count
+                    primary_books_count
+                    is_completed
+                    author {
+                      id
+                      canonical_id
+                      name
+                      slug
+                    }
+                    canonical {
+                      id
+                      name
+                      slug
+                      books_count
+                      primary_books_count
+                      is_completed
+                      author {
+                        id
+                        canonical_id
+                        name
+                        slug
+                      }
+                    }
+                  }
+                }
+                canonical {
+                  id
+                  title
+                  compilation
+                  is_partial_book
+                  users_read_count
+                  ratings_count
+                  image {
+                    url
+                  }
+                  book_series(order_by: [{ position: asc }, { series_id: asc }]) {
+                    position
+                    featured
+                    compilation
+                    series {
+                      id
+                      canonical_id
+                      name
+                      slug
+                      books_count
+                      primary_books_count
+                      is_completed
+                      author {
+                        id
+                        canonical_id
+                        name
+                        slug
+                      }
+                      canonical {
+                        id
+                        name
+                        slug
+                        books_count
+                        primary_books_count
+                        is_completed
+                        author {
+                          id
+                          canonical_id
+                          name
+                          slug
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      {
+        id: normalizedId,
+        limit: normalizedLimit,
+        offset: normalizedOffset,
+      },
+    );
+
+    const author = data?.authors_by_pk ?? null;
+
+    return {
+      author,
+      contributions: author?.contributions ?? [],
+    };
+  }
+
+  async function getSeriesByAuthorId({ id, limit = 100, offset = 0 }) {
+    const normalizedId = normalizePositiveInteger(id, 'Hardcover author ID');
+    const normalizedLimit = normalizeLimit(
+      limit,
+      MAX_PAGE_LIMIT,
+      'Hardcover author-series page limit',
+    );
+    const normalizedOffset = normalizeOffset(offset);
+
+    const data = await graphql(
+      `
+        query RankerUltimateHardcoverAuthorSeries($id: Int!, $limit: Int!, $offset: Int!) {
+          series(
+            where: {
+              _or: [{ author_id: { _eq: $id } }, { author: { canonical_id: { _eq: $id } } }]
+            }
+            order_by: [{ primary_books_count: desc }, { books_count: desc }, { name: asc }]
+            limit: $limit
+            offset: $offset
+          ) {
+            id
+            canonical_id
+            name
+            slug
+            books_count
+            primary_books_count
+            is_completed
+            author {
+              id
+              canonical_id
+              name
+              slug
+              canonical {
+                id
+                name
+                slug
+              }
+            }
+            canonical {
+              id
+              name
+              slug
+              books_count
+              primary_books_count
+              is_completed
+              author {
+                id
+                canonical_id
+                name
+                slug
+              }
+            }
+            book_series(
+              where: { book: { is_partial_book: { _eq: false } } }
+              order_by: [{ book: { users_read_count: desc } }, { book: { ratings_count: desc } }]
+              limit: 1
+            ) {
+              book {
+                id
+                canonical_id
+                title
+                slug
+                users_read_count
+                ratings_count
+                image {
+                  id
+                  url
+                }
+                canonical {
+                  id
+                  title
+                  slug
+                  users_read_count
+                  ratings_count
+                  image {
+                    id
+                    url
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      {
+        id: normalizedId,
+        limit: normalizedLimit,
+        offset: normalizedOffset,
+      },
+    );
+
+    return Array.isArray(data?.series) ? data.series : [];
+  }
+
+  async function getBookSeriesMembershipsByBookIds(bookIds) {
+    if (!Array.isArray(bookIds) || bookIds.length === 0) {
+      throw new Error('Hardcover book-series membership lookup requires book IDs.');
+    }
+
+    const normalizedIds = [
+      ...new Set(bookIds.map((id) => normalizeId(id)).filter((id) => id !== null)),
+    ];
+
+    if (normalizedIds.length === 0) {
+      throw new Error('Hardcover book-series membership lookup requires valid book IDs.');
+    }
+
+    const booksById = new Map();
+    const chunkSize = 25;
+    const relationshipPageSize = 500;
+
+    for (let index = 0; index < normalizedIds.length; index += chunkSize) {
+      const chunk = normalizedIds.slice(index, index + chunkSize);
+
+      for (let offset = 0; offset < 2000; offset += relationshipPageSize) {
+        const data = await graphql(
+          `
+            query RankerUltimateHardcoverBookSeriesMemberships(
+              $bookIds: [Int!]!
+              $limit: Int!
+              $offset: Int!
+            ) {
+              book_series(
+                where: {
+                  _or: [
+                    { book_id: { _in: $bookIds } }
+                    { book: { canonical_id: { _in: $bookIds } } }
+                  ]
+                }
+                order_by: [{ book_id: asc }, { position: asc }, { series_id: asc }]
+                limit: $limit
+                offset: $offset
+              ) {
+                book_id
+                position
+                featured
+                compilation
+                book {
+                  id
+                  canonical_id
+                  title
+                  slug
+                  release_date
+                  release_year
+                  compilation
+                  is_partial_book
+                  users_read_count
+                  ratings_count
+                  rating
+                  image {
+                    id
+                    url
+                  }
+                }
+                series {
+                  id
+                  canonical_id
+                  name
+                  slug
+                  books_count
+                  primary_books_count
+                  is_completed
+                  author {
+                    id
+                    canonical_id
+                    name
+                    slug
+                  }
+                  canonical {
+                    id
+                    name
+                    slug
+                    books_count
+                    primary_books_count
+                    is_completed
+                    author {
+                      id
+                      canonical_id
+                      name
+                      slug
+                    }
+                  }
+                }
+              }
+            }
+          `,
+          {
+            bookIds: chunk,
+            limit: relationshipPageSize,
+            offset,
+          },
+        );
+
+        const relationships = Array.isArray(data?.book_series) ? data.book_series : [];
+
+        for (const relationship of relationships) {
+          const bookId = normalizeId(relationship?.book?.id ?? relationship?.book_id);
+
+          if (bookId === null) {
+            continue;
+          }
+
+          let book = booksById.get(bookId);
+
+          if (!book) {
+            book = {
+              ...relationship.book,
+              id: bookId,
+              canonical_id:
+                relationship?.book?.canonical_id != null
+                  ? normalizeId(relationship.book.canonical_id)
+                  : null,
+              book_series: [],
+            };
+
+            booksById.set(bookId, book);
+          }
+
+          book.book_series.push({
+            position: relationship.position,
+            featured: relationship.featured,
+            compilation: relationship.compilation,
+            series: relationship.series,
+          });
+        }
+
+        if (relationships.length < relationshipPageSize) {
+          break;
+        }
+      }
+    }
+
+    return [...booksById.values()];
+  }
+
   async function getBooksByTag({ tagId, categorySlug, limit = 100, offset = 0 }) {
     const normalizedTagId = normalizePositiveInteger(tagId, 'Hardcover tag ID');
     const normalizedCategorySlug = requireNonEmptyString(
       categorySlug,
       'Hardcover tag category slug',
     );
-    const normalizedLimit = normalizeLimit(
-      limit,
-      MAX_TAG_PAGE_LIMIT,
-      'Hardcover tag page limit',
-    );
+    const normalizedLimit = normalizeLimit(limit, MAX_TAG_PAGE_LIMIT, 'Hardcover tag page limit');
     const normalizedOffset = normalizeOffset(offset);
 
     // Keep the expensive per-book relevance lookup out of the candidate query.
@@ -473,21 +812,11 @@ export function createHardcoverProvider({
     // tag result set and resolve nested taggable_counts for every returned book.
     const candidateData = await graphql(
       `
-        query RankerUltimateHardcoverTagBooks(
-          $tagId: Int!,
-          $limit: Int!,
-          $offset: Int!
-        ) {
+        query RankerUltimateHardcoverTagBooks($tagId: Int!, $limit: Int!, $offset: Int!) {
           taggable_counts(
-            where: {
-              tag_id: {_eq: $tagId},
-              book: {id: {_is_null: false}}
-            },
-            order_by: [
-              {book: {users_read_count: desc}},
-              {count: desc}
-            ],
-            limit: $limit,
+            where: { tag_id: { _eq: $tagId }, book: { id: { _is_null: false } } }
+            order_by: [{ book: { users_read_count: desc } }, { count: desc }]
+            limit: $limit
             offset: $offset
           ) {
             count
@@ -552,15 +881,9 @@ export function createHardcoverProvider({
       },
     );
 
-    const rows = Array.isArray(candidateData?.taggable_counts)
-      ? candidateData.taggable_counts
-      : [];
+    const rows = Array.isArray(candidateData?.taggable_counts) ? candidateData.taggable_counts : [];
     const bookIds = [
-      ...new Set(
-        rows
-          .map((row) => normalizeId(row?.book?.id))
-          .filter((id) => id !== null),
-      ),
+      ...new Set(rows.map((row) => normalizeId(row?.book?.id)).filter((id) => id !== null)),
     ];
 
     if (bookIds.length === 0) {
@@ -574,20 +897,14 @@ export function createHardcoverProvider({
         const profileData = await graphql(
           `
             query RankerUltimateHardcoverBookTagProfiles(
-              $bookIds: [Int!]!,
+              $bookIds: [Int!]!
               $categorySlug: String!
             ) {
-              books(where: {id: {_in: $bookIds}}) {
+              books(where: { id: { _in: $bookIds } }) {
                 id
                 taggable_counts(
-                  where: {
-                    tag: {
-                      tag_category: {
-                        slug: {_eq: $categorySlug}
-                      }
-                    }
-                  },
-                  order_by: {count: desc},
+                  where: { tag: { tag_category: { slug: { _eq: $categorySlug } } } }
+                  order_by: { count: desc }
                   limit: 1
                 ) {
                   count
@@ -640,9 +957,7 @@ export function createHardcoverProvider({
 
         if (id !== null) {
           profilesByBookId.set(id, {
-            taggableCounts: Array.isArray(book?.taggable_counts)
-              ? book.taggable_counts
-              : [],
+            taggableCounts: Array.isArray(book?.taggable_counts) ? book.taggable_counts : [],
             bookSeries: Array.isArray(book?.book_series) ? book.book_series : [],
           });
         }
@@ -675,6 +990,9 @@ export function createHardcoverProvider({
     findTagsBySlugs,
     getSeriesById,
     getAuthorContributionsPage,
+    getAuthorSeriesContributionsPage,
+    getSeriesByAuthorId,
+    getBookSeriesMembershipsByBookIds,
     getBooksByTag,
   };
 }

@@ -8,28 +8,27 @@ import {
 const AUTHORSHIP_ROLE_CATEGORY_ID = 1;
 const AUTHOR_PAGE_SIZE = 100;
 const MAX_AUTHOR_PAGES = 10;
+
+/*
+ * Series derived from an author's books can still contain low-usage catalog
+ * duplicates that Hardcover has not marked as partial editions. Scale the
+ * noise floor to the author's strongest qualifying series while capping it
+ * so smaller legitimate series remain eligible.
+ */
+const AUTHOR_SERIES_READER_NOISE_RATIO = 0.02;
+const AUTHOR_SERIES_MAX_READER_NOISE_FLOOR = 100;
+
 const TAG_PAGE_SIZE = 100;
 const MIN_TAG_PAGE_SIZE = 25;
-const MODES = new Set(['series', 'author', 'tag-books', 'tag-series']);
-const SORTS = new Set([
-  'series-order',
-  'popular',
-  'rating',
-  'release-asc',
-  'release-desc',
-  'name',
-]);
+const MODES = new Set(['series', 'author', 'author-series', 'tag-books', 'tag-series']);
+const SORTS = new Set(['series-order', 'popular', 'rating', 'release-asc', 'release-desc', 'name']);
 
 function isObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function requireNonEmptyString(value, label, maximum = 300) {
-  if (
-    typeof value !== 'string' ||
-    value.trim().length === 0 ||
-    value.trim().length > maximum
-  ) {
+  if (typeof value !== 'string' || value.trim().length === 0 || value.trim().length > maximum) {
     throw new Error(`${label} must contain between 1 and ${maximum} characters.`);
   }
 
@@ -84,11 +83,12 @@ function normalizeBookConcept(rowBook, relationship = null) {
     return null;
   }
 
-  const title = typeof book.title === 'string' && book.title.trim()
-    ? book.title.trim()
-    : typeof rowBook.title === 'string' && rowBook.title.trim()
-      ? rowBook.title.trim()
-      : null;
+  const title =
+    typeof book.title === 'string' && book.title.trim()
+      ? book.title.trim()
+      : typeof rowBook.title === 'string' && rowBook.title.trim()
+        ? rowBook.title.trim()
+        : null;
 
   if (!title) {
     return null;
@@ -108,12 +108,8 @@ function normalizeBookConcept(rowBook, relationship = null) {
     compilation: Boolean(
       book.compilation ?? rowBook.compilation ?? relationship?.compilation ?? false,
     ),
-    is_partial_book: Boolean(
-      book.is_partial_book ?? rowBook.is_partial_book ?? false,
-    ),
-    users_read_count: Number(
-      book.users_read_count ?? rowBook.users_read_count ?? 0,
-    ),
+    is_partial_book: Boolean(book.is_partial_book ?? rowBook.is_partial_book ?? false),
+    users_read_count: Number(book.users_read_count ?? rowBook.users_read_count ?? 0),
     ratings_count: Number(book.ratings_count ?? rowBook.ratings_count ?? 0),
     rating: Number(book.rating ?? rowBook.rating ?? 0),
     image: book.image?.url ?? rowBook.image?.url ?? null,
@@ -252,36 +248,21 @@ function validateRequest(request) {
   }
 
   const query = requireNonEmptyString(request.query, 'Book generation query');
-  const collectionId = requireNonEmptyString(
-    request.collectionId,
-    'Book collection ID',
-    100,
-  );
+  const collectionId = requireNonEmptyString(request.collectionId, 'Book collection ID', 100);
 
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(collectionId)) {
     throw new Error('Book collection ID must be a lowercase slug.');
   }
 
-  const hardcoverId = normalizePositiveId(
-    request.hardcoverId,
-    'Hardcover resolved ID',
-  );
-  const resolvedName = requireNonEmptyString(
-    request.resolvedName,
-    'Resolved Hardcover name',
-  );
+  const hardcoverId = normalizePositiveId(request.hardcoverId, 'Hardcover resolved ID');
+  const resolvedName = requireNonEmptyString(request.resolvedName, 'Resolved Hardcover name');
   const limit = request.limit ?? DEFAULT_BOOK_COLLECTION_LIMIT;
 
   if (!Number.isInteger(limit) || limit < 1 || limit > MAX_BOOK_COLLECTION_LIMIT) {
-    throw new Error(
-      `Book collection limit must be between 1 and ${MAX_BOOK_COLLECTION_LIMIT}.`,
-    );
+    throw new Error(`Book collection limit must be between 1 and ${MAX_BOOK_COLLECTION_LIMIT}.`);
   }
 
-  const defaultSort =
-    request.mode === 'series'
-      ? 'series-order'
-      : 'popular';
+  const defaultSort = request.mode === 'series' ? 'series-order' : 'popular';
   const sort = request.sort ?? defaultSort;
 
   if (!SORTS.has(sort)) {
@@ -292,35 +273,32 @@ function validateRequest(request) {
     throw new Error('Book series generation must preserve series order.');
   }
 
-  if ((request.mode === 'tag-books' || request.mode === 'tag-series') && sort !== 'popular') {
-    throw new Error('Book tag generation currently supports popularity sort only.');
+  if (
+    (request.mode === 'author-series' ||
+      request.mode === 'tag-books' ||
+      request.mode === 'tag-series') &&
+    sort !== 'popular'
+  ) {
+    throw new Error('Book series/tag generation currently supports popularity sort only.');
   }
 
   const isTagMode = request.mode === 'tag-books' || request.mode === 'tag-series';
-  const tagSlug =
-    isTagMode
-      ? requireNonEmptyString(request.tagSlug, 'Hardcover tag slug', 100)
-      : null;
-  const tagCategorySlug =
-    isTagMode
-      ? requireNonEmptyString(
-          request.tagCategorySlug,
-          'Hardcover tag category slug',
-          100,
-        )
-      : null;
+  const tagSlug = isTagMode
+    ? requireNonEmptyString(request.tagSlug, 'Hardcover tag slug', 100)
+    : null;
+  const tagCategorySlug = isTagMode
+    ? requireNonEmptyString(request.tagCategorySlug, 'Hardcover tag category slug', 100)
+    : null;
   const semanticCategory =
     isTagMode && request.semanticCategory != null
       ? requireNonEmptyString(request.semanticCategory, 'Book semantic category', 100)
       : null;
-  const tagSources =
-    isTagMode ? normalizeSemanticTagSources(request.tagSources) : null;
+  const tagSources = isTagMode ? normalizeSemanticTagSources(request.tagSources) : null;
 
   let candidateLimit = null;
 
   if (isTagMode) {
-    const requestedCandidateLimit =
-      request.candidateLimit ?? DEFAULT_BOOK_TAG_CANDIDATE_LIMIT;
+    const requestedCandidateLimit = request.candidateLimit ?? DEFAULT_BOOK_TAG_CANDIDATE_LIMIT;
 
     if (
       !Number.isInteger(requestedCandidateLimit) ||
@@ -332,7 +310,10 @@ function validateRequest(request) {
       );
     }
 
-    candidateLimit = Math.max(requestedCandidateLimit, Math.min(limit, MAX_BOOK_TAG_CANDIDATE_LIMIT));
+    candidateLimit = Math.max(
+      requestedCandidateLimit,
+      Math.min(limit, MAX_BOOK_TAG_CANDIDATE_LIMIT),
+    );
   }
 
   return {
@@ -474,8 +455,7 @@ async function loadAuthorBooks(hardcover, request) {
 
     for (const contribution of contributions) {
       if (
-        contribution?.contributor_role?.contributor_role_category_id !==
-        AUTHORSHIP_ROLE_CATEGORY_ID
+        contribution?.contributor_role?.contributor_role_category_id !== AUTHORSHIP_ROLE_CATEGORY_ID
       ) {
         continue;
       }
@@ -505,16 +485,258 @@ async function loadAuthorBooks(hardcover, request) {
     throw new Error(`Hardcover author ${request.hardcoverId} was not found.`);
   }
 
-  const books = sortAuthorBooks([...booksByConcept.values()], request.sort).slice(
-    0,
-    request.limit,
-  );
+  const books = sortAuthorBooks([...booksByConcept.values()], request.sort).slice(0, request.limit);
 
   return {
     author: author.canonical ?? author,
     books,
     candidateCount: booksByConcept.size,
     rawContributionCount,
+  };
+}
+
+function normalizeAuthorSeriesRelationship(relationship) {
+  const rawSeries = relationship?.series;
+
+  if (!rawSeries) {
+    return null;
+  }
+
+  const series = isObject(rawSeries.canonical) ? rawSeries.canonical : rawSeries;
+  const id = Number(series.id ?? rawSeries.canonical_id ?? rawSeries.id);
+
+  if (!Number.isSafeInteger(id) || id < 1) {
+    return null;
+  }
+
+  const name = typeof series.name === 'string' ? series.name.trim() : '';
+
+  if (!name) {
+    return null;
+  }
+
+  return {
+    id,
+    canonical_id: rawSeries.canonical_id ?? null,
+    name,
+    slug: series.slug ?? rawSeries.slug,
+    books_count: series.books_count ?? rawSeries.books_count,
+    primary_books_count: series.primary_books_count ?? rawSeries.primary_books_count,
+    is_completed: series.is_completed ?? rawSeries.is_completed,
+    author: series.author ?? rawSeries.author ?? null,
+  };
+}
+
+function getSeriesAuthorId(series) {
+  const raw = series?.author;
+  const id = Number(raw?.canonical_id ?? raw?.id);
+
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
+function addAuthorSeriesCandidate(seriesById, series, book) {
+  if (!series || !book) {
+    return;
+  }
+
+  const size = getSeriesSize(series);
+
+  if (size !== 0 && size < 2) {
+    return;
+  }
+
+  let aggregate = seriesById.get(series.id);
+
+  if (!aggregate) {
+    aggregate = {
+      ...series,
+      matchedConceptIds: new Set(),
+      peakReaders: 0,
+      totalReaders: 0,
+      totalRatings: 0,
+      image: null,
+      representativeReaders: -1,
+    };
+
+    seriesById.set(series.id, aggregate);
+  }
+
+  /*
+   * Count conceptual authored books only once even if Hardcover exposes more
+   * than one relationship row for the same Work.
+   */
+  if (!aggregate.matchedConceptIds.has(book.id)) {
+    aggregate.matchedConceptIds.add(book.id);
+    aggregate.peakReaders = Math.max(aggregate.peakReaders, book.users_read_count);
+    aggregate.totalReaders += book.users_read_count;
+    aggregate.totalRatings += book.ratings_count;
+  }
+
+  if (book.image && book.users_read_count > aggregate.representativeReaders) {
+    aggregate.image = book.image;
+    aggregate.representativeReaders = book.users_read_count;
+  }
+}
+
+function isPrimaryAuthorSeriesRelationship(series, relationship) {
+  const position = Number(relationship?.position);
+
+  if (!Number.isInteger(position) || position < 1) {
+    return false;
+  }
+
+  const primaryCount = Number(series?.primary_books_count ?? 0);
+
+  /*
+   * Unknown primary-count metadata should not suppress an otherwise valid
+   * relationship. When Hardcover does know the primary range, stay inside it.
+   */
+  return !Number.isInteger(primaryCount) || primaryCount < 1 || position <= primaryCount;
+}
+
+async function loadAuthorSeries(hardcover, request) {
+  if (typeof hardcover.getAuthorSeriesContributionsPage !== 'function') {
+    throw new Error('Hardcover author-series contribution lookup is not configured.');
+  }
+
+  const seriesById = new Map();
+  let resolvedAuthor = null;
+
+  /*
+   * Author-series generation needs both authorship evidence and the canonical
+   * Work's series memberships. Load them together so we do not need a second
+   * request for every small batch of authored book IDs.
+   */
+  for (let pageIndex = 0; pageIndex < MAX_AUTHOR_PAGES; pageIndex += 1) {
+    const offset = pageIndex * AUTHOR_PAGE_SIZE;
+
+    const page = await hardcover.getAuthorSeriesContributionsPage({
+      id: request.hardcoverId,
+      limit: AUTHOR_PAGE_SIZE,
+      offset,
+    });
+
+    if (!resolvedAuthor && page?.author) {
+      resolvedAuthor = page.author.canonical ?? page.author;
+    }
+
+    const contributions = Array.isArray(page?.contributions) ? page.contributions : [];
+
+    for (const contribution of contributions) {
+      if (
+        contribution?.contributor_role?.contributor_role_category_id !== AUTHORSHIP_ROLE_CATEGORY_ID
+      ) {
+        continue;
+      }
+
+      const contributionBook = contribution?.book;
+
+      if (!contributionBook) {
+        continue;
+      }
+
+      /*
+       * Contributions can point at an alias/edition instead of the canonical
+       * Work. Series qualification intentionally uses only the root Work.
+       */
+      const rootBook = isObject(contributionBook.canonical)
+        ? contributionBook.canonical
+        : contributionBook.canonical_id == null
+          ? contributionBook
+          : null;
+
+      if (!rootBook) {
+        continue;
+      }
+
+      const relationships = Array.isArray(rootBook.book_series) ? rootBook.book_series : [];
+
+      for (const relationship of relationships) {
+        const series = normalizeAuthorSeriesRelationship(relationship);
+
+        if (!series) {
+          continue;
+        }
+
+        /*
+         * "Series by AUTHOR" means the requested author is the canonical series
+         * author. A series they merely contributed books to belongs to a
+         * different request intent.
+         */
+        if (getSeriesAuthorId(series) !== request.hardcoverId) {
+          continue;
+        }
+
+        if (!isPrimaryAuthorSeriesRelationship(series, relationship)) {
+          continue;
+        }
+
+        const book = normalizeBookConcept(rootBook, relationship);
+
+        if (!book) {
+          continue;
+        }
+
+        if (book.is_partial_book || book.compilation || relationship?.compilation === true) {
+          continue;
+        }
+
+        addAuthorSeriesCandidate(seriesById, series, book);
+      }
+    }
+
+    if (contributions.length < AUTHOR_PAGE_SIZE) {
+      break;
+    }
+  }
+
+  const candidates = [...seriesById.values()]
+    .map((entry) => ({
+      ...entry,
+      matchedBooks: entry.matchedConceptIds.size,
+    }))
+    .filter((entry) => entry.matchedBooks >= 2);
+
+  /*
+   * Some Hardcover catalog duplicates use whole-book rows even though they
+   * represent low-usage edition groupings. Compare them with the author's own
+   * evidence level rather than imposing one global popularity requirement.
+   */
+  const strongestPeakReaders = candidates.reduce(
+    (maximum, entry) => Math.max(maximum, entry.peakReaders),
+    0,
+  );
+
+  const readerNoiseFloor = Math.min(
+    AUTHOR_SERIES_MAX_READER_NOISE_FLOOR,
+    strongestPeakReaders * AUTHOR_SERIES_READER_NOISE_RATIO,
+  );
+
+  const series = candidates
+    .filter((entry) => entry.peakReaders >= readerNoiseFloor)
+    .sort(
+      (left, right) =>
+        right.peakReaders - left.peakReaders ||
+        right.totalReaders - left.totalReaders ||
+        right.matchedBooks - left.matchedBooks ||
+        Number(right.primary_books_count ?? 0) - Number(left.primary_books_count ?? 0) ||
+        right.totalRatings - left.totalRatings ||
+        left.name.localeCompare(right.name),
+    )
+    .slice(0, request.limit)
+    .map((entry) => {
+      const { matchedConceptIds: _matchedConceptIds, ...seriesEntry } = entry;
+
+      return seriesEntry;
+    });
+
+  return {
+    author: resolvedAuthor ?? {
+      id: request.hardcoverId,
+      name: request.resolvedName,
+    },
+    series,
+    candidateCount: candidates.length,
   };
 }
 
@@ -543,10 +765,7 @@ function isRankableSeriesCandidate(series) {
   // should never make a series qualify by themselves. This prevents broad helper
   // signals such as Literary Fiction from turning unrelated popular series into
   // Drama results.
-  if (
-    Number.isInteger(series.qualifyingMatchedBooks) &&
-    series.qualifyingMatchedBooks < 1
-  ) {
+  if (Number.isInteger(series.qualifyingMatchedBooks) && series.qualifyingMatchedBooks < 1) {
     return false;
   }
 
@@ -766,16 +985,12 @@ function aggregateTagBooks(rows) {
       : [];
     const strongestCategoryVotes = Math.max(0, ...categoryCounts);
     const targetVotes = Number(row?.count ?? 0);
-    const strength =
-      strongestCategoryVotes > 0 ? targetVotes / strongestCategoryVotes : 0;
+    const strength = strongestCategoryVotes > 0 ? targetVotes / strongestCategoryVotes : 0;
     const semanticWeight = Number(row?.semanticWeight ?? 1);
     const boundedSemanticWeight = Number.isFinite(semanticWeight)
       ? Math.min(1, Math.max(0, semanticWeight))
       : 1;
-    const evidence = Math.min(
-      1,
-      Math.max(0, strength * strength * boundedSemanticWeight),
-    );
+    const evidence = Math.min(1, Math.max(0, strength * strength * boundedSemanticWeight));
     const qualifyingEvidence = row?.semanticQualifies === false ? 0 : evidence;
     let aggregate = booksByConcept.get(book.id);
 
@@ -842,9 +1057,7 @@ function aggregateTagSeries(rows) {
 
     for (const relationship of Array.isArray(book.book_series) ? book.book_series : []) {
       const membershipSeries = relationship?.series;
-      const membershipId = Number(
-        membershipSeries?.canonical_id ?? membershipSeries?.id ?? 0,
-      );
+      const membershipId = Number(membershipSeries?.canonical_id ?? membershipSeries?.id ?? 0);
 
       if (Number.isSafeInteger(membershipId) && membershipId > 0) {
         membershipSeriesIds.add(membershipId);
@@ -855,16 +1068,12 @@ function aggregateTagSeries(rows) {
       ? book.taggable_counts.map((entry) => Number(entry?.count ?? 0))
       : [];
     const strongestCategoryVotes = Math.max(0, ...categoryCounts);
-    const strength =
-      strongestCategoryVotes > 0 ? targetVotes / strongestCategoryVotes : 0;
+    const strength = strongestCategoryVotes > 0 ? targetVotes / strongestCategoryVotes : 0;
     const semanticWeight = Number(row.semanticWeight ?? 1);
     const boundedSemanticWeight = Number.isFinite(semanticWeight)
       ? Math.min(1, Math.max(0, semanticWeight))
       : 1;
-    const evidence = Math.min(
-      1,
-      Math.max(0, strength * strength * boundedSemanticWeight),
-    );
+    const evidence = Math.min(1, Math.max(0, strength * strength * boundedSemanticWeight));
     const qualifyingEvidence = row.semanticQualifies === false ? 0 : evidence;
     const readers = Number(book.users_read_count ?? 0);
 
@@ -897,8 +1106,7 @@ function aggregateTagSeries(rows) {
     // Multiple semantic signals for the same conceptual book should reinforce
     // each other without allowing duplicate tags to multiply readership.
     concept.evidence = 1 - (1 - concept.evidence) * (1 - evidence);
-    concept.qualifyingEvidence =
-      1 - (1 - concept.qualifyingEvidence) * (1 - qualifyingEvidence);
+    concept.qualifyingEvidence = 1 - (1 - concept.qualifyingEvidence) * (1 - qualifyingEvidence);
     concept.targetVotes += targetVotes;
     concept.readers = Math.max(concept.readers, readers);
 
@@ -957,10 +1165,7 @@ function aggregateTagSeries(rows) {
 
     aggregate.featuredMemberConceptIds.add(concept.id);
     aggregate.peakReaders = Math.max(aggregate.peakReaders, concept.readers);
-    aggregate.peakWeightedReaders = Math.max(
-      aggregate.peakWeightedReaders,
-      weightedReaders,
-    );
+    aggregate.peakWeightedReaders = Math.max(aggregate.peakWeightedReaders, weightedReaders);
     aggregate.totalWeightedReaders += weightedReaders;
     aggregate.totalTargetVotes += concept.targetVotes;
 
@@ -1094,10 +1299,7 @@ async function loadSemanticTagBooks(hardcover, request) {
   while (candidateLimit !== null) {
     for (const state of states) {
       while (state.offset < candidateLimit && !state.exhausted) {
-        const requestedPageSize = Math.min(
-          state.pageSize,
-          candidateLimit - state.offset,
-        );
+        const requestedPageSize = Math.min(state.pageSize, candidateLimit - state.offset);
         let pageRows;
 
         try {
@@ -1109,10 +1311,7 @@ async function loadSemanticTagBooks(hardcover, request) {
           });
         } catch (error) {
           if (isHardcoverTimeout(error) && state.pageSize > MIN_TAG_PAGE_SIZE) {
-            state.pageSize = Math.max(
-              MIN_TAG_PAGE_SIZE,
-              Math.floor(state.pageSize / 2),
-            );
+            state.pageSize = Math.max(MIN_TAG_PAGE_SIZE, Math.floor(state.pageSize / 2));
             continue;
           }
 
@@ -1254,10 +1453,7 @@ async function loadSemanticTagSeries(hardcover, request) {
   while (candidateLimit !== null) {
     for (const state of states) {
       while (state.offset < candidateLimit && !state.exhausted) {
-        const requestedPageSize = Math.min(
-          state.pageSize,
-          candidateLimit - state.offset,
-        );
+        const requestedPageSize = Math.min(state.pageSize, candidateLimit - state.offset);
         let pageRows;
 
         try {
@@ -1269,10 +1465,7 @@ async function loadSemanticTagSeries(hardcover, request) {
           });
         } catch (error) {
           if (isHardcoverTimeout(error) && state.pageSize > MIN_TAG_PAGE_SIZE) {
-            state.pageSize = Math.max(
-              MIN_TAG_PAGE_SIZE,
-              Math.floor(state.pageSize / 2),
-            );
+            state.pageSize = Math.max(MIN_TAG_PAGE_SIZE, Math.floor(state.pageSize / 2));
             continue;
           }
 
@@ -1363,6 +1556,10 @@ function createCollection(request, resolvedEntity, items, extraDefinition = {}) 
     name = `${resolvedName} Books`;
     description = `Books authored by ${resolvedName}.`;
     suffix = 'books';
+  } else if (request.mode === 'author-series') {
+    name = `${resolvedName} Book Series`;
+    description = `Book series authored by ${resolvedName}.`;
+    suffix = 'book-series';
   } else {
     name = `${resolvedName} Books`;
     description = `Primary books in the ${resolvedName} series.`;
@@ -1387,14 +1584,12 @@ function createCollection(request, resolvedEntity, items, extraDefinition = {}) 
         resolvedName,
         limit: request.limit,
         sort: request.sort,
-        ...((request.mode === 'tag-books' || request.mode === 'tag-series')
+        ...(request.mode === 'tag-books' || request.mode === 'tag-series'
           ? {
               tagSlug: request.tagSlug,
               tagCategorySlug: request.tagCategorySlug,
               candidateLimit: request.candidateLimit,
-              ...(request.semanticCategory
-                ? { semanticCategory: request.semanticCategory }
-                : {}),
+              ...(request.semanticCategory ? { semanticCategory: request.semanticCategory } : {}),
               ...(Array.isArray(request.tagSources) && request.tagSources.length > 0
                 ? { tagSources: request.tagSources }
                 : {}),
@@ -1407,11 +1602,7 @@ function createCollection(request, resolvedEntity, items, extraDefinition = {}) 
   };
 }
 
-export async function generateBookCollection({
-  request,
-  hardcover,
-  logger = console,
-}) {
+export async function generateBookCollection({ request, hardcover, logger = console }) {
   if (!hardcover) {
     throw new Error('Hardcover provider is not configured.');
   }
@@ -1457,6 +1648,27 @@ export async function generateBookCollection({
     const missingPosterCount = items.filter((item) => !item.image).length;
 
     logger.log(`Found ${items.length} authored book(s) for ${result.author.name}.`);
+
+    return {
+      collection: createCollection(normalizedRequest, result.author, items),
+      resolvedEntity: result.author,
+      candidateCount: result.candidateCount,
+      validatedCount: items.length,
+      missingPosterCount,
+    };
+  }
+
+  if (normalizedRequest.mode === 'author-series') {
+    const result = await loadAuthorSeries(hardcover, normalizedRequest);
+
+    if (result.series.length === 0) {
+      throw new Error(`No book series were found for ${result.author.name}.`);
+    }
+
+    const items = result.series.map(createSeriesRankItem);
+    const missingPosterCount = items.filter((item) => !item.image).length;
+
+    logger.log(`Found ${items.length} book series for ${result.author.name}.`);
 
     return {
       collection: createCollection(normalizedRequest, result.author, items),
@@ -1513,9 +1725,7 @@ export async function generateBookCollection({
     categorySlug: normalizedRequest.tagCategorySlug,
   };
 
-  logger.log(
-    `Found ${items.length} popular book series for ${normalizedRequest.resolvedName}.`,
-  );
+  logger.log(`Found ${items.length} popular book series for ${normalizedRequest.resolvedName}.`);
 
   return {
     collection: createCollection(normalizedRequest, resolvedEntity, items, {

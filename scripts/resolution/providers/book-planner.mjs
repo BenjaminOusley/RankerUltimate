@@ -31,11 +31,15 @@ const AMBIGUOUS_BOOK_CATEGORIES = new Map([
 ]);
 
 function normalizeWhitespace(value) {
-  return String(value ?? '').replace(/\s+/gu, ' ').trim();
+  return String(value ?? '')
+    .replace(/\s+/gu, ' ')
+    .trim();
 }
 
 function comparable(value) {
-  return normalizeHardcoverText(value).replace(/^the\s+/u, '').trim();
+  return normalizeHardcoverText(value)
+    .replace(/^the\s+/u, '')
+    .trim();
 }
 
 function entityNamesMatch(left, right) {
@@ -100,27 +104,15 @@ function selectDominantExactMatches(matches, getScore, minimumRatio = 0.1) {
   return plausible.length > 0 ? plausible : [ranked[0]];
 }
 
-function selectPlausibleSeriesMatches(
-  query,
-  seriesResults,
-  { preferExactSeries = false } = {},
-) {
-  const rawDirectMatches = seriesResults.filter((series) =>
-    seriesMatchesQuery(query, series),
-  );
+function selectPlausibleSeriesMatches(query, seriesResults, { preferExactSeries = false } = {}) {
+  const rawDirectMatches = seriesResults.filter((series) => seriesMatchesQuery(query, series));
 
   if (rawDirectMatches.length === 0) {
     return [];
   }
 
-  const directMatches = selectDominantExactMatches(
-    rawDirectMatches,
-    getReadersCount,
-    0.05,
-  );
-  const authorQualified = directMatches.some(
-    (series) => !entityNamesMatch(query, series?.name),
-  );
+  const directMatches = selectDominantExactMatches(rawDirectMatches, getReadersCount, 0.05);
+  const authorQualified = directMatches.some((series) => !entityNamesMatch(query, series?.name));
 
   if (authorQualified || preferExactSeries) {
     return directMatches;
@@ -139,9 +131,7 @@ function selectPlausibleSeriesMatches(
 }
 
 function selectPlausibleAuthorMatches(query, authorResults) {
-  const directMatches = authorResults.filter((author) =>
-    entityNamesMatch(query, author?.name),
-  );
+  const directMatches = authorResults.filter((author) => entityNamesMatch(query, author?.name));
 
   return selectDominantExactMatches(directMatches, getAuthorVolume, 0.1);
 }
@@ -211,14 +201,21 @@ function parseTagTargetHint(text) {
     return 'books';
   }
 
-  if (
-    /\bbook\s+series\b/u.test(normalized) ||
-    /\bseries\s+of\s+books\b/u.test(normalized)
-  ) {
+  if (/\bbook\s+series\b/u.test(normalized) || /\bseries\s+of\s+books\b/u.test(normalized)) {
     return 'series';
   }
 
   return null;
+}
+
+function hasAuthorSeriesSyntax(text) {
+  const normalized = normalizeHardcoverText(text);
+
+  return /\b(?:book\s+)?series\s+by\b/u.test(normalized) || /\bbook\s+series\b/u.test(normalized);
+}
+
+function hasExplicitBookNoun(text) {
+  return /\bbooks?\b/u.test(normalizeHardcoverText(text));
 }
 
 function parseAuthorSort(text) {
@@ -256,6 +253,8 @@ function cleanBookQuery(subject, requestText) {
 
   query = query
     .replace(/^(?:books?\s+)?(?:by|written\s+by|authored\s+by)\s+/iu, '')
+    .replace(/^(?:book\s+)?(?:series|saga)\s+by\s+/iu, '')
+    .replace(/\s+book\s+(?:series|saga)$/iu, '')
     .replace(/^(?:the\s+)?(?:author|series|saga|genre|subject|mood|tag)\s+/iu, '')
     .replace(/\s+(?:author|series|saga|genre|subject|mood|tag)$/iu, '')
     .replace(/\s+(?:individual|single)$/iu, '')
@@ -273,6 +272,8 @@ function cleanBookQuery(subject, requestText) {
     requestedLimit,
     authorSort: parseAuthorSort(combinedText),
     preferExactSeries,
+    authorSeriesSyntax: hasAuthorSeriesSyntax(combinedText),
+    explicitBookNoun: hasExplicitBookNoun(combinedText),
   };
 }
 
@@ -314,14 +315,11 @@ function getAmbiguousBookCategory(query, requestText) {
 }
 
 async function buildAmbiguousBookCategoryClarification(hardcover, category) {
-  const tags = await hardcover.findTagsBySlugs(
-    category.options.map((option) => option.slug),
-  );
+  const tags = await hardcover.findTagsBySlugs(category.options.map((option) => option.slug));
   const availableOptions = category.options.filter((option) =>
     tags.some(
       (tag) =>
-        String(tag?.slug ?? '') === option.slug &&
-        tag?.tag_category?.slug === option.categorySlug,
+        String(tag?.slug ?? '') === option.slug && tag?.tag_category?.slug === option.categorySlug,
     ),
   );
 
@@ -369,6 +367,21 @@ function createAuthorPlan({ query, author, limit, sort }) {
     parameters: {
       limit,
       sort,
+    },
+  };
+}
+
+function createAuthorSeriesPlan({ query, author, limit }) {
+  return {
+    provider: 'hardcover',
+    mediaType: 'book',
+    mode: 'author-series',
+    query,
+    resolvedId: Number(author.id),
+    resolvedName: author.name,
+    parameters: {
+      limit,
+      sort: 'popular',
     },
   };
 }
@@ -423,6 +436,8 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
     requestedLimit,
     authorSort,
     preferExactSeries,
+    authorSeriesSyntax,
+    explicitBookNoun,
   } = cleanBookQuery(subject, requestText);
 
   if (requestedLimit !== null && requestedLimit > MAX_BOOK_COLLECTION_LIMIT) {
@@ -439,10 +454,58 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
   const defaultLimit = DEFAULT_BOOK_COLLECTION_LIMIT;
   const explicitLimit = requestedLimit ?? null;
 
-  const shouldTryTags =
-    !relationHint ||
-    relationHint === 'tag' ||
-    tagTargetHint !== null;
+  let matchingAuthors = [];
+  let authorLookupAttempted = false;
+
+  /*
+   * Explicit author-shaped requests must resolve first-class Author entities
+   * before Hardcover tags. Hardcover occasionally misclassifies a person's
+   * name as a genre, which must not hijack "individual books" or "book series"
+   * requests for that author.
+   */
+  const shouldResolveAuthorFirst =
+    relationHint === 'author' ||
+    tagTargetHint === 'books' ||
+    (relationHint === 'series' && authorSeriesSyntax);
+
+  if (shouldResolveAuthorFirst) {
+    const authors = await hardcover.searchAuthors(query, 15);
+
+    matchingAuthors = selectPlausibleAuthorMatches(query, authors);
+    authorLookupAttempted = true;
+
+    if (matchingAuthors.length > 0) {
+      const useAuthorSeries = relationHint === 'series' && authorSeriesSyntax;
+
+      for (const author of matchingAuthors) {
+        plans.push(
+          useAuthorSeries
+            ? createAuthorSeriesPlan({
+                query,
+                author,
+                limit: explicitLimit ?? defaultLimit,
+              })
+            : createAuthorPlan({
+                query,
+                author,
+                limit: explicitLimit ?? defaultLimit,
+                sort: authorSort,
+              }),
+        );
+      }
+
+      return {
+        plans: dedupePlans(plans),
+        query,
+        relationHint,
+        tagTargetHint,
+        requestedLimit,
+        unsupportedLimit: false,
+      };
+    }
+  }
+
+  const shouldTryTags = !relationHint || relationHint === 'tag' || tagTargetHint !== null;
 
   if (shouldTryTags) {
     const ambiguousCategory = getAmbiguousBookCategory(query, requestText);
@@ -479,11 +542,12 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
       return true;
     });
 
-    const exactCategoryMatch = matchingTags.some((tag) =>
-      ['genre', 'mood', 'tag'].includes(tag.tag_category?.slug),
+    const strongCategoryMatch = matchingTags.some((tag) =>
+      ['genre', 'mood'].includes(tag.tag_category?.slug),
     );
+    const explicitTagRequest = relationHint === 'tag';
 
-    if (exactCategoryMatch) {
+    if (strongCategoryMatch || explicitTagRequest) {
       for (const tag of matchingTags) {
         const limit = explicitLimit ?? DEFAULT_BOOK_TAG_SERIES_LIMIT;
 
@@ -519,6 +583,83 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
         unsupportedLimit: false,
       };
     }
+
+    // Generic Hardcover tags are lower-confidence than first-class Series and
+    // Author entities. Names such as "Stephen King" and "Brandon Sanderson"
+    // can exist as community tags, but those tags must not hijack requests for
+    // the actual author or their book series. Keep generic tags as a fallback.
+    for (const tag of matchingTags) {
+      const limit = explicitLimit ?? DEFAULT_BOOK_TAG_SERIES_LIMIT;
+
+      if (tagTargetHint !== 'series') {
+        plans.push(
+          createTagPlan({
+            query,
+            tag,
+            limit,
+            mode: 'tag-books',
+          }),
+        );
+      }
+
+      if (tagTargetHint !== 'books') {
+        plans.push(
+          createTagPlan({
+            query,
+            tag,
+            limit,
+            mode: 'tag-series',
+          }),
+        );
+      }
+    }
+  }
+
+  const deferredGenericTagPlans = plans.filter(
+    (plan) => plan.mode === 'tag-books' || plan.mode === 'tag-series',
+  );
+  plans.length = 0;
+
+  if (
+    !authorLookupAttempted &&
+    (!relationHint || relationHint === 'author' || relationHint === 'series')
+  ) {
+    const authors = await hardcover.searchAuthors(query, 15);
+    matchingAuthors = selectPlausibleAuthorMatches(query, authors);
+
+    const explicitAuthorBooks =
+      matchingAuthors.length > 0 &&
+      (relationHint === 'author' || (!relationHint && explicitBookNoun));
+    const explicitAuthorSeries =
+      matchingAuthors.length > 0 && relationHint === 'series' && authorSeriesSyntax;
+
+    if (explicitAuthorBooks || explicitAuthorSeries) {
+      for (const author of matchingAuthors) {
+        plans.push(
+          explicitAuthorSeries
+            ? createAuthorSeriesPlan({
+                query,
+                author,
+                limit: explicitLimit ?? defaultLimit,
+              })
+            : createAuthorPlan({
+                query,
+                author,
+                limit: explicitLimit ?? defaultLimit,
+                sort: authorSort,
+              }),
+        );
+      }
+
+      return {
+        plans: dedupePlans(plans),
+        query,
+        relationHint,
+        tagTargetHint,
+        requestedLimit,
+        unsupportedLimit: false,
+      };
+    }
   }
 
   if (!relationHint || relationHint === 'series') {
@@ -538,11 +679,16 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
     }
   }
 
-  if (!relationHint || relationHint === 'author') {
-    const authors = await hardcover.searchAuthors(query, 15);
-    const matchingAuthors = selectPlausibleAuthorMatches(query, authors);
-
-    for (const author of matchingAuthors) {
+  for (const author of matchingAuthors) {
+    if (relationHint === 'series') {
+      plans.push(
+        createAuthorSeriesPlan({
+          query,
+          author,
+          limit: explicitLimit ?? defaultLimit,
+        }),
+      );
+    } else {
       plans.push(
         createAuthorPlan({
           query,
@@ -552,6 +698,10 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
         }),
       );
     }
+  }
+
+  if (plans.length === 0 && deferredGenericTagPlans.length > 0) {
+    plans.push(...deferredGenericTagPlans);
   }
 
   return {

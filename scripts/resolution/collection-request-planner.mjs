@@ -556,6 +556,10 @@ function clarificationForMatches({ subject, mediaType, matches }) {
         return `${match.name} individual books`;
       }
 
+      if (match.mode === 'author-series') {
+        return `book series by ${match.name}`;
+      }
+
       const relationLabel = match.mode === 'author' ? 'author' : 'book subject';
 
       return `${match.name} ${relationLabel}`;

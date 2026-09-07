@@ -68,7 +68,7 @@ export type IgdbPlannedSource = {
   };
 };
 
-export type BookPlannedMode = 'series' | 'author' | 'tag-books' | 'tag-series';
+export type BookPlannedMode = 'series' | 'author' | 'author-series' | 'tag-books' | 'tag-series';
 export type BookGenerationSort =
   | 'series-order'
   | 'popular'

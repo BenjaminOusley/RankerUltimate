@@ -60,6 +60,30 @@ describe('book collection plan execution', () => {
     });
   });
 
+  it('maps an author-series plan into the book generator contract', () => {
+    const source = bookSource({
+      mode: 'author-series',
+      query: 'Brandon Sanderson',
+      resolvedId: 204214,
+      resolvedName: 'Brandon Sanderson',
+      parameters: {
+        limit: 50,
+        sort: 'popular',
+      },
+    });
+
+    expect(
+      buildGenerationRequestFromPlannedSource(source, collectionId),
+    ).toMatchObject({
+      mediaType: 'book',
+      mode: 'author-series',
+      hardcoverId: 204214,
+      resolvedName: 'Brandon Sanderson',
+      limit: 50,
+      sort: 'popular',
+    });
+  });
+
   it('preserves normalized semantic tag sources in the generation contract', () => {
     const source = bookSource({
       query: 'drama',

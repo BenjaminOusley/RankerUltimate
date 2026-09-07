@@ -268,6 +268,56 @@ describe('book collection planner', () => {
     });
   });
 
+  it('plans book series by an exact author when series intent is explicit', async () => {
+    const hardcover = createHardcover({
+      authors: [
+        {
+          id: 204214,
+          name: 'Brandon Sanderson',
+          books_count: 268,
+          users_count: 10000,
+        },
+      ],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Brandon Sanderson series',
+      requestText: 'Brandon Sanderson book series',
+    });
+
+    expect(result.plans).toEqual([
+      expect.objectContaining({
+        mode: 'author-series',
+        resolvedId: 204214,
+        resolvedName: 'Brandon Sanderson',
+        parameters: {
+          limit: 50,
+          sort: 'popular',
+        },
+      }),
+    ]);
+  });
+
+  it('understands "book series by" author phrasing', async () => {
+    const hardcover = createHardcover({
+      authors: [{ id: 154441, name: 'Stephen King', books_count: 606 }],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'series by Stephen King',
+      requestText: 'book series by Stephen King',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author-series',
+      resolvedId: 154441,
+      resolvedName: 'Stephen King',
+    });
+  });
+
   it('resolves exact authors and preserves explicit popularity counts', async () => {
     const hardcover = createHardcover({
       authors: [
@@ -297,5 +347,180 @@ describe('book collection planner', () => {
         },
       }),
     ]);
+  });
+  it('prefers an exact author over a same-name Series entity for a plain books request', async () => {
+    const hardcover = createHardcover({
+      series: [{ id: 7000, name: 'Stephen King', readers_count: 500 }],
+      authors: [{ id: 154441, name: 'Stephen King', books_count: 606 }],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Stephen King',
+      requestText: 'Stephen King books',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author',
+      resolvedId: 154441,
+      resolvedName: 'Stephen King',
+    });
+    expect(hardcover.searchSeries).not.toHaveBeenCalled();
+  });
+
+  it('prefers author-series intent over a same-name Series entity when the phrase names an author', async () => {
+    const hardcover = createHardcover({
+      series: [{ id: 7000, name: 'Stephen King', readers_count: 500 }],
+      authors: [{ id: 154441, name: 'Stephen King', books_count: 606 }],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Stephen King series',
+      requestText: 'Stephen King book series',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author-series',
+      resolvedId: 154441,
+      resolvedName: 'Stephen King',
+    });
+    expect(hardcover.searchSeries).not.toHaveBeenCalled();
+  });
+
+  it('prefers an exact author over a same-name generic Hardcover tag', async () => {
+    const hardcover = createHardcover({
+      tags: [
+        {
+          id: 999,
+          tag: 'Stephen King',
+          slug: 'stephen-king',
+          tag_category: { slug: 'tag' },
+        },
+      ],
+      authors: [{ id: 154441, name: 'Stephen King', books_count: 606 }],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Stephen King',
+      requestText: 'Stephen King books',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author',
+      resolvedId: 154441,
+      resolvedName: 'Stephen King',
+    });
+  });
+
+  it('prefers author-series intent over a same-name generic Hardcover tag', async () => {
+    const hardcover = createHardcover({
+      tags: [
+        {
+          id: 998,
+          tag: 'Brandon Sanderson',
+          slug: 'brandon-sanderson',
+          tag_category: { slug: 'tag' },
+        },
+      ],
+      authors: [{ id: 204214, name: 'Brandon Sanderson', books_count: 268 }],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Brandon Sanderson series',
+      requestText: 'Brandon Sanderson book series',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author-series',
+      resolvedId: 204214,
+      resolvedName: 'Brandon Sanderson',
+    });
+  });
+
+  it('prefers an exact author over a same-name genre tag after an individual-book clarification', async () => {
+    const hardcover = createHardcover({
+      tags: [
+        {
+          id: 44245,
+          tag: 'Brandon Sanderson',
+          slug: 'brandon-sanderson',
+          tag_category: { slug: 'genre' },
+        },
+      ],
+      authors: [
+        {
+          id: 204214,
+          name: 'Brandon Sanderson',
+          books_count: 254,
+        },
+      ],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'top 20 Brandon Sanderson individual',
+      requestText: 'top 20 Brandon Sanderson individual books',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author',
+      resolvedId: 204214,
+      resolvedName: 'Brandon Sanderson',
+      parameters: {
+        limit: 20,
+        sort: 'popular',
+      },
+    });
+
+    expect(hardcover.searchAuthors).toHaveBeenCalledWith('Brandon Sanderson', 15);
+    expect(hardcover.findTagsBySlugs).not.toHaveBeenCalled();
+  });
+
+  it('prefers author-series intent over a same-name genre tag', async () => {
+    const hardcover = createHardcover({
+      tags: [
+        {
+          id: 44245,
+          tag: 'Brandon Sanderson',
+          slug: 'brandon-sanderson',
+          tag_category: { slug: 'genre' },
+        },
+      ],
+      authors: [
+        {
+          id: 204214,
+          name: 'Brandon Sanderson',
+          books_count: 254,
+        },
+      ],
+    });
+
+    const result = await findBookPlans({
+      hardcover,
+      subject: 'Brandon Sanderson series',
+      requestText: 'Brandon Sanderson book series',
+    });
+
+    expect(result.plans).toHaveLength(1);
+    expect(result.plans[0]).toMatchObject({
+      mode: 'author-series',
+      resolvedId: 204214,
+      resolvedName: 'Brandon Sanderson',
+      parameters: {
+        limit: 50,
+        sort: 'popular',
+      },
+    });
+
+    expect(hardcover.searchAuthors).toHaveBeenCalledWith('Brandon Sanderson', 15);
+    expect(hardcover.findTagsBySlugs).not.toHaveBeenCalled();
   });
 });

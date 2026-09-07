@@ -1,9 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  generateBookCollection,
-  validateBookGenerationRequest,
-} from './book-generator.mjs';
+import { generateBookCollection, validateBookGenerationRequest } from './book-generator.mjs';
 
 const baseRequest = {
   mediaType: 'book',
@@ -135,10 +132,7 @@ describe('book generator', () => {
       logger: { log: vi.fn() },
     });
 
-    expect(result.collection.items.map((item) => item.name)).toEqual([
-      'Dune',
-      'Sandworms of Dune',
-    ]);
+    expect(result.collection.items.map((item) => item.name)).toEqual(['Dune', 'Sandworms of Dune']);
     expect(result.collection.items[1].source).toEqual({
       provider: 'hardcover',
       id: '800',
@@ -218,53 +212,338 @@ describe('book generator', () => {
     expect(result.collection.items.some((item) => item.name.includes('Someone'))).toBe(false);
   });
 
+  it('derives author series from paged authored root Works without a separate membership lookup', async () => {
+    const author = {
+      id: 204214,
+      name: 'Brandon Sanderson',
+    };
+
+    const stormlight = {
+      id: 200,
+      name: 'The Stormlight Archive',
+      primary_books_count: 2,
+      author,
+    };
+
+    const mistborn = {
+      id: 100,
+      name: 'Mistborn',
+      primary_books_count: 2,
+      author,
+    };
+
+    const lowEvidenceSplit = {
+      id: 300,
+      name: 'Low Evidence Split Edition',
+      primary_books_count: 2,
+      author,
+    };
+
+    const markedPartialSplit = {
+      id: 400,
+      name: 'Marked Partial Split Edition',
+      primary_books_count: 2,
+      author,
+    };
+
+    const collaboratorSeries = {
+      id: 500,
+      name: 'Another Author Series',
+      primary_books_count: 2,
+      author: {
+        id: 999999,
+        name: 'Another Author',
+      },
+    };
+
+    const authoredBooks = [
+      book({
+        id: 1,
+        title: 'The Way of Kings',
+        readers: 8000,
+        ratings: 5000,
+        image: 'stormlight.jpg',
+      }),
+      book({
+        id: 2,
+        title: 'Words of Radiance',
+        readers: 5000,
+        ratings: 3000,
+      }),
+      book({
+        id: 3,
+        title: 'Mistborn: The Final Empire',
+        readers: 4000,
+        ratings: 2500,
+        image: 'mistborn.jpg',
+      }),
+      book({
+        id: 4,
+        title: 'The Well of Ascension',
+        readers: 3000,
+        ratings: 2000,
+      }),
+      book({
+        id: 5,
+        title: 'Large Novel: Part One',
+        readers: 60,
+        ratings: 40,
+      }),
+      book({
+        id: 6,
+        title: 'Large Novel: Part Two',
+        readers: 13,
+        ratings: 7,
+      }),
+      book({
+        id: 7,
+        title: 'Explicit Split: Part One',
+        readers: 315,
+        ratings: 200,
+        partial: true,
+      }),
+      book({
+        id: 8,
+        title: 'Explicit Split: Part Two',
+        readers: 110,
+        ratings: 70,
+        partial: true,
+      }),
+      book({
+        id: 9,
+        title: 'Collaborative Book One',
+        readers: 900,
+        ratings: 600,
+      }),
+      book({
+        id: 10,
+        title: 'Collaborative Book Two',
+        readers: 800,
+        ratings: 500,
+      }),
+    ];
+
+    const contributionBooks = [
+      book({
+        id: 101,
+        title: 'Translated Way of Kings',
+        readers: 25,
+        canonical: {
+          ...authoredBooks[0],
+          book_series: [
+            {
+              position: 1,
+              compilation: false,
+              series: stormlight,
+            },
+          ],
+        },
+      }),
+      {
+        ...authoredBooks[1],
+        book_series: [
+          {
+            position: 2,
+            compilation: false,
+            series: stormlight,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[2],
+        book_series: [
+          {
+            position: 1,
+            compilation: false,
+            series: mistborn,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[3],
+        book_series: [
+          {
+            position: 2,
+            compilation: false,
+            series: mistborn,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[4],
+        book_series: [
+          {
+            position: 1,
+            compilation: false,
+            series: lowEvidenceSplit,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[5],
+        book_series: [
+          {
+            position: 2,
+            compilation: false,
+            series: lowEvidenceSplit,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[6],
+        book_series: [
+          {
+            position: 1,
+            compilation: false,
+            series: markedPartialSplit,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[7],
+        book_series: [
+          {
+            position: 2,
+            compilation: false,
+            series: markedPartialSplit,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[8],
+        book_series: [
+          {
+            position: 1,
+            compilation: false,
+            series: collaboratorSeries,
+          },
+        ],
+      },
+      {
+        ...authoredBooks[9],
+        book_series: [
+          {
+            position: 2,
+            compilation: false,
+            series: collaboratorSeries,
+          },
+        ],
+      },
+    ];
+
+    const getAuthorSeriesContributionsPage = vi.fn(async () => ({
+      author,
+      contributions: contributionBooks.map((contributionBook) => ({
+        contributor_role: {
+          contributor_role_category_id: 1,
+        },
+        book: contributionBook,
+      })),
+    }));
+
+    const getSeriesByAuthorId = vi.fn();
+    const getAuthorContributionsPage = vi.fn();
+    const getBookSeriesMembershipsByBookIds = vi.fn();
+
+    const result = await generateBookCollection({
+      request: {
+        mediaType: 'book',
+        mode: 'author-series',
+        query: 'Brandon Sanderson',
+        collectionId: 'generated-sanderson-series-membership',
+        hardcoverId: 204214,
+        resolvedName: 'Brandon Sanderson',
+        limit: 50,
+        sort: 'popular',
+      },
+      hardcover: {
+        getAuthorSeriesContributionsPage,
+        getSeriesByAuthorId,
+        getAuthorContributionsPage,
+        getBookSeriesMembershipsByBookIds,
+      },
+      logger: {
+        log: vi.fn(),
+      },
+    });
+
+    expect(getAuthorSeriesContributionsPage).toHaveBeenCalledOnce();
+    expect(getSeriesByAuthorId).not.toHaveBeenCalled();
+    expect(getAuthorContributionsPage).not.toHaveBeenCalled();
+    expect(getBookSeriesMembershipsByBookIds).not.toHaveBeenCalled();
+
+    expect(result.collection.items.map((item) => item.name)).toEqual([
+      'The Stormlight Archive',
+      'Mistborn',
+    ]);
+
+    expect(result.collection.items[0]).toMatchObject({
+      image: 'stormlight.jpg',
+      source: {
+        type: 'book-series',
+      },
+    });
+
+    expect(result.collection.items.some((item) => item.name === 'Low Evidence Split Edition')).toBe(
+      false,
+    );
+
+    expect(
+      result.collection.items.some((item) => item.name === 'Marked Partial Split Edition'),
+    ).toBe(false);
+
+    expect(result.collection.items.some((item) => item.name === 'Another Author Series')).toBe(
+      false,
+    );
+  });
+
   it('ranks genre/subject results by relevance-weighted popularity instead of raw readership', async () => {
     const getBooksByTag = vi.fn(async ({ limit, offset }) => {
       expect(limit).toBe(100);
       expect(offset).toBe(0);
 
       return [
-      {
-        count: 1,
-        book: {
-          id: 1,
-          title: 'Very popular weak match',
-          users_read_count: 10000,
-          image: { url: 'weak.jpg' },
-          featured_book_series: {
-            series: {
-              id: 1185,
-              name: 'Weak Match Series',
-              author: { name: 'Popular Author' },
+        {
+          count: 1,
+          book: {
+            id: 1,
+            title: 'Very popular weak match',
+            users_read_count: 10000,
+            image: { url: 'weak.jpg' },
+            featured_book_series: {
+              series: {
+                id: 1185,
+                name: 'Weak Match Series',
+                author: { name: 'Popular Author' },
+              },
             },
+            taggable_counts: [
+              { count: 20, tag: { slug: 'fantasy' } },
+              { count: 1, tag: { slug: 'science-fiction' } },
+            ],
           },
-          taggable_counts: [
-            { count: 20, tag: { slug: 'fantasy' } },
-            { count: 1, tag: { slug: 'science-fiction' } },
-          ],
         },
-      },
-      {
-        count: 20,
-        book: {
-          id: 2,
-          title: 'Strong genre match',
-          users_read_count: 3000,
-          image: { url: 'strong.jpg' },
-          featured_book_series: {
-            series: {
-              id: 1150,
-              name: 'Strong Match Series',
-              author: { name: 'Genre Author' },
+        {
+          count: 20,
+          book: {
+            id: 2,
+            title: 'Strong genre match',
+            users_read_count: 3000,
+            image: { url: 'strong.jpg' },
+            featured_book_series: {
+              series: {
+                id: 1150,
+                name: 'Strong Match Series',
+                author: { name: 'Genre Author' },
+              },
             },
+            taggable_counts: [
+              { count: 20, tag: { slug: 'science-fiction' } },
+              { count: 3, tag: { slug: 'fantasy' } },
+            ],
           },
-          taggable_counts: [
-            { count: 20, tag: { slug: 'science-fiction' } },
-            { count: 3, tag: { slug: 'fantasy' } },
-          ],
         },
-      },
-    ];
+      ];
     });
 
     const result = await generateBookCollection({
@@ -300,36 +579,38 @@ describe('book generator', () => {
   });
 
   it('generates popular individual conceptual books for a genre tag', async () => {
-    const getBooksByTag = vi.fn(async () => [
-      {
-        count: 20,
-        book: book({
-          id: 1,
-          title: 'Popular Fantasy Book',
-          readers: 5000,
-          ratings: 3000,
-          releaseYear: 2001,
-          image: 'popular.jpg',
-        }),
-      },
-      {
-        count: 2,
-        book: book({
-          id: 2,
-          title: 'Weak Fantasy Match',
-          readers: 10000,
-          ratings: 5000,
-          releaseYear: 2002,
-          image: 'weak.jpg',
-        }),
-      },
-    ].map((row, index) => ({
-      ...row,
-      book: {
-        ...row.book,
-        taggable_counts: [{ count: index === 0 ? 20 : 20 }],
-      },
-    })));
+    const getBooksByTag = vi.fn(async () =>
+      [
+        {
+          count: 20,
+          book: book({
+            id: 1,
+            title: 'Popular Fantasy Book',
+            readers: 5000,
+            ratings: 3000,
+            releaseYear: 2001,
+            image: 'popular.jpg',
+          }),
+        },
+        {
+          count: 2,
+          book: book({
+            id: 2,
+            title: 'Weak Fantasy Match',
+            readers: 10000,
+            ratings: 5000,
+            releaseYear: 2002,
+            image: 'weak.jpg',
+          }),
+        },
+      ].map((row, index) => ({
+        ...row,
+        book: {
+          ...row.book,
+          taggable_counts: [{ count: index === 0 ? 20 : 20 }],
+        },
+      })),
+    );
 
     const result = await generateBookCollection({
       request: {
@@ -416,9 +697,7 @@ describe('book generator', () => {
     });
 
     expect(getBooksByTag).toHaveBeenCalledTimes(2);
-    expect(result.collection.items.map((item) => item.name)).toEqual([
-      'Reliable Series',
-    ]);
+    expect(result.collection.items.map((item) => item.name)).toEqual(['Reliable Series']);
   });
 
   it('combines normalized semantic category signals without double-counting conceptual books', async () => {
@@ -555,9 +834,7 @@ describe('book generator', () => {
       'Drama Series',
       'Play Series',
     ]);
-    expect(result.collection.description).toBe(
-      'Popular book series associated with Drama.',
-    );
+    expect(result.collection.description).toBe('Popular book series associated with Drama.');
     expect(result.collection.candidateSource.definition).toMatchObject({
       semanticCategory: 'drama',
       tagSources: [
@@ -634,9 +911,7 @@ describe('book generator', () => {
     });
 
     expect(getAuthorContributionsPage).toHaveBeenCalledTimes(2);
-    expect(result.collection.items.map((item) => item.name)).toEqual([
-      'Aardvark Book',
-    ]);
+    expect(result.collection.items.map((item) => item.name)).toEqual(['Aardvark Book']);
   });
 
   it('suppresses broader umbrella series when specific child series contain the same sampled books', async () => {
@@ -662,10 +937,7 @@ describe('book generator', () => {
       books_count: 4,
       author,
     };
-    const memberships = (series) => [
-      { series: umbrella },
-      { series },
-    ];
+    const memberships = (series) => [{ series: umbrella }, { series }];
     const getBooksByTag = vi.fn(async () => [
       {
         count: 10,
@@ -796,11 +1068,8 @@ describe('book generator', () => {
       logger: { log: vi.fn() },
     });
 
-    expect(result.collection.items.map((item) => item.name)).toEqual([
-      'Actual Series',
-    ]);
+    expect(result.collection.items.map((item) => item.name)).toEqual(['Actual Series']);
   });
-
 
   it('drops large series that have only one matching candidate book', async () => {
     const getBooksByTag = vi.fn(async () => [
@@ -860,9 +1129,6 @@ describe('book generator', () => {
       logger: { log: vi.fn() },
     });
 
-    expect(result.collection.items.map((item) => item.name)).toEqual([
-      'Focused Trilogy',
-    ]);
+    expect(result.collection.items.map((item) => item.name)).toEqual(['Focused Trilogy']);
   });
-
 });
