@@ -28,7 +28,9 @@ export function CollectionReviewScreen({
       ? `${styles.spaciousGrid} ${styles.singleRowGrid}`
       : collection.items.length <= 15
         ? styles.spaciousGrid
-        : styles.denseGrid;
+        : collection.items.length <= 40
+          ? `${styles.denseGrid} ${styles.mediumDenseGrid}`
+          : `${styles.denseGrid} ${styles.largeDenseGrid}`;
 
   function toggleItem(itemId: string) {
     const next = new Set(selectedItemIds);
@@ -59,7 +61,9 @@ export function CollectionReviewScreen({
         <div className={styles.toolbar}>
           <Button
             size="small"
-            onClick={() => onSelectedItemIdsChange(new Set(collection.items.map((item) => item.id)))}
+            onClick={() =>
+              onSelectedItemIdsChange(new Set(collection.items.map((item) => item.id)))
+            }
           >
             Select All
           </Button>

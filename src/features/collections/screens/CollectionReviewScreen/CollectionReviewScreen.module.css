@@ -22,8 +22,17 @@
 .grid {
   min-height: 0;
   padding: 6px;
+
   display: grid;
   gap: 10px;
+
+  /*
+   * Keep the card group compact inside the available review area instead of
+   * stretching rows to consume unused vertical space.
+   */
+  align-content: start;
+  justify-content: center;
+
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
@@ -41,37 +50,75 @@
   background-clip: padding-box;
 }
 
+/*
+ * Medium collections use slightly larger cards, but the cards have a bounded
+ * width and height so sparse rows never stretch across the review panel.
+ */
 .spaciousGrid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  grid-auto-rows: minmax(0, 1fr);
-  align-content: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  grid-auto-rows: clamp(310px, 38vh, 390px);
 }
 
+/*
+ * Very small collections stay centered and get a little more breathing room.
+ * They remain bounded rather than becoming giant full-height cards.
+ */
 .singleRowGrid {
-  grid-auto-rows: clamp(380px, 65vh, 560px);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 300px));
+  grid-auto-rows: clamp(330px, 42vh, 420px);
+
   align-content: center;
 }
 
+/*
+ * Larger collections favor compact cards so more items fit on screen. The
+ * review panel itself handles scrolling once the rows exceed its height.
+ */
 .denseGrid {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  grid-auto-rows: minmax(220px, 1fr);
-  align-content: stretch;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 220px));
+  grid-auto-rows: clamp(270px, 32vh, 340px);
+}
+
+/*
+ * Medium-dense collections need the compact column sizing of the dense grid,
+ * but slightly shorter rows so a partially filled second row does not look
+ * vertically stretched.
+ */
+.mediumDenseGrid {
+  grid-auto-rows: clamp(240px, 28vh, 295px);
+}
+
+/*
+ * Large collections trade some card size for density so substantially more
+ * items remain visible in the review viewport.
+ */
+.largeDenseGrid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 180px));
+  grid-auto-rows: clamp(215px, 24vh, 255px);
 }
 
 .item {
   position: relative;
+
   min-width: 0;
   min-height: 0;
+
   padding: 10px;
+
   border: 1px solid var(--line);
   border-radius: 13px;
+
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
+
   justify-items: center;
   align-items: center;
+
   gap: 5px;
+
   background: rgba(22, 28, 42, 0.75);
+
   cursor: pointer;
   overflow: hidden;
 }
@@ -81,6 +128,7 @@
   top: 10px;
   left: 10px;
   z-index: 2;
+
   margin: 0;
 }
 
@@ -92,24 +140,30 @@
 .poster {
   width: 100%;
   height: 100%;
+
   max-width: none;
   max-height: none;
+
   object-fit: contain;
   object-position: center bottom;
+
   border-radius: 8px;
 }
 
 .itemCopy {
   width: 100%;
   min-width: 0;
+
   display: grid;
   gap: 2px;
+
   text-align: center;
 }
 
 .itemCopy strong,
 .itemCopy small {
   display: block;
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -125,18 +179,46 @@
 
 @media (max-width: 1300px) {
   .spaciousGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(190px, 250px));
+    grid-auto-rows: clamp(290px, 36vh, 360px);
   }
 
   .singleRowGrid {
-    grid-auto-rows: minmax(220px, 1fr);
-    align-content: stretch;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 270px));
+    grid-auto-rows: clamp(310px, 40vh, 380px);
+  }
+
+  .denseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 210px));
+    grid-auto-rows: clamp(250px, 30vh, 310px);
+  }
+
+  .mediumDenseGrid {
+    grid-auto-rows: clamp(220px, 26vh, 275px);
+  }
+
+  .largeDenseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(145px, 175px));
+    grid-auto-rows: clamp(205px, 23vh, 240px);
   }
 }
 
 @media (max-width: 1000px) {
   .spaciousGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 230px));
+  }
+
+  .singleRowGrid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 240px));
+  }
+
+  .denseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
+  }
+
+  .largeDenseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 170px));
+    grid-auto-rows: clamp(195px, 22vh, 230px);
   }
 }
 
@@ -146,15 +228,20 @@
     align-items: stretch;
   }
 
-  .grid {
+  .grid,
+  .spaciousGrid,
+  .singleRowGrid,
+  .denseGrid {
     grid-template-columns: 1fr;
     grid-auto-rows: minmax(230px, auto);
+
     align-content: start;
   }
 
   .poster {
     width: auto;
     height: 160px;
+
     max-height: 160px;
   }
 }

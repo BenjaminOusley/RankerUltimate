@@ -27,16 +27,16 @@ export function GeneratedCollectionReview({
     [collection.items],
   );
 
-  const [selectedItemKeys, setSelectedItemKeys] = useState<Set<string>>(
-    () => new Set(itemKeys),
-  );
+  const [selectedItemKeys, setSelectedItemKeys] = useState<Set<string>>(() => new Set(itemKeys));
 
   const gridDensityClass =
     collection.items.length <= 5
       ? `${chooserStyles.spaciousGrid} ${chooserStyles.singleRowGrid}`
       : collection.items.length <= 15
         ? chooserStyles.spaciousGrid
-        : chooserStyles.denseGrid;
+        : collection.items.length <= 40
+          ? `${chooserStyles.denseGrid} ${chooserStyles.mediumDenseGrid}`
+          : `${chooserStyles.denseGrid} ${chooserStyles.largeDenseGrid}`;
 
   function toggleItem(itemKey: string) {
     setSelectedItemKeys((current) => {
@@ -105,7 +105,10 @@ export function GeneratedCollectionReview({
                   disabled={isSaving}
                 />
 
-                <Poster item={item} className={chooserStyles.poster} />
+                <Poster
+                  item={item}
+                  className={chooserStyles.poster}
+                />
 
                 <span className={chooserStyles.itemCopy}>
                   <strong title={item.name}>{item.name}</strong>
@@ -120,7 +123,10 @@ export function GeneratedCollectionReview({
       {error && <p className={styles.error}>{error}</p>}
 
       <div className={chooserStyles.footer}>
-        <Button onClick={onBack} disabled={isSaving}>
+        <Button
+          onClick={onBack}
+          disabled={isSaving}
+        >
           Change Request
         </Button>
         <Button
