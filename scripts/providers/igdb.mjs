@@ -509,6 +509,63 @@ export function createIgdbProvider({
     return games[0] ?? null;
   }
 
+  async function getGamesGlobal({
+    limit = 100,
+    sort = 'popular',
+    gameTypes = CORE_IGDB_GAME_TYPES,
+  } = {}) {
+    const normalizedLimit = normalizeLimit(limit, 100);
+    const normalizedSort = normalizeGameSort(sort);
+    const normalizedGameTypes = normalizeIgdbGameTypes(gameTypes);
+    const pageSize = Math.min(
+      MAX_QUERY_LIMIT,
+      Math.max(100, normalizedLimit * 4),
+    );
+    const uniqueGames = new Map();
+
+    for (
+      let offset = 0;
+      offset < MAX_RELATION_GAME_ROWS;
+      offset += pageSize
+    ) {
+      const games = await request(
+        'games',
+        [
+          `fields ${GAME_FIELDS};`,
+          'where version_parent = null;',
+          `sort ${GAME_SORTS[normalizedSort]};`,
+          `limit ${pageSize};`,
+          ...(offset > 0 ? [`offset ${offset};`] : []),
+        ].join('\n'),
+      );
+
+      for (const game of games) {
+        if (
+          Number.isSafeInteger(game?.id) &&
+          isRankableIgdbGame(game, { gameTypes: normalizedGameTypes })
+        ) {
+          uniqueGames.set(game.id, game);
+        }
+      }
+
+      const rankableGames = sortGames(
+        [...uniqueGames.values()],
+        normalizedSort,
+      );
+
+      if (
+        rankableGames.length >= normalizedLimit ||
+        games.length < pageSize
+      ) {
+        return rankableGames.slice(0, normalizedLimit);
+      }
+    }
+
+    throw new Error(
+      `IGDB global game lookup exceeded ${MAX_RELATION_GAME_ROWS} records; refusing to return a potentially incomplete candidate pool.`,
+    );
+  }
+
   async function getGamesByRelation({
     relation,
     id,
@@ -809,6 +866,7 @@ export function createIgdbProvider({
     getCompanyById,
     getGamesByIds,
     getGameById,
+    getGamesGlobal,
     getGamesByRelation,
     getGamesByParentGameId,
     getGamesByFranchiseId,

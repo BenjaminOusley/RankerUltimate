@@ -184,7 +184,7 @@ function parseRelationHint(text) {
     return 'tag';
   }
 
-  if (/\b(?:series|saga)\b/u.test(normalized)) {
+  if (/\b(?:series|saga|trilogy)\b/u.test(normalized)) {
     return 'series';
   }
 
@@ -201,7 +201,10 @@ function parseTagTargetHint(text) {
     return 'books';
   }
 
-  if (/\bbook\s+series\b/u.test(normalized) || /\bseries\s+of\s+books\b/u.test(normalized)) {
+  if (
+    /\bbook\s+(?:series|trilogy)\b/u.test(normalized) ||
+    /\b(?:series|trilogy)\s+of\s+books\b/u.test(normalized)
+  ) {
     return 'series';
   }
 
@@ -211,7 +214,10 @@ function parseTagTargetHint(text) {
 function hasAuthorSeriesSyntax(text) {
   const normalized = normalizeHardcoverText(text);
 
-  return /\b(?:book\s+)?series\s+by\b/u.test(normalized) || /\bbook\s+series\b/u.test(normalized);
+  return (
+    /\b(?:book\s+)?(?:series|trilogy)\s+by\b/u.test(normalized) ||
+    /\bbook\s+(?:series|trilogy)\b/u.test(normalized)
+  );
 }
 
 function hasExplicitBookNoun(text) {
@@ -248,15 +254,15 @@ function cleanBookQuery(subject, requestText) {
   const tagTargetHint = parseTagTargetHint(combinedText);
   const preferExactSeries =
     relationHint === 'series' &&
-    /\bmain(?:\s+book)?\s+(?:series|saga)\b/u.test(normalizedCombinedText);
+    /\bmain(?:\s+book)?\s+(?:series|saga|trilogy)\b/u.test(normalizedCombinedText);
   let query = stripRequestedLimit(subject, requestedLimit);
 
   query = query
     .replace(/^(?:books?\s+)?(?:by|written\s+by|authored\s+by)\s+/iu, '')
-    .replace(/^(?:book\s+)?(?:series|saga)\s+by\s+/iu, '')
-    .replace(/\s+book\s+(?:series|saga)$/iu, '')
-    .replace(/^(?:the\s+)?(?:author|series|saga|genre|subject|mood|tag)\s+/iu, '')
-    .replace(/\s+(?:author|series|saga|genre|subject|mood|tag)$/iu, '')
+    .replace(/^(?:book\s+)?(?:series|saga|trilogy)\s+by\s+/iu, '')
+    .replace(/\s+book\s+(?:series|saga|trilogy)$/iu, '')
+    .replace(/^(?:the\s+)?(?:author|series|saga|trilogy|genre|subject|mood|tag)\s+/iu, '')
+    .replace(/\s+(?:author|series|saga|trilogy|genre|subject|mood|tag)$/iu, '')
     .replace(/\s+(?:individual|single)$/iu, '')
     .replace(/\s+main$/iu, '')
     .replace(
@@ -330,7 +336,7 @@ async function buildAmbiguousBookCategoryClarification(hardcover, category) {
   return {
     status: 'clarification',
     reason: 'ambiguous-entity',
-    question: `“${category.displayName}” is not a single standard Hardcover book genre. Which meaning do you want?`,
+    question: `"${category.displayName}" is not a single standard Hardcover book genre. Which meaning do you want?`,
     examples: availableOptions.map((option) => `${option.label} books`),
     matches: [],
   };
@@ -456,6 +462,8 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
 
   let matchingAuthors = [];
   let authorLookupAttempted = false;
+  let preloadedSeriesResults = null;
+  let exactNamedSeriesMatches = [];
 
   /*
    * Explicit author-shaped requests must resolve first-class Author entities
@@ -505,6 +513,27 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
     }
   }
 
+  /*
+   * First-class Series entities outrank same-name inferred tags. Hardcover can
+   * have community/category tags such as "Lord of the Rings" that otherwise
+   * hijack requests for the actual named series. Keep explicit taxonomy
+   * requests ("fantasy genre", "subject", etc.) on the tag path.
+   *
+   * We only preload here; if no tag collision exists, the normal series path
+   * below still decides whether broader related series should be offered.
+   */
+  const explicitTaxonomyRequest = relationHint === 'tag';
+  const shouldProbeNamedSeries =
+    !explicitTaxonomyRequest &&
+    (relationHint === 'series' || tagTargetHint !== null || explicitBookNoun);
+
+  if (shouldProbeNamedSeries) {
+    preloadedSeriesResults = await hardcover.searchSeries(query, 15);
+    exactNamedSeriesMatches = selectPlausibleSeriesMatches(query, preloadedSeriesResults, {
+      preferExactSeries: true,
+    });
+  }
+
   const shouldTryTags = !relationHint || relationHint === 'tag' || tagTargetHint !== null;
 
   if (shouldTryTags) {
@@ -546,6 +575,27 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
       ['genre', 'mood'].includes(tag.tag_category?.slug),
     );
     const explicitTagRequest = relationHint === 'tag';
+
+    if (strongCategoryMatch && !explicitTagRequest && exactNamedSeriesMatches.length > 0) {
+      for (const series of exactNamedSeriesMatches) {
+        plans.push(
+          createSeriesPlan({
+            query,
+            series,
+            limit: explicitLimit ?? defaultLimit,
+          }),
+        );
+      }
+
+      return {
+        plans: dedupePlans(plans),
+        query,
+        relationHint,
+        tagTargetHint,
+        requestedLimit,
+        unsupportedLimit: false,
+      };
+    }
 
     if (strongCategoryMatch || explicitTagRequest) {
       for (const tag of matchingTags) {
@@ -663,7 +713,8 @@ export async function findBookPlans({ hardcover, subject, requestText }) {
   }
 
   if (!relationHint || relationHint === 'series') {
-    const seriesResults = await hardcover.searchSeries(query, 15);
+    const seriesResults =
+      preloadedSeriesResults ?? (await hardcover.searchSeries(query, 15));
     const matchingSeries = selectPlausibleSeriesMatches(query, seriesResults, {
       preferExactSeries,
     });

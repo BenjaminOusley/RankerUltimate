@@ -36,9 +36,7 @@ function createFakeHardcover() {
         : [];
     },
     async searchAuthors(query) {
-      return query.toLowerCase() === 'stephen king'
-        ? [{ id: 154441, name: 'Stephen King' }]
-        : [];
+      return query.toLowerCase() === 'stephen king' ? [{ id: 154441, name: 'Stephen King' }] : [];
     },
   };
 }
@@ -199,7 +197,7 @@ describe('conversational book collection requests', () => {
 
     expect(planned).toMatchObject({
       status: 'clarification',
-      question: '“Drama” is not a single standard Hardcover book genre. Which meaning do you want?',
+      question: '"Drama" is not a single standard Hardcover book genre. Which meaning do you want?',
       examples: ['Literary Fiction books', 'Contemporary Fiction books', 'Plays books'],
     });
   });

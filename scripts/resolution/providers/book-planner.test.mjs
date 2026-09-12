@@ -43,7 +43,12 @@ describe('book collection planner', () => {
         parameters: expect.objectContaining({ limit: 50, sort: 'popular' }),
       }),
     ]);
-    expect(hardcover.searchSeries).not.toHaveBeenCalled();
+    /*
+     * Named Series are checked as a collision guard before trusting an inferred
+     * Hardcover tag. "Fantasy" still resolves to the genre because no matching
+     * first-class Series outranks it.
+     */
+    expect(hardcover.searchSeries).toHaveBeenCalledWith('fantasy', 15);
     expect(hardcover.searchAuthors).not.toHaveBeenCalled();
   });
 
@@ -133,7 +138,7 @@ describe('book collection planner', () => {
     expect(result.clarification).toEqual({
       status: 'clarification',
       reason: 'ambiguous-entity',
-      question: '“Drama” is not a single standard Hardcover book genre. Which meaning do you want?',
+      question: '"Drama" is not a single standard Hardcover book genre. Which meaning do you want?',
       examples: ['Literary Fiction books', 'Contemporary Fiction books', 'Plays books'],
       matches: [],
     });
@@ -366,7 +371,12 @@ describe('book collection planner', () => {
       resolvedId: 154441,
       resolvedName: 'Stephen King',
     });
-    expect(hardcover.searchSeries).not.toHaveBeenCalled();
+    /*
+     * The Series lookup is intentional here: the planner sees the competing
+     * first-class Series entity but still gives the exact Author the correct
+     * precedence for a plain books request.
+     */
+    expect(hardcover.searchSeries).toHaveBeenCalledWith('Stephen King', 15);
   });
 
   it('prefers author-series intent over a same-name Series entity when the phrase names an author', async () => {

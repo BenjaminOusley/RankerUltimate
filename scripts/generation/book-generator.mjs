@@ -333,13 +333,76 @@ function validateRequest(request) {
   };
 }
 
-function selectPrimarySeriesBooks(series, limit) {
+function compareSeriesCandidateQuality(left, right) {
+  const rootDifference = Number(right.rootRelationship) - Number(left.rootRelationship);
+
+  if (rootDifference !== 0) {
+    return rootDifference;
+  }
+
+  const exactPositionDifference =
+    Number(right.exactPositionRelationship) - Number(left.exactPositionRelationship);
+
+  if (exactPositionDifference !== 0) {
+    return exactPositionDifference;
+  }
+
+  const featuredDifference = Number(right.featured) - Number(left.featured);
+
+  if (featuredDifference !== 0) {
+    return featuredDifference;
+  }
+
+  return compareBookQuality(left.book, right.book);
+}
+
+async function resolveSeriesPrimaryCount(hardcover, series) {
+  const detailedCount = Number(series?.primary_books_count ?? 0);
+  const normalizedDetailedCount =
+    Number.isInteger(detailedCount) && detailedCount > 0 ? detailedCount : null;
+
+  if (
+    typeof hardcover?.searchSeries !== 'function' ||
+    typeof series?.name !== 'string' ||
+    !series.name.trim()
+  ) {
+    return normalizedDetailedCount;
+  }
+
+  try {
+    const seriesId = Number(series.id);
+    const searchResults = await hardcover.searchSeries(series.name, 15);
+    const directMatch = searchResults.find((candidate) => Number(candidate?.id) === seriesId);
+    const canonicalMatch = searchResults.find(
+      (candidate) => Number(candidate?.canonical_id) === seriesId,
+    );
+    const summary = directMatch ?? canonicalMatch ?? null;
+    const searchedCount = Number(summary?.primary_books_count ?? 0);
+    const normalizedSearchedCount =
+      Number.isInteger(searchedCount) && searchedCount > 0 ? searchedCount : null;
+
+    if (normalizedDetailedCount && normalizedSearchedCount) {
+      return Math.min(normalizedDetailedCount, normalizedSearchedCount);
+    }
+
+    return normalizedSearchedCount ?? normalizedDetailedCount;
+  } catch {
+    // Series search is a consistency check. Detailed series data is still usable
+    // when the supplementary search request is unavailable.
+    return normalizedDetailedCount;
+  }
+}
+
+function selectPrimarySeriesBooks(series, limit, expectedPrimaryCount = null) {
   const rows = Array.isArray(series?.book_series) ? series.book_series : [];
-  const primaryCount = Number(series?.primary_books_count ?? 0);
-  const targetCount = Math.min(
-    limit,
-    Number.isInteger(primaryCount) && primaryCount > 0 ? primaryCount : limit,
-  );
+  const detailedPrimaryCount = Number(series?.primary_books_count ?? 0);
+  const primaryCount =
+    Number.isInteger(expectedPrimaryCount) && expectedPrimaryCount > 0
+      ? expectedPrimaryCount
+      : Number.isInteger(detailedPrimaryCount) && detailedPrimaryCount > 0
+        ? detailedPrimaryCount
+        : null;
+  const targetCount = Math.min(limit, primaryCount ?? limit);
   const positions = new Map();
 
   for (const relationship of rows) {
@@ -355,8 +418,17 @@ function selectPrimarySeriesBooks(series, limit) {
       continue;
     }
 
+    const details =
+      typeof relationship?.details === 'string'
+        ? relationship.details.trim()
+        : '';
     const candidates = positions.get(position) ?? [];
-    candidates.push(book);
+    candidates.push({
+      book,
+      rootRelationship: relationship.book?.canonical_id == null,
+      exactPositionRelationship: !details || details === String(position),
+      featured: relationship?.featured === true,
+    });
     positions.set(position, candidates);
   }
 
@@ -369,23 +441,64 @@ function selectPrimarySeriesBooks(series, limit) {
     const candidatesByConcept = new Map();
 
     for (const candidate of rawCandidates) {
-      const existing = candidatesByConcept.get(candidate.id);
+      const existing = candidatesByConcept.get(candidate.book.id);
 
-      if (!existing || compareBookQuality(candidate, existing) < 0) {
-        candidatesByConcept.set(candidate.id, candidate);
+      if (!existing || compareSeriesCandidateQuality(candidate, existing) < 0) {
+        candidatesByConcept.set(candidate.book.id, candidate);
       }
     }
 
-    const candidates = [...candidatesByConcept.values()].sort(compareBookQuality);
-    const chosen = candidates.find((candidate) => !seenConcepts.has(candidate.id));
+    const candidates = [...candidatesByConcept.values()];
+    const usable = candidates.filter(
+      (candidate) => !candidate.book.compilation && !candidate.book.is_partial_book,
+    );
+    const candidatePools = [
+      usable.filter(
+        (candidate) =>
+          candidate.rootRelationship &&
+          candidate.exactPositionRelationship &&
+          candidate.featured,
+      ),
+      usable.filter(
+        (candidate) =>
+          candidate.rootRelationship &&
+          candidate.exactPositionRelationship,
+      ),
+      usable.filter((candidate) => candidate.rootRelationship),
+      usable.filter(
+        (candidate) =>
+          !candidate.rootRelationship &&
+          candidate.exactPositionRelationship,
+      ),
+      usable.filter((candidate) => !candidate.rootRelationship),
+      candidates.filter(
+        (candidate) =>
+          candidate.rootRelationship &&
+          candidate.exactPositionRelationship,
+      ),
+      candidates.filter((candidate) => candidate.rootRelationship),
+      candidates.filter((candidate) => !candidate.rootRelationship),
+    ];
+
+    let chosen = null;
+
+    for (const pool of candidatePools) {
+      chosen = pool
+        .sort(compareSeriesCandidateQuality)
+        .find((candidate) => !seenConcepts.has(candidate.book.id));
+
+      if (chosen) {
+        break;
+      }
+    }
 
     if (!chosen) {
       continue;
     }
 
-    seenConcepts.add(chosen.id);
+    seenConcepts.add(chosen.book.id);
     selected.push({
-      ...chosen,
+      ...chosen.book,
       seriesPosition: position,
     });
 
@@ -596,7 +709,9 @@ function isPrimaryAuthorSeriesRelationship(series, relationship) {
 
 async function loadAuthorSeries(hardcover, request) {
   if (typeof hardcover.getAuthorSeriesContributionsPage !== 'function') {
-    throw new Error('Hardcover author-series contribution lookup is not configured.');
+    throw new Error(
+      'Hardcover author-series contribution lookup is not configured.',
+    );
   }
 
   const seriesById = new Map();
@@ -607,7 +722,11 @@ async function loadAuthorSeries(hardcover, request) {
    * Work's series memberships. Load them together so we do not need a second
    * request for every small batch of authored book IDs.
    */
-  for (let pageIndex = 0; pageIndex < MAX_AUTHOR_PAGES; pageIndex += 1) {
+  for (
+    let pageIndex = 0;
+    pageIndex < MAX_AUTHOR_PAGES;
+    pageIndex += 1
+  ) {
     const offset = pageIndex * AUTHOR_PAGE_SIZE;
 
     const page = await hardcover.getAuthorSeriesContributionsPage({
@@ -620,11 +739,14 @@ async function loadAuthorSeries(hardcover, request) {
       resolvedAuthor = page.author.canonical ?? page.author;
     }
 
-    const contributions = Array.isArray(page?.contributions) ? page.contributions : [];
+    const contributions = Array.isArray(page?.contributions)
+      ? page.contributions
+      : [];
 
     for (const contribution of contributions) {
       if (
-        contribution?.contributor_role?.contributor_role_category_id !== AUTHORSHIP_ROLE_CATEGORY_ID
+        contribution?.contributor_role?.contributor_role_category_id !==
+        AUTHORSHIP_ROLE_CATEGORY_ID
       ) {
         continue;
       }
@@ -649,7 +771,9 @@ async function loadAuthorSeries(hardcover, request) {
         continue;
       }
 
-      const relationships = Array.isArray(rootBook.book_series) ? rootBook.book_series : [];
+      const relationships = Array.isArray(rootBook.book_series)
+        ? rootBook.book_series
+        : [];
 
       for (const relationship of relationships) {
         const series = normalizeAuthorSeriesRelationship(relationship);
@@ -677,11 +801,19 @@ async function loadAuthorSeries(hardcover, request) {
           continue;
         }
 
-        if (book.is_partial_book || book.compilation || relationship?.compilation === true) {
+        if (
+          book.is_partial_book ||
+          book.compilation ||
+          relationship?.compilation === true
+        ) {
           continue;
         }
 
-        addAuthorSeriesCandidate(seriesById, series, book);
+        addAuthorSeriesCandidate(
+          seriesById,
+          series,
+          book,
+        );
       }
     }
 
@@ -703,38 +835,48 @@ async function loadAuthorSeries(hardcover, request) {
    * evidence level rather than imposing one global popularity requirement.
    */
   const strongestPeakReaders = candidates.reduce(
-    (maximum, entry) => Math.max(maximum, entry.peakReaders),
+    (maximum, entry) =>
+      Math.max(maximum, entry.peakReaders),
     0,
   );
 
   const readerNoiseFloor = Math.min(
     AUTHOR_SERIES_MAX_READER_NOISE_FLOOR,
-    strongestPeakReaders * AUTHOR_SERIES_READER_NOISE_RATIO,
+    strongestPeakReaders *
+      AUTHOR_SERIES_READER_NOISE_RATIO,
   );
 
   const series = candidates
-    .filter((entry) => entry.peakReaders >= readerNoiseFloor)
+    .filter(
+      (entry) =>
+        entry.peakReaders >= readerNoiseFloor,
+    )
     .sort(
       (left, right) =>
         right.peakReaders - left.peakReaders ||
         right.totalReaders - left.totalReaders ||
         right.matchedBooks - left.matchedBooks ||
-        Number(right.primary_books_count ?? 0) - Number(left.primary_books_count ?? 0) ||
+        Number(right.primary_books_count ?? 0) -
+          Number(left.primary_books_count ?? 0) ||
         right.totalRatings - left.totalRatings ||
         left.name.localeCompare(right.name),
     )
     .slice(0, request.limit)
     .map((entry) => {
-      const { matchedConceptIds: _matchedConceptIds, ...seriesEntry } = entry;
+      const {
+        matchedConceptIds: _matchedConceptIds,
+        ...seriesEntry
+      } = entry;
 
       return seriesEntry;
     });
 
   return {
-    author: resolvedAuthor ?? {
-      id: request.hardcoverId,
-      name: request.resolvedName,
-    },
+    author:
+      resolvedAuthor ?? {
+        id: request.hardcoverId,
+        name: request.resolvedName,
+      },
     series,
     candidateCount: candidates.length,
   };
@@ -1610,14 +1752,42 @@ export async function generateBookCollection({ request, hardcover, logger = cons
   const normalizedRequest = validateRequest(request);
 
   if (normalizedRequest.mode === 'series') {
-    const rawSeries = await hardcover.getSeriesById(normalizedRequest.hardcoverId);
+    const requestedSeries = await hardcover.getSeriesById(normalizedRequest.hardcoverId);
 
-    if (!rawSeries) {
+    if (!requestedSeries) {
       throw new Error(`Hardcover series ${normalizedRequest.hardcoverId} was not found.`);
     }
 
-    const series = rawSeries.canonical ?? rawSeries;
-    const books = selectPrimarySeriesBooks(rawSeries, normalizedRequest.limit);
+    /*
+     * Search can resolve a non-canonical Series alias whose own membership rows
+     * contain translations, box sets, or other edition groupings. When that
+     * happens, reload the canonical Series itself and select books from its
+     * authoritative membership rows rather than the alias rows.
+     */
+    const canonicalSeriesId = Number(
+      requestedSeries.canonical_id ?? requestedSeries.canonical?.id ?? 0,
+    );
+    let membershipSeries = requestedSeries;
+
+    if (
+      Number.isSafeInteger(canonicalSeriesId) &&
+      canonicalSeriesId > 0 &&
+      canonicalSeriesId !== Number(requestedSeries.id)
+    ) {
+      const canonicalSeries = await hardcover.getSeriesById(canonicalSeriesId);
+
+      if (canonicalSeries) {
+        membershipSeries = canonicalSeries;
+      }
+    }
+
+    const series = membershipSeries.canonical ?? membershipSeries;
+    const expectedPrimaryCount = await resolveSeriesPrimaryCount(hardcover, membershipSeries);
+    const books = selectPrimarySeriesBooks(
+      membershipSeries,
+      normalizedRequest.limit,
+      expectedPrimaryCount,
+    );
 
     if (books.length === 0) {
       throw new Error(`No primary books were found for ${series.name}.`);

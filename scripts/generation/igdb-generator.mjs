@@ -9,7 +9,7 @@ import {
 } from '../providers/igdb.mjs';
 
 const MAX_IGDB_COLLECTION_LIMIT = 500;
-const MODES = new Set(['genre', 'franchise', 'platform', 'company', 'parent-game']);
+const MODES = new Set(['global', 'genre', 'franchise', 'platform', 'company', 'parent-game']);
 const SORTS = new Set(['popular', 'rating', 'release-asc', 'release-desc', 'name']);
 
 function isObject(value) {
@@ -40,7 +40,9 @@ function validateRequest(request) {
     throw new Error('IGDB collection ID must be a lowercase slug.');
   }
 
-  if (!Number.isSafeInteger(request.igdbId) || request.igdbId < 1) {
+  const igdbId = request.mode === 'global' ? null : request.igdbId;
+
+  if (request.mode !== 'global' && (!Number.isSafeInteger(igdbId) || igdbId < 1)) {
     throw new Error('IGDB generation requires a resolved positive IGDB ID.');
   }
 
@@ -62,7 +64,7 @@ function validateRequest(request) {
     mode: request.mode,
     query,
     collectionId,
-    igdbId: request.igdbId,
+    igdbId,
     limit,
     sort,
     gameTypes,
@@ -70,6 +72,13 @@ function validateRequest(request) {
 }
 
 async function loadResolvedEntity(igdb, request) {
+  if (request.mode === 'global') {
+    return {
+      id: null,
+      name: 'All-Time',
+    };
+  }
+
   if (request.mode === 'genre') {
     return igdb.getGenreById(request.igdbId);
   }
@@ -90,6 +99,14 @@ async function loadResolvedEntity(igdb, request) {
 }
 
 async function loadGames(igdb, request) {
+  if (request.mode === 'global') {
+    return igdb.getGamesGlobal({
+      limit: request.limit,
+      sort: request.sort,
+      gameTypes: request.gameTypes,
+    });
+  }
+
   if (request.mode === 'genre') {
     return igdb.getGamesByRelation({
       relation: 'genres',
@@ -173,7 +190,11 @@ function createCollection(request, resolvedEntity, items) {
 
   let description;
 
-  if (request.mode === 'parent-game') {
+  if (request.mode === 'global') {
+    description = contentScoped
+      ? `Popular ${contentLabel.toLowerCase()} from IGDB.`
+      : 'Popular games from IGDB.';
+  } else if (request.mode === 'parent-game') {
     description = `${contentLabel} for ${entityName}.`;
   } else if (request.mode === 'genre') {
     description = contentScoped
@@ -230,7 +251,11 @@ export async function generateIgdbCollection({ request, igdb, logger = console }
     throw new Error(`IGDB ${normalizedRequest.mode} ${normalizedRequest.igdbId} was not found.`);
   }
 
-  logger.log(`âœ“ ${normalizedRequest.mode}: ${resolvedEntity.name} [IGDB ${resolvedEntity.id}]`);
+  logger.log(
+    normalizedRequest.mode === 'global'
+      ? `Global IGDB games: ${resolvedEntity.name}`
+      : `Resolved ${normalizedRequest.mode}: ${resolvedEntity.name} [IGDB ${resolvedEntity.id}]`,
+  );
 
   const games = await loadGames(igdb, normalizedRequest);
   const uniqueGames = [...new Map(games.map((game) => [game.id, game])).values()];

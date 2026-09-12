@@ -21,6 +21,12 @@ const OPTIONAL_IGDB_GAME_TYPES = Object.freeze([
 const GAME_CONTENT_LIST_PATTERN =
   '(?:dlcs?|expansions?|seasons?)(?:\\s*(?:,|and|or|\\/|&)\\s*(?:dlcs?|expansions?|seasons?))*';
 
+const GAME_GENRE_ALIASES = new Map([
+  ['platformer', 'platform'],
+  ['platformers', 'platform'],
+]);
+
+
 function normalizeWhitespace(value) {
   return value.replace(/\s+/gu, ' ').trim();
 }
@@ -45,6 +51,47 @@ function simpleSingular(value) {
 
 function uniqueQueries(values) {
   return [...new Set(values.map((value) => normalizeWhitespace(value)).filter(Boolean))];
+}
+
+function canonicalGameGenreQuery(value) {
+  const normalized = normalizeComparable(value);
+
+  return GAME_GENRE_ALIASES.get(normalized) ?? normalized;
+}
+
+function stripGameRankingScopeModifiers(value) {
+  return normalizeWhitespace(
+    String(value ?? '').replace(
+      /(?:^|\s)(?:of\s+all\s+time|all\s+time|ever|overall)$/iu,
+      '',
+    ),
+  );
+}
+
+function isGlobalGameQuery(query, requestText, relationHint) {
+  if (relationHint) {
+    return false;
+  }
+
+  const normalizedRequest = normalizeComparable(requestText);
+
+  if (!/\bgames?\b/u.test(normalizedRequest)) {
+    return false;
+  }
+
+  /*
+   * Global ranking language is only global when no meaningful subject remains.
+   * For example, "top 200 games all time" has no subject, while
+   * "top 200 platformer games all time" must still resolve Platform as a genre.
+   */
+  const residualQuery = normalizeComparable(query)
+    .replace(/^(?:(?:top|best)\s+\d{1,4}\s*)+/u, '')
+    .replace(/\b(?:of\s+all\s+time|all\s+time|ever|overall)\b/gu, ' ')
+    .replace(/\bgames?\b/gu, ' ')
+    .replace(/\s+/gu, ' ')
+    .trim();
+
+  return residualQuery.length === 0;
 }
 
 function entityNameStartsWith(query, candidate) {
@@ -140,7 +187,7 @@ function getGameContentScopeLabel(gameTypes) {
   );
   const hasSeason = SEASON_IGDB_GAME_TYPES.some((gameType) => selected.has(gameType));
 
-  // In normal game language, â€œDLCâ€ is an umbrella term that also includes
+  // In normal game language, "DLC" is an umbrella term that also includes
   // downloadable expansions. Keep the provider taxonomy explicit in gameTypes,
   // but keep clarification copy aligned with the user's terminology.
   if (hasDlcAddon && !hasSeason) {
@@ -333,7 +380,7 @@ function parseRelationHint(text, mediaType) {
 function cleanPlanningQuery(subject, requestText, mediaType) {
   let query = normalizeWhitespace(subject);
   const combinedText = `${requestText} ${subject}`;
-  const relationHint = parseRelationHint(combinedText, mediaType);
+  let relationHint = parseRelationHint(combinedText, mediaType);
   const requestedLimit = parseRequestedLimit(combinedText, mediaType);
   const gameTypes = mediaType === 'game' ? parseGameContentScope(combinedText) : null;
 
@@ -341,7 +388,27 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
 
   if (mediaType === 'game') {
     query = stripGameContentScopeModifiers(query);
+    query = stripGameRankingScopeModifiers(query);
+
+    /*
+     * IGDB calls the platformer genre "Platform". In natural language,
+     * "platform games" means that genre when Platform is the entire cleaned
+     * subject. Keep phrases such as "PlayStation 2 platform" on the actual
+     * platform-entity path.
+     */
+    if (
+      relationHint === 'platform' &&
+      /\bplatform\s+games?\b/iu.test(requestText) &&
+      normalizeComparable(query) === 'platform'
+    ) {
+      relationHint = 'genre';
+    }
   }
+
+  const gameGenreFallback =
+    mediaType === 'game' && relationHint === 'genre'
+      ? canonicalGameGenreQuery(query)
+      : null;
 
   query = query
     .replace(
@@ -362,10 +429,11 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
 
   if (mediaType === 'game') {
     query = stripGameContentScopeModifiers(query);
+    query = stripGameRankingScopeModifiers(query);
   }
 
   return {
-    query: query || normalizeWhitespace(subject),
+    query: query || gameGenreFallback || normalizeWhitespace(subject),
     relationHint,
     sort: parseSortHint(combinedText, mediaType),
     requestedLimit,
@@ -455,6 +523,18 @@ function createIgdbPlan({ mode, query, entity, sort, limit, gameTypes }) {
     resolvedId: entity.id,
     resolvedName: entity.name,
     ...(resolvedYear ? { resolvedYear } : {}),
+    parameters: createIgdbParameters(sort, limit, gameTypes),
+  };
+}
+
+function createGlobalIgdbPlan({ query, sort, limit, gameTypes }) {
+  return {
+    provider: 'igdb',
+    mediaType: 'game',
+    mode: 'global',
+    query,
+    resolvedId: null,
+    resolvedName: 'All-Time',
     parameters: createIgdbParameters(sort, limit, gameTypes),
   };
 }
@@ -573,7 +653,7 @@ function clarificationForMatches({ subject, mediaType, matches }) {
   return {
     status: 'clarification',
     reason: 'ambiguous-entity',
-    question: `I found more than one plausible ${mediaLabel} match for â€œ${subject}â€. Please clarify what you mean in your own words.`,
+    question: `I found more than one plausible ${mediaLabel} match for "${subject}". Please clarify what you mean in your own words.`,
     examples,
     matches,
   };
@@ -584,7 +664,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
     return {
       status: 'clarification',
       reason: 'unresolved-entity',
-      question: `I couldn't safely map â€œ${subject}â€ to one IGDB game title, genre, franchise, platform, or company. Please make the request more specific â€” for example, â€œ${subject} franchiseâ€ or name the exact game/platform/company you mean.`,
+      question: `I couldn't safely map "${subject}" to one IGDB game title, genre, franchise, platform, or company. Please make the request more specific - for example, "${subject} franchise" or name the exact game/platform/company you mean.`,
       examples: [`${subject} franchise`, `${subject} genre`, `${subject} platform`],
       matches: [],
     };
@@ -594,7 +674,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
     return {
       status: 'clarification',
       reason: 'unresolved-entity',
-      question: `I couldn't safely map â€œ${subject}â€ to a Hardcover book series, author, or genre/subject tag. Please make the request more specific.`,
+      question: `I couldn't safely map "${subject}" to a Hardcover book series, author, or genre/subject tag. Please make the request more specific.`,
       examples: [`${subject} book series`, `books by ${subject}`, `${subject} books`],
       matches: [],
     };
@@ -605,7 +685,7 @@ function clarificationForNoMatch({ subject, mediaType }) {
   return {
     status: 'clarification',
     reason: 'unresolved-entity',
-    question: `I couldn't safely map â€œ${subject}â€ to a supported ${mediaLabel} genre, company, or person yet. Please make the request more specific.`,
+    question: `I couldn't safely map "${subject}" to a supported ${mediaLabel} genre, company, or person yet. Please make the request more specific.`,
     examples:
       mediaType === 'movie'
         ? [`${subject} genre`, `${subject} studio`, `movies starring ${subject}`]
@@ -626,7 +706,7 @@ function clarificationForCompanyPlatformBrand({
   return {
     status: 'clarification',
     reason: 'ambiguous-entity',
-    question: `I found â€œ${subject}â€ as a game company, but it also matches a family of game platforms. Do you mean games associated with ${companyPlan.resolvedName} the company, or games from a specific platform?`,
+    question: `I found "${subject}" as a game company, but it also matches a family of game platforms. Do you mean games associated with ${companyPlan.resolvedName} the company, or games from a specific platform?`,
     examples: [`${companyPlan.resolvedName} company`, ...platformExamples],
     matches: [toPlanningMatch(companyPlan), ...platformPlans.map(toPlanningMatch)],
   };
@@ -744,6 +824,22 @@ async function findGamePlans({ igdb, subject, requestText }) {
     };
   }
 
+  if (isGlobalGameQuery(query, requestText, relationHint)) {
+    return {
+      plans: [
+        createGlobalIgdbPlan({
+          query: 'all time',
+          sort,
+          limit,
+          gameTypes,
+        }),
+      ],
+      relatedPlatformPlans: [],
+      relationHint,
+      limitClarification: null,
+    };
+  }
+
   if (!relationHint && isExclusiveGameContentScope(gameTypes)) {
     const parentGamePlans = await findExactParentGamePlans({
       igdb,
@@ -770,9 +866,14 @@ async function findGamePlans({ igdb, subject, requestText }) {
   const relatedPlatformPlans = [];
 
   for (const mode of modes) {
+    const genreQuery = canonicalGameGenreQuery(query);
     const searchQueries =
       mode === 'genre'
-        ? uniqueQueries([query, simpleSingular(normalizeComparable(query))])
+        ? uniqueQueries([
+            query,
+            genreQuery,
+            simpleSingular(normalizeComparable(query)),
+          ])
         : [query];
 
     const matchesById = new Map();
@@ -792,9 +893,13 @@ async function findGamePlans({ igdb, subject, requestText }) {
 
     for (const match of matchesById.values()) {
       if (
-        entityNamesMatch(query, match.name, {
-          allowSimplePlural: mode === 'genre',
-        })
+        entityNamesMatch(
+          mode === 'genre' ? genreQuery : query,
+          match.name,
+          {
+            allowSimplePlural: mode === 'genre',
+          },
+        )
       ) {
         exactPlans.push(
           createIgdbPlan({

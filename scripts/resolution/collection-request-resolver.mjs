@@ -49,6 +49,10 @@ function isRelationOnlyClarification(value) {
   return RELATION_ONLY_PATTERN.test(normalizeWhitespace(value));
 }
 
+function isBookTargetOnlyClarification(value) {
+  return /^(?:individual|single|series|trilogy)$/iu.test(normalizeWhitespace(value));
+}
+
 function uniqueMediaTypes(mediaTypes) {
   return SUPPORTED_MEDIA_TYPES.filter((mediaType) => mediaTypes.includes(mediaType));
 }
@@ -126,7 +130,7 @@ function subjectClarification(mediaTypes) {
   if (mediaTypes.length === 1 && mediaTypes[0] === 'game') {
     return {
       question:
-        'Which games do you want to rank? You can answer however you want — for example, shooters, a specific game series, games from a platform or company, or the most popular games.',
+        'Which games do you want to rank? You can answer however you want - for example, shooters, a specific game series, games from a platform or company, or the most popular games.',
       examples: ['shooters', 'Halo games', 'PlayStation 2 games', 'Nintendo games'],
     };
   }
@@ -167,7 +171,7 @@ function subjectClarification(mediaTypes) {
 }
 
 function mediaClarification(subject) {
-  const subjectPhrase = subject ? ` from “${subject}”` : '';
+  const subjectPhrase = subject ? ` from "${subject}"` : '';
 
   return {
     question: `What kind of things do you want to rank${subjectPhrase}? For example: movies, TV shows, games, books, or a combination.`,
@@ -219,20 +223,33 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
   let subject = extractedSubject || previousContext.subject;
   let requestText = normalizedText;
 
-  if (
-    extractedSubject &&
-    previousContext.subject &&
-    detectedMediaTypes.length === 0 &&
-    previousContext.mediaTypes.length > 0
-  ) {
-    if (isRelationOnlyClarification(extractedSubject)) {
-      // Planner clarifications such as "the company" or "franchise" describe
-      // the relationship of the existing subject rather than replacing it.
+  if (previousContext.subject) {
+    const relationOnly = extractedSubject && isRelationOnlyClarification(extractedSubject);
+    const bookTargetOnly =
+      mediaTypes.length === 1 &&
+      mediaTypes[0] === 'book' &&
+      extractedSubject &&
+      isBookTargetOnlyClarification(extractedSubject);
+
+    if (!extractedSubject && detectedMediaTypes.length > 0) {
+      // A media-only clarification such as "books" keeps the prior subject and
+      // rebuilds the full request text so the planner still sees both pieces.
       subject = previousContext.subject;
       requestText = `${previousContext.subject} ${normalizedText}`;
-    } else {
-      // When the user is answering a "which <media>?" question, their new answer is the
-      // useful subject/constraint and should replace the earlier broad wording.
+    } else if (relationOnly || bookTargetOnly) {
+      // Planner clarifications such as "series", "individual books", "the
+      // company", or "franchise" describe the relationship of the existing
+      // subject rather than replacing it.
+      subject = previousContext.subject;
+      requestText = `${previousContext.subject} ${normalizedText}`;
+    } else if (
+      extractedSubject &&
+      detectedMediaTypes.length === 0 &&
+      previousContext.mediaTypes.length > 0
+    ) {
+      // When the user is answering a "which <media>?" question, their new
+      // answer is the useful subject/constraint and should replace the earlier
+      // broad wording.
       subject = extractedSubject;
     }
   }
@@ -250,6 +267,28 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
       result: {
         status: 'clarification',
         ...clarification,
+        context: nextContext,
+      },
+    };
+  }
+
+  if (
+    previousContext.subject &&
+    previousContext.mediaTypes.length === 0 &&
+    detectedMediaTypes.length === 1 &&
+    detectedMediaTypes[0] === 'book' &&
+    !extractedSubject
+  ) {
+    return {
+      ok: true,
+      result: {
+        status: 'clarification',
+        reason: 'ambiguous-book-target',
+        question: `Do you want individual ${previousContext.subject} books, or ${previousContext.subject} book series?`,
+        examples: [
+          `${previousContext.subject} individual books`,
+          `${previousContext.subject} book series`,
+        ],
         context: nextContext,
       },
     };

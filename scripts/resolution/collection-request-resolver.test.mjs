@@ -47,7 +47,7 @@ describe('collection request resolver foundation', () => {
       ok: true,
       result: {
         status: 'ready-for-planning',
-        requestText: 'movies and TV shows',
+        requestText: 'MCU movies and TV shows',
         subject: 'MCU',
         mediaTypes: ['movie', 'tv'],
         context: {
@@ -136,6 +136,64 @@ describe('collection request resolver foundation', () => {
           subject: 'Halo',
           mediaTypes: ['game'],
         },
+      },
+    });
+  });
+
+
+
+  it('clarifies individual books versus book series after a media-only books answer', () => {
+    const first = resolveCollectionRequestTurn({ text: 'lord of the rings' });
+    const second = resolveCollectionRequestTurn({
+      text: 'books',
+      context: first.result.context,
+    });
+
+    expect(second).toEqual({
+      ok: true,
+      result: {
+        status: 'clarification',
+        reason: 'ambiguous-book-target',
+        question:
+          'Do you want individual lord of the rings books, or lord of the rings book series?',
+        examples: [
+          'lord of the rings individual books',
+          'lord of the rings book series',
+        ],
+        context: {
+          subject: 'lord of the rings',
+          mediaTypes: ['book'],
+        },
+      },
+    });
+
+    const series = resolveCollectionRequestTurn({
+      text: 'series',
+      context: second.result.context,
+    });
+
+    expect(series).toMatchObject({
+      ok: true,
+      result: {
+        status: 'ready-for-planning',
+        requestText: 'lord of the rings series',
+        subject: 'lord of the rings',
+        mediaTypes: ['book'],
+      },
+    });
+
+    const individual = resolveCollectionRequestTurn({
+      text: 'individual books',
+      context: second.result.context,
+    });
+
+    expect(individual).toMatchObject({
+      ok: true,
+      result: {
+        status: 'ready-for-planning',
+        requestText: 'lord of the rings individual books',
+        subject: 'lord of the rings',
+        mediaTypes: ['book'],
       },
     });
   });
