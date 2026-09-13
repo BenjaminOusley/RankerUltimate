@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 
 import { AppShell } from '@/app/AppShell';
 import type { CollectionGroupId, RankCollection, RankItem } from '@/domain/models';
@@ -50,7 +56,9 @@ type CollectionsScreenProps = {
   onUpdate: (collection: RankCollection, itemsChanged: boolean) => void;
   onRefreshSource: (collectionId: string) => Promise<void>;
   onMoveToGroup: (collectionId: string, groupId: CollectionGroupId) => void;
+  onMoveManyToGroup: (collectionIds: readonly string[], groupId: CollectionGroupId) => void;
   onDelete: (collectionId: string) => void;
+  onDeleteMany: (collectionIds: readonly string[]) => void;
 };
 
 export function CollectionsScreen({
@@ -62,7 +70,9 @@ export function CollectionsScreen({
   onUpdate,
   onRefreshSource,
   onMoveToGroup,
+  onMoveManyToGroup,
   onDelete,
+  onDeleteMany,
 }: CollectionsScreenProps) {
   const [sort, setSort] = useState<CollectionSort>('nameAsc');
   const [search, setSearch] = useState('');
@@ -79,8 +89,15 @@ export function CollectionsScreen({
   const [dragOverGroupId, setDragOverGroupId] = useState<CollectionGroupId | null>(null);
   const [deleteDropActive, setDeleteDropActive] = useState(false);
   const [dragPointer, setDragPointer] = useState<{ x: number; y: number } | null>(null);
+  const [dragScrollDirection, setDragScrollDirection] = useState<'up' | 'down' | null>(null);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState<Set<string>>(() => new Set());
+  const [bulkMoveOpen, setBulkMoveOpen] = useState(false);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [editor, setEditor] = useState<EditorState | null>(null);
   const groupsRef = useRef<HTMLDivElement>(null);
+  const topScrollZoneRef = useRef<HTMLDivElement>(null);
+  const bottomScrollZoneRef = useRef<HTMLDivElement>(null);
   const deleteDropRef = useRef<HTMLDivElement>(null);
   const dragCandidateRef = useRef<PointerDragCandidate | null>(null);
   const dragPointerRef = useRef<{ x: number; y: number } | null>(null);
@@ -144,12 +161,10 @@ export function CollectionsScreen({
     ? (collections.find((collection) => collection.id === previewCollectionId) ?? null)
     : null;
   const previewItems = useMemo(
-    () => previewTarget ? sortCollectionItemsForDisplay(previewTarget.items, previewSort) : [],
+    () => (previewTarget ? sortCollectionItemsForDisplay(previewTarget.items, previewSort) : []),
     [previewTarget, previewSort],
   );
-  const previewSupportsDateSort = previewTarget
-    ? collectionSupportsDateSort(previewTarget)
-    : false;
+  const previewSupportsDateSort = previewTarget ? collectionSupportsDateSort(previewTarget) : false;
   const previewHasRequestedOrder = previewTarget
     ? collectionHasRequestedItemOrder(previewTarget)
     : false;
@@ -160,6 +175,24 @@ export function CollectionsScreen({
   const draggingPermissions = draggingCollection
     ? getCollectionPermissions(draggingCollection)
     : null;
+
+  const selectedCollections = collections.filter((collection) =>
+    selectedCollectionIds.has(collection.id),
+  );
+  const selectedCollectionIdList = selectedCollections.map((collection) => collection.id);
+  const selectedCount = selectedCollections.length;
+  const canBulkMove =
+    selectedCount > 0 &&
+    selectedCollections.every((collection) => getCollectionPermissions(collection).move);
+  const canBulkDelete =
+    selectedCount > 0 &&
+    selectedCollections.every((collection) => getCollectionPermissions(collection).delete);
+  const visibleSelectableCollectionIds = visibleCollections
+    .filter((collection) => {
+      const permissions = getCollectionPermissions(collection);
+      return permissions.move || permissions.delete;
+    })
+    .map((collection) => collection.id);
 
   const editorItemLibrary = editor?.collectionId
     ? getCandidateItems(editor.collectionId)
@@ -176,43 +209,69 @@ export function CollectionsScreen({
     const previousUserSelect = document.body.style.userSelect;
     document.body.style.userSelect = 'none';
 
+    function pointerInsideElement(element: HTMLElement | null, clientX: number, clientY: number) {
+      const bounds = element?.getBoundingClientRect();
+
+      return Boolean(
+        bounds &&
+        clientX >= bounds.left &&
+        clientX <= bounds.right &&
+        clientY >= bounds.top &&
+        clientY <= bounds.bottom,
+      );
+    }
+
+    function groupAtPointer(clientX: number, clientY: number): CollectionGroupId | null {
+      const element = document.elementFromPoint(clientX, clientY);
+      const groupElement = element?.closest<HTMLElement>('[data-collection-group-id]');
+      const groupId = groupElement?.dataset.collectionGroupId;
+
+      if (!groupId || !COLLECTION_GROUPS.some((group) => group.id === groupId)) {
+        return null;
+      }
+
+      return groupId as CollectionGroupId;
+    }
+
     function handleDragWheel(event: WheelEvent) {
       const container = groupsRef.current;
+      const pointer = dragPointerRef.current;
+      const collection = collections.find((item) => item.id === draggingCollectionId);
 
-      if (!container || event.deltaY === 0) {
+      if (!container || !pointer || !collection || event.deltaY === 0) {
         return;
       }
 
       event.preventDefault();
       container.scrollTop += event.deltaY;
 
-      const pointer = dragPointerRef.current;
+      const permissions = getCollectionPermissions(collection);
 
-      if (!pointer) {
+      const scrollDirection = pointerInsideElement(topScrollZoneRef.current, pointer.x, pointer.y)
+        ? 'up'
+        : pointerInsideElement(bottomScrollZoneRef.current, pointer.x, pointer.y)
+          ? 'down'
+          : null;
+
+      setDragScrollDirection(scrollDirection);
+
+      if (scrollDirection) {
+        setDeleteDropActive(false);
+        setDragOverGroupId(null);
         return;
       }
 
-      const deleteBounds = deleteDropRef.current?.getBoundingClientRect();
-      const overDelete = Boolean(
-        deleteBounds &&
-        pointer.x >= deleteBounds.left &&
-        pointer.x <= deleteBounds.right &&
-        pointer.y >= deleteBounds.top &&
-        pointer.y <= deleteBounds.bottom
-      );
+      const deleteTargetActive =
+        permissions.delete && pointerInsideElement(deleteDropRef.current, pointer.x, pointer.y);
 
-      if (overDelete) {
+      if (deleteTargetActive) {
         setDeleteDropActive(true);
         setDragOverGroupId(null);
         return;
       }
 
       setDeleteDropActive(false);
-      const element = document.elementFromPoint(pointer.x, pointer.y);
-      const groupElement = element?.closest<HTMLElement>('[data-collection-group-id]');
-      const groupId = groupElement?.dataset.collectionGroupId;
-      const validGroupId = COLLECTION_GROUPS.find((group) => group.id === groupId)?.id ?? null;
-      setDragOverGroupId(validGroupId);
+      setDragOverGroupId(permissions.move ? groupAtPointer(pointer.x, pointer.y) : null);
     }
 
     function handleEscape(event: KeyboardEvent) {
@@ -226,17 +285,45 @@ export function CollectionsScreen({
       setDragOverGroupId(null);
       setDeleteDropActive(false);
       setDragPointer(null);
+      setDragScrollDirection(null);
     }
 
-    window.addEventListener('wheel', handleDragWheel, { passive: false, capture: true });
+    window.addEventListener('wheel', handleDragWheel, {
+      passive: false,
+      capture: true,
+    });
     window.addEventListener('keydown', handleEscape);
 
     return () => {
       document.body.style.userSelect = previousUserSelect;
-      window.removeEventListener('wheel', handleDragWheel, { capture: true });
+      window.removeEventListener('wheel', handleDragWheel, {
+        capture: true,
+      });
       window.removeEventListener('keydown', handleEscape);
     };
-  }, [draggingCollectionId]);
+  }, [collections, draggingCollectionId]);
+
+  useEffect(() => {
+    if (!draggingCollectionId || !dragScrollDirection) {
+      return;
+    }
+
+    let animationFrame = 0;
+
+    const scroll = () => {
+      const container = groupsRef.current;
+
+      if (container) {
+        container.scrollTop += dragScrollDirection === 'up' ? -14 : 14;
+      }
+
+      animationFrame = window.requestAnimationFrame(scroll);
+    };
+
+    animationFrame = window.requestAnimationFrame(scroll);
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [dragScrollDirection, draggingCollectionId]);
 
   function toggleGroup(groupId: CollectionGroupId) {
     setExpandedGroups((previous) => {
@@ -254,9 +341,7 @@ export function CollectionsScreen({
 
   function toggleAllGroups() {
     setExpandedGroups(
-      allGroupsExpanded
-        ? new Set()
-        : new Set(COLLECTION_GROUPS.map((group) => group.id)),
+      allGroupsExpanded ? new Set() : new Set(COLLECTION_GROUPS.map((group) => group.id)),
     );
   }
 
@@ -272,6 +357,7 @@ export function CollectionsScreen({
     setDragOverGroupId(null);
     setDeleteDropActive(false);
     setDragPointer(null);
+    setDragScrollDirection(null);
   }
 
   function getPointerGroupId(clientX: number, clientY: number): CollectionGroupId | null {
@@ -294,36 +380,32 @@ export function CollectionsScreen({
       clientX >= bounds.left &&
       clientX <= bounds.right &&
       clientY >= bounds.top &&
-      clientY <= bounds.bottom
+      clientY <= bounds.bottom,
     );
   }
 
-  function autoScrollGroupsAtPointer(clientX: number, clientY: number) {
-    const container = groupsRef.current;
+  function isPointerInsideElement(element: HTMLElement | null, clientX: number, clientY: number) {
+    const bounds = element?.getBoundingClientRect();
 
-    if (!container || isPointerOverDeleteTarget(clientX, clientY)) {
-      return;
+    return Boolean(
+      bounds &&
+      clientX >= bounds.left &&
+      clientX <= bounds.right &&
+      clientY >= bounds.top &&
+      clientY <= bounds.bottom,
+    );
+  }
+
+  function getPointerScrollDirection(clientX: number, clientY: number) {
+    if (isPointerInsideElement(topScrollZoneRef.current, clientX, clientY)) {
+      return 'up' as const;
     }
 
-    const bounds = container.getBoundingClientRect();
-
-    if (clientX < bounds.left || clientX > bounds.right) {
-      return;
+    if (isPointerInsideElement(bottomScrollZoneRef.current, clientX, clientY)) {
+      return 'down' as const;
     }
 
-    const edgeSize = Math.min(90, Math.max(56, bounds.height * 0.11));
-    const maximumStep = 28;
-
-    if (clientY < bounds.top + edgeSize && clientY >= bounds.top) {
-      const strength = Math.min(1, (bounds.top + edgeSize - clientY) / edgeSize);
-      container.scrollTop -= Math.ceil(maximumStep * strength);
-      return;
-    }
-
-    if (clientY > bounds.bottom - edgeSize && clientY <= bounds.bottom) {
-      const strength = Math.min(1, (clientY - (bounds.bottom - edgeSize)) / edgeSize);
-      container.scrollTop += Math.ceil(maximumStep * strength);
-    }
+    return null;
   }
 
   function updatePointerDrag(clientX: number, clientY: number, collection: RankCollection) {
@@ -332,7 +414,15 @@ export function CollectionsScreen({
 
     dragPointerRef.current = pointer;
     setDragPointer(pointer);
-    autoScrollGroupsAtPointer(clientX, clientY);
+
+    const scrollDirection = getPointerScrollDirection(clientX, clientY);
+    setDragScrollDirection(scrollDirection);
+
+    if (scrollDirection) {
+      setDeleteDropActive(false);
+      setDragOverGroupId(null);
+      return;
+    }
 
     if (permissions.delete && isPointerOverDeleteTarget(clientX, clientY)) {
       setDeleteDropActive(true);
@@ -348,7 +438,7 @@ export function CollectionsScreen({
     event: ReactPointerEvent<HTMLElement>,
     collection: RankCollection,
   ) {
-    if (event.button !== 0) {
+    if (event.button !== 0 || selectionMode) {
       return;
     }
 
@@ -411,10 +501,7 @@ export function CollectionsScreen({
     updatePointerDrag(event.clientX, event.clientY, collection);
   }
 
-  function finishPointerDrag(
-    event: ReactPointerEvent<HTMLElement>,
-    collection: RankCollection,
-  ) {
+  function finishPointerDrag(event: ReactPointerEvent<HTMLElement>, collection: RankCollection) {
     const candidate = dragCandidateRef.current;
 
     if (
@@ -435,11 +522,13 @@ export function CollectionsScreen({
     }
 
     const permissions = getCollectionPermissions(collection);
+    const scrollDirection = getPointerScrollDirection(event.clientX, event.clientY);
     const deleteTargetActive =
-      permissions.delete && isPointerOverDeleteTarget(event.clientX, event.clientY);
-    const groupId = permissions.move
-      ? getPointerGroupId(event.clientX, event.clientY)
-      : null;
+      !scrollDirection &&
+      permissions.delete &&
+      isPointerOverDeleteTarget(event.clientX, event.clientY);
+    const groupId =
+      !scrollDirection && permissions.move ? getPointerGroupId(event.clientX, event.clientY) : null;
 
     if (deleteTargetActive) {
       setDeleteCollectionId(collection.id);
@@ -466,9 +555,38 @@ export function CollectionsScreen({
     }
   }
 
+  function exitSelectionMode() {
+    setSelectionMode(false);
+    setSelectedCollectionIds(new Set());
+    setBulkMoveOpen(false);
+    setBulkDeleteOpen(false);
+  }
+
+  function toggleCollectionSelection(collectionId: string) {
+    setSelectedCollectionIds((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(collectionId)) {
+        next.delete(collectionId);
+      } else {
+        next.add(collectionId);
+      }
+
+      return next;
+    });
+  }
+
+  function selectAllVisibleCollections() {
+    setSelectedCollectionIds(
+      (previous) => new Set([...previous, ...visibleSelectableCollectionIds]),
+    );
+  }
+
   return (
     <AppShell>
-      <ScenePanel className={styles.scene}>
+      <ScenePanel
+        className={`${styles.scene} ${draggingCollection ? styles.sceneDragging : ''} ${selectionMode ? styles.sceneSelecting : ''}`}
+      >
         <SceneHeading className={styles.heading}>
           <div>
             <h1>Collection Library</h1>
@@ -490,6 +608,22 @@ export function CollectionsScreen({
             <span className={styles.collectionCountNumber}>{collections.length}</span>
             <span>{collections.length === 1 ? 'Collection' : 'Collections'}</span>
           </strong>
+
+          <Button
+            className={styles.selectModeButton}
+            size="small"
+            variant={selectionMode ? 'quiet' : undefined}
+            onClick={() => {
+              if (selectionMode) {
+                exitSelectionMode();
+              } else {
+                setSelectionMode(true);
+                setOpenMenuId(null);
+              }
+            }}
+          >
+            {selectionMode ? 'Cancel' : 'Select'}
+          </Button>
 
           <div className={styles.searchWrap}>
             <input
@@ -543,6 +677,19 @@ export function CollectionsScreen({
           </label>
         </div>
 
+        {draggingCollection && (
+          <div
+            ref={topScrollZoneRef}
+            className={`${styles.dragScrollZone} ${styles.dragScrollZoneTop} ${
+              dragScrollDirection === 'up' ? styles.dragScrollZoneActive : ''
+            }`}
+          >
+            <span aria-hidden="true">▲</span>
+            <strong>Drag here to scroll up</strong>
+            <span aria-hidden="true">▲</span>
+          </div>
+        )}
+
         <div
           ref={groupsRef}
           className={styles.groups}
@@ -571,10 +718,18 @@ export function CollectionsScreen({
                   onClick={() => toggleGroup(group.id)}
                   aria-expanded={expanded}
                 >
-                  <span className={styles.groupChevron} aria-hidden="true">
+                  <span
+                    className={styles.groupChevron}
+                    aria-hidden="true"
+                  >
                     {expanded ? '⌄' : '›'}
                   </span>
-                  <span className={styles.groupIcon} aria-hidden="true">{group.icon}</span>
+                  <span
+                    className={styles.groupIcon}
+                    aria-hidden="true"
+                  >
+                    {group.icon}
+                  </span>
                   <strong>{group.label}</strong>
                   <span className={styles.groupCount}>
                     <strong>{group.collections.length}</strong>
@@ -589,16 +744,21 @@ export function CollectionsScreen({
                     ) : (
                       group.collections.map((collection) => {
                         const permissions = getCollectionPermissions(collection);
-                        const refreshable = permissions.refresh && canRefreshCollectionSource(collection);
-                        const hasMenuActions = refreshable || permissions.move || permissions.delete;
-                        const locked = !permissions.edit && !permissions.delete && !permissions.move;
-                        const draggable = permissions.move || permissions.delete;
+                        const refreshable =
+                          permissions.refresh && canRefreshCollectionSource(collection);
+                        const hasMenuActions =
+                          refreshable || permissions.move || permissions.delete;
+                        const locked =
+                          !permissions.edit && !permissions.delete && !permissions.move;
+                        const selectable = permissions.move || permissions.delete;
+                        const selected = selectedCollectionIds.has(collection.id);
+                        const draggable = !selectionMode && selectable;
 
                         return (
                           <article
                             className={`${styles.card} ${draggable ? styles.draggableCard : ''} ${
                               draggingCollectionId === collection.id ? styles.draggingCard : ''
-                            }`}
+                            } ${selected ? styles.selectedCard : ''}`}
                             key={collection.id}
                             onPointerDown={(event) => beginPointerDragCandidate(event, collection)}
                             onPointerMove={(event) => handlePointerDragMove(event, collection)}
@@ -616,6 +776,23 @@ export function CollectionsScreen({
                             }}
                             title={draggable ? 'Drag to another group, or to Delete.' : undefined}
                           >
+                            {selectionMode && selectable && (
+                              <label
+                                className={styles.selectionCheckbox}
+                                title={`Select ${collection.name}`}
+                                onPointerDown={(event) => event.stopPropagation()}
+                                onClick={(event) => event.stopPropagation()}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selected}
+                                  onChange={() => toggleCollectionSelection(collection.id)}
+                                  aria-label={`Select ${collection.name}`}
+                                />
+                                <span aria-hidden="true" />
+                              </label>
+                            )}
+
                             <button
                               className={styles.cardArtworkButton}
                               type="button"
@@ -628,17 +805,27 @@ export function CollectionsScreen({
                             </button>
 
                             <div className={styles.cardCopy}>
-                              <strong className={styles.cardName} title={collection.name}>
+                              <strong
+                                className={styles.cardName}
+                                title={collection.name}
+                              >
                                 {collection.name}
                               </strong>
                               <span className={styles.cardCount}>
-                                {collection.items.length} {collection.items.length === 1 ? 'item' : 'items'}
+                                {collection.items.length}{' '}
+                                {collection.items.length === 1 ? 'item' : 'items'}
                               </span>
                             </div>
 
                             <div className={styles.cardFooter}>
                               <div className={styles.cardBadges}>
-                                <span className={collection.isBuiltIn ? styles.builtInBadge : styles.generatedBadge}>
+                                <span
+                                  className={
+                                    collection.isBuiltIn
+                                      ? styles.builtInBadge
+                                      : styles.generatedBadge
+                                  }
+                                >
                                   {collection.isBuiltIn ? '▣ Built-in' : '✦ Generated'}
                                 </span>
                                 {locked && <span className={styles.lockedLabel}>🔒 Locked</span>}
@@ -648,7 +835,9 @@ export function CollectionsScreen({
                                 {permissions.edit && (
                                   <Button
                                     size="small"
-                                    onClick={() => setEditor({ mode: 'edit', collectionId: collection.id })}
+                                    onClick={() =>
+                                      setEditor({ mode: 'edit', collectionId: collection.id })
+                                    }
                                   >
                                     Edit
                                   </Button>
@@ -671,7 +860,10 @@ export function CollectionsScreen({
                                     </Button>
 
                                     {openMenuId === collection.id && (
-                                      <div className={styles.actionMenu} role="menu">
+                                      <div
+                                        className={styles.actionMenu}
+                                        role="menu"
+                                      >
                                         {refreshable && (
                                           <button
                                             role="menuitem"
@@ -754,17 +946,76 @@ export function CollectionsScreen({
             aria-hidden="true"
           >
             <strong>{draggingCollection.name}</strong>
-            <span>{draggingCollection.items.length} {draggingCollection.items.length === 1 ? 'item' : 'items'}</span>
+            <span>
+              {draggingCollection.items.length}{' '}
+              {draggingCollection.items.length === 1 ? 'item' : 'items'}
+            </span>
           </div>
         )}
 
-        {draggingCollection && draggingPermissions?.delete && (
-          <div
-            ref={deleteDropRef}
-            className={`${styles.deleteDropZone} ${deleteDropActive ? styles.deleteDropZoneActive : ''}`}
-          >
-            <strong>🗑 Drop here to delete</strong>
-            <span>Release to delete · confirmation still required</span>
+        {draggingCollection && (
+          <div className={styles.dragFooter}>
+            {draggingPermissions?.delete && (
+              <div
+                ref={deleteDropRef}
+                className={`${styles.deleteDropZone} ${deleteDropActive ? styles.deleteDropZoneActive : ''}`}
+              >
+                <strong>🗑 Drop here to delete</strong>
+                <span>Release to delete · confirmation still required</span>
+              </div>
+            )}
+
+            <div
+              ref={bottomScrollZoneRef}
+              className={`${styles.dragScrollZone} ${styles.dragScrollZoneBottom} ${
+                dragScrollDirection === 'down' ? styles.dragScrollZoneActive : ''
+              }`}
+            >
+              <span aria-hidden="true">▼</span>
+              <strong>Drag here to scroll down</strong>
+              <span aria-hidden="true">▼</span>
+            </div>
+          </div>
+        )}
+
+        {selectionMode && (
+          <div className={styles.selectionBar}>
+            <div className={styles.selectionSummary}>
+              <strong>{selectedCount} selected</strong>
+              <span>Locked default collections cannot be selected.</span>
+            </div>
+
+            <div className={styles.selectionActions}>
+              <Button
+                size="small"
+                onClick={selectAllVisibleCollections}
+                disabled={visibleSelectableCollectionIds.length === 0}
+              >
+                Select all visible
+              </Button>
+              <Button
+                size="small"
+                onClick={() => setSelectedCollectionIds(new Set())}
+                disabled={selectedCount === 0}
+              >
+                Clear selection
+              </Button>
+              <Button
+                size="small"
+                onClick={() => setBulkMoveOpen(true)}
+                disabled={!canBulkMove}
+              >
+                Move to Group
+              </Button>
+              <Button
+                size="small"
+                variant="danger"
+                onClick={() => setBulkDeleteOpen(true)}
+                disabled={!canBulkDelete}
+              >
+                Delete{selectedCount > 0 ? ` (${selectedCount})` : ''}
+              </Button>
+            </div>
           </div>
         )}
       </ScenePanel>
@@ -801,7 +1052,9 @@ export function CollectionsScreen({
                 <span>Display order</span>
                 <select
                   value={previewSort}
-                  onChange={(event) => setPreviewSort(event.target.value as CollectionItemDisplaySort)}
+                  onChange={(event) =>
+                    setPreviewSort(event.target.value as CollectionItemDisplaySort)
+                  }
                 >
                   <option value="nameAsc">Name (A–Z)</option>
                   <option value="nameDesc">Name (Z–A)</option>
@@ -818,8 +1071,14 @@ export function CollectionsScreen({
 
           <div className={styles.previewGrid}>
             {previewItems.map((item) => (
-              <div className={styles.previewItem} key={item.id}>
-                <Poster item={item} className={styles.previewPoster} />
+              <div
+                className={styles.previewItem}
+                key={item.id}
+              >
+                <Poster
+                  item={item}
+                  className={styles.previewPoster}
+                />
                 <div className={styles.previewItemCopy}>
                   <strong title={item.name}>{item.name}</strong>
                   {item.subtitle && <span title={item.subtitle}>{item.subtitle}</span>}
@@ -843,7 +1102,9 @@ export function CollectionsScreen({
           <div className={styles.groupChoices}>
             {COLLECTION_GROUPS.map((group) => (
               <button
-                className={getCollectionGroupId(moveTarget) === group.id ? styles.activeGroupChoice : ''}
+                className={
+                  getCollectionGroupId(moveTarget) === group.id ? styles.activeGroupChoice : ''
+                }
                 type="button"
                 key={group.id}
                 onClick={() => {
@@ -859,6 +1120,67 @@ export function CollectionsScreen({
 
           <div className={styles.modalActions}>
             <Button onClick={() => setMoveCollectionId(null)}>Cancel</Button>
+          </div>
+        </Modal>
+      )}
+
+      {bulkMoveOpen && selectedCount > 0 && (
+        <Modal
+          className={styles.moveModal}
+          aria-labelledby="bulk-move-collections-title"
+        >
+          <h2 id="bulk-move-collections-title">Move {selectedCount} Collections</h2>
+          <p>Choose a destination group for the selected collections.</p>
+
+          <div className={styles.groupChoices}>
+            {COLLECTION_GROUPS.map((group) => (
+              <button
+                type="button"
+                key={group.id}
+                onClick={() => {
+                  onMoveManyToGroup(selectedCollectionIdList, group.id);
+                  setExpandedGroups((previous) => new Set([...previous, group.id]));
+                  exitSelectionMode();
+                }}
+              >
+                <span aria-hidden="true">{group.icon}</span>
+                <span>{group.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.modalActions}>
+            <Button onClick={() => setBulkMoveOpen(false)}>Cancel</Button>
+          </div>
+        </Modal>
+      )}
+
+      {bulkDeleteOpen && selectedCount > 0 && (
+        <Modal
+          className={styles.deleteModal}
+          aria-labelledby="bulk-delete-collections-title"
+        >
+          <h2 id="bulk-delete-collections-title">Delete {selectedCount} Collections?</h2>
+          <p>This deletes the selected collections only. Your Personal Ratings are not affected.</p>
+
+          <div className={styles.bulkDeleteNames}>
+            {selectedCollections.slice(0, 6).map((collection) => (
+              <span key={collection.id}>{collection.name}</span>
+            ))}
+            {selectedCount > 6 && <span>…and {selectedCount - 6} more</span>}
+          </div>
+
+          <div className={styles.modalActions}>
+            <Button onClick={() => setBulkDeleteOpen(false)}>Cancel</Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                onDeleteMany(selectedCollectionIdList);
+                exitSelectionMode();
+              }}
+            >
+              Delete {selectedCount}
+            </Button>
           </div>
         </Modal>
       )}

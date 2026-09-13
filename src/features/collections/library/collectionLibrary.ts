@@ -651,6 +651,25 @@ export function moveCollectionToGroupInLibrary(
   return state;
 }
 
+
+export function moveCollectionsToGroupInLibrary(
+  state: CollectionLibraryState,
+  sourceCollections: readonly RankCollection[],
+  collectionIds: readonly string[],
+  groupId: CollectionGroupId,
+): CollectionLibraryState {
+  return [...new Set(collectionIds)].reduce(
+    (currentState, collectionId) =>
+      moveCollectionToGroupInLibrary(
+        currentState,
+        sourceCollections,
+        collectionId,
+        groupId,
+      ),
+    state,
+  );
+}
+
 export function deleteCollectionFromLibrary(
   state: CollectionLibraryState,
   sourceCollections: readonly RankCollection[],
@@ -694,3 +713,16 @@ export function deleteCollectionFromLibrary(
     deletedBuiltInIds: [...new Set([...state.deletedBuiltInIds, collectionId])],
   };
 }
+
+export function deleteCollectionsFromLibrary(
+  state: CollectionLibraryState,
+  sourceCollections: readonly RankCollection[],
+  collectionIds: readonly string[],
+): CollectionLibraryState {
+  return [...new Set(collectionIds)].reduce(
+    (currentState, collectionId) =>
+      deleteCollectionFromLibrary(currentState, sourceCollections, collectionId),
+    state,
+  );
+}
+

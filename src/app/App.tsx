@@ -55,7 +55,9 @@ function App() {
         onUpdate={app.collectionLibrary.updateCollection}
         onRefreshSource={app.collectionLibrary.refreshCollectionCandidates}
         onMoveToGroup={app.collectionLibrary.moveCollectionToGroup}
+        onMoveManyToGroup={app.collectionLibrary.moveCollectionsToGroup}
         onDelete={app.deleteCollection}
+        onDeleteMany={app.deleteCollections}
       />
     );
   } else if (app.screen === 'generateCollection') {

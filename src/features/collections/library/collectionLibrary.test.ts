@@ -6,10 +6,12 @@ import {
   buildCollectionCandidateItems,
   buildStoredGeneratedCollectionShells,
   deleteCollectionFromLibrary,
+  deleteCollectionsFromLibrary,
   getCollectionLibraryItemKey,
   loadCollectionLibraryState,
   materializeCollections,
   moveCollectionToGroupInLibrary,
+  moveCollectionsToGroupInLibrary,
   saveCollectionLibraryState,
   updateCollectionInLibrary,
   type CollectionLibraryState,
@@ -319,6 +321,65 @@ describe('runtime generated collections', () => {
     expect(moved.generatedCollections[0].groupId).toBe('various');
   });
 
+  it('moves multiple generated collections in one library operation', () => {
+    const secondGenerated: RankCollection = {
+      ...generatedCollection,
+      id: 'nolan-movies-2',
+      name: 'More Christopher Nolan Movies',
+    };
+
+    let state = addGeneratedCollectionToLibrary(
+      emptyState(),
+      baseCollections,
+      generatedCollection,
+    );
+    state = addGeneratedCollectionToLibrary(
+      state,
+      [...baseCollections, generatedCollection],
+      secondGenerated,
+    );
+
+    const moved = moveCollectionsToGroupInLibrary(
+      state,
+      [...baseCollections, generatedCollection, secondGenerated],
+      [generatedCollection.id, secondGenerated.id],
+      'various',
+    );
+
+    expect(moved.generatedCollections.map((collection) => collection.groupId)).toEqual([
+      'various',
+      'various',
+    ]);
+  });
+
+  it('deletes multiple generated collections in one library operation', () => {
+    const secondGenerated: RankCollection = {
+      ...generatedCollection,
+      id: 'nolan-movies-2',
+      name: 'More Christopher Nolan Movies',
+    };
+
+    let state = addGeneratedCollectionToLibrary(
+      emptyState(),
+      baseCollections,
+      generatedCollection,
+    );
+    state = addGeneratedCollectionToLibrary(
+      state,
+      [...baseCollections, generatedCollection],
+      secondGenerated,
+    );
+
+    const deleted = deleteCollectionsFromLibrary(
+      state,
+      [...baseCollections, generatedCollection, secondGenerated],
+      [generatedCollection.id, secondGenerated.id],
+    );
+
+    expect(deleted.generatedCollections).toEqual([]);
+    expect(deleted.deletedBuiltInIds).toEqual([]);
+  });
+
   it('stores a composite runtime source without freezing its candidate items', () => {
     const compositeCollection: RankCollection = {
       id: 'mixed-media',
@@ -409,6 +470,17 @@ describe('locked built-in collections', () => {
         state,
         lockedSources,
         lockedCollection.id,
+        'various',
+      ),
+    ).toBe(state);
+    expect(
+      deleteCollectionsFromLibrary(state, lockedSources, [lockedCollection.id]),
+    ).toBe(state);
+    expect(
+      moveCollectionsToGroupInLibrary(
+        state,
+        lockedSources,
+        [lockedCollection.id],
         'various',
       ),
     ).toBe(state);

@@ -4,6 +4,14 @@
   grid-template-rows: auto auto minmax(0, 1fr);
 }
 
+.sceneDragging {
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+}
+
+.sceneSelecting {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
 .heading {
   padding-bottom: 16px;
   border-bottom: 1px solid var(--line);
@@ -19,7 +27,7 @@
 .toolbar {
   min-height: 54px;
   display: grid;
-  grid-template-columns: auto minmax(260px, 1fr) auto auto;
+  grid-template-columns: auto auto minmax(260px, 1fr) auto auto;
   align-items: center;
   gap: 12px;
 }
@@ -41,6 +49,12 @@
   color: #f2ecff;
   font-size: 1.18rem;
   font-weight: 850;
+}
+
+.selectModeButton {
+  min-width: 78px;
+  min-height: 42px;
+  white-space: nowrap;
 }
 
 .searchWrap {
@@ -252,6 +266,7 @@
 }
 
 .card {
+  position: relative;
   min-width: 0;
   padding: 9px;
   border: 1px solid rgba(154, 107, 255, 0.24);
@@ -281,6 +296,35 @@
 .draggingCard {
   opacity: 0.45;
   transform: scale(0.985);
+}
+
+.selectedCard {
+  border-color: rgba(154, 107, 255, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(154, 107, 255, 0.28);
+}
+
+.selectionCheckbox {
+  position: absolute;
+  z-index: 8;
+  top: 14px;
+  left: 14px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(189, 165, 255, 0.52);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: rgba(9, 13, 22, 0.92);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+}
+
+.selectionCheckbox input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #8b5bff;
+  cursor: pointer;
 }
 
 .cardArtworkButton {
@@ -464,25 +508,62 @@
   font-size: 0.74rem;
 }
 
+.dragScrollZone {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid rgba(154, 107, 255, 0.48);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: rgba(66, 39, 121, 0.18);
+  color: #d9ccff;
+  text-align: center;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.dragScrollZone strong {
+  font-size: 0.9rem;
+}
+
+.dragScrollZone > span {
+  color: #aa8cff;
+  font-size: 0.92rem;
+}
+
+.dragScrollZoneActive {
+  border-color: rgba(174, 130, 255, 0.95);
+  background: rgba(105, 61, 192, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(174, 130, 255, 0.22);
+}
+
+.dragFooter {
+  display: grid;
+  gap: 8px;
+}
+
 .deleteDropZone {
-  position: absolute;
-  z-index: 85;
-  left: 50%;
-  bottom: 18px;
-  width: min(460px, calc(100% - 40px));
-  min-height: 76px;
-  transform: translateX(-50%);
-  padding: 12px 18px;
+  width: min(460px, 100%);
+  min-height: 58px;
+  justify-self: center;
+  padding: 9px 18px;
   border: 1px dashed rgba(255, 79, 104, 0.72);
   border-radius: 12px;
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 3px;
-  background: rgba(53, 16, 28, 0.93);
+  gap: 2px;
+  background: rgba(53, 16, 28, 0.78);
   color: #ff8da1;
   text-align: center;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.38);
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .deleteDropZone > * {
@@ -497,10 +578,57 @@
 .deleteDropZoneActive {
   border-style: solid;
   border-color: #ff526d;
-  background: rgba(96, 23, 42, 0.96);
-  box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.38),
-    0 0 0 3px rgba(255, 82, 109, 0.12);
+  background: rgba(96, 23, 42, 0.92);
+  box-shadow: 0 0 0 3px rgba(255, 82, 109, 0.12);
+}
+
+.selectionBar {
+  min-height: 58px;
+  padding: 9px 12px;
+  border: 1px solid rgba(139, 91, 255, 0.24);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: rgba(16, 22, 36, 0.92);
+}
+
+.selectionSummary {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.selectionSummary strong {
+  color: #f1ebff;
+}
+
+.selectionSummary span {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.selectionActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bulkDeleteNames {
+  max-height: 180px;
+  margin: -6px 0 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(154, 107, 255, 0.16);
+  border-radius: 10px;
+  display: grid;
+  gap: 6px;
+  overflow-y: auto;
+  background: rgba(10, 14, 23, 0.46);
+  color: #c7c0d6;
+  font-size: 0.84rem;
 }
 
 .emptyState {
@@ -679,17 +807,17 @@
 
 @media (max-width: 1100px) {
   .toolbar {
-    grid-template-columns: auto minmax(220px, 1fr) auto;
+    grid-template-columns: auto auto minmax(220px, 1fr) auto;
   }
 
   .collapseAllButton {
-    grid-column: 1;
+    grid-column: 1 / span 2;
     grid-row: 2;
     justify-self: start;
   }
 
   .sortControl {
-    grid-column: 3;
+    grid-column: 4;
     grid-row: 1 / span 2;
   }
 }
@@ -711,6 +839,7 @@
   }
 
   .collectionCount,
+  .selectModeButton,
   .searchWrap,
   .collapseAllButton,
   .sortControl {
@@ -731,10 +860,21 @@
     grid-template-columns: 1fr;
   }
 
-  .deleteDropZone {
-    bottom: 12px;
-    width: calc(100% - 24px);
-    min-height: 68px;
+  .selectionBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .selectionActions {
+    justify-content: stretch;
+  }
+
+  .selectionActions > * {
+    flex: 1 1 140px;
+  }
+
+  .dragScrollZone {
+    gap: 10px;
   }
 
   .previewHeader {

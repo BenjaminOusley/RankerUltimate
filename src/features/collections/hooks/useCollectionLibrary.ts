@@ -9,9 +9,11 @@ import {
   buildStoredGeneratedCollectionShells,
   createCustomCollection,
   deleteCollectionFromLibrary,
+  deleteCollectionsFromLibrary,
   loadCollectionLibraryState,
   materializeCollections,
   moveCollectionToGroupInLibrary,
+  moveCollectionsToGroupInLibrary,
   saveCollectionLibraryState,
   updateCollectionInLibrary,
 } from '../library/collectionLibrary';
@@ -199,6 +201,58 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     [sourceCollections],
   );
 
+  const moveCollectionsToGroup = useCallback(
+    (collectionIds: readonly string[], groupId: CollectionGroupId) => {
+      setLibraryState((previous) =>
+        moveCollectionsToGroupInLibrary(
+          previous,
+          sourceCollections,
+          collectionIds,
+          groupId,
+        ),
+      );
+    },
+    [sourceCollections],
+  );
+
+  const deleteCollections = useCallback(
+    (collectionIds: readonly string[]) => {
+      const uniqueIds = [...new Set(collectionIds)];
+      const deletableIds = uniqueIds.filter((collectionId) => {
+        const collection = sourceCollections.find((item) => item.id === collectionId);
+        return !collection?.isBuiltIn || getCollectionPermissions(collection).delete;
+      });
+
+      if (deletableIds.length === 0) {
+        return;
+      }
+
+      const deletedIdSet = new Set(deletableIds);
+
+      setLibraryState((previous) =>
+        deleteCollectionsFromLibrary(previous, sourceCollections, deletableIds),
+      );
+
+      setSourceSnapshots((previous) =>
+        previous.filter((snapshot) => !deletedIdSet.has(snapshot.collectionId)),
+      );
+
+      void Promise.allSettled(
+        deletableIds.map((collectionId) => deleteCollectionSourceSnapshot(collectionId)),
+      ).then((results) => {
+        results.forEach((result, index) => {
+          if (result.status === 'rejected') {
+            console.error(
+              `Failed to delete collection source cache for ${deletableIds[index]}:`,
+              result.reason,
+            );
+          }
+        });
+      });
+    },
+    [sourceCollections],
+  );
+
   const deleteCollection = useCallback(
     (collectionId: string) => {
       const collection = sourceCollections.find((item) => item.id === collectionId);
@@ -231,6 +285,8 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     createCollection,
     updateCollection,
     moveCollectionToGroup,
+    moveCollectionsToGroup,
     deleteCollection,
+    deleteCollections,
   };
 }

@@ -190,6 +190,14 @@ export function useAppController() {
     }
   }
 
+  function deleteCollections(collectionIds: readonly string[]) {
+    collectionLibrary.deleteCollections(collectionIds);
+
+    if (session.collection && collectionIds.includes(session.collection.id)) {
+      session.clearSession();
+    }
+  }
+
   function startNewRanking() {
     session.clearSession();
     setScreen('collections');
@@ -218,6 +226,7 @@ export function useAppController() {
     resumeInterruptedRanking,
     discardInterruptedRanking,
     deleteCollection,
+    deleteCollections,
     startNewRanking,
   };
 }
