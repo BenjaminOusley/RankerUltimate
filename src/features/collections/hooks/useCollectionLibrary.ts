@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { RankCollection } from '@/domain/models';
+import type { CollectionGroupId, RankCollection } from '@/domain/models';
 import { refreshCollectionSource } from '../api/refreshCollectionSource';
 import {
   addGeneratedCollectionToLibrary,
@@ -11,9 +11,11 @@ import {
   deleteCollectionFromLibrary,
   loadCollectionLibraryState,
   materializeCollections,
+  moveCollectionToGroupInLibrary,
   saveCollectionLibraryState,
   updateCollectionInLibrary,
 } from '../library/collectionLibrary';
+import { getCollectionPermissions } from '../model/collectionGroups';
 import {
   applyCollectionSourceSnapshots,
   createCollectionSourceSnapshot,
@@ -163,6 +165,10 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
         throw new Error('This collection does not have a refreshable source.');
       }
 
+      if (!getCollectionPermissions(sourceCollection).refresh) {
+        throw new Error('This collection is not allowed to refresh.');
+      }
+
       const result = await refreshCollectionSource(sourceCollection);
       const snapshot = createCollectionSourceSnapshot(
         sourceCollection,
@@ -178,8 +184,29 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     [sourceDefinitions],
   );
 
+  const moveCollectionToGroup = useCallback(
+    (collectionId: string, groupId: CollectionGroupId) => {
+      const collection = sourceCollections.find((item) => item.id === collectionId);
+
+      if (collection?.isBuiltIn && !getCollectionPermissions(collection).move) {
+        return;
+      }
+
+      setLibraryState((previous) =>
+        moveCollectionToGroupInLibrary(previous, sourceCollections, collectionId, groupId),
+      );
+    },
+    [sourceCollections],
+  );
+
   const deleteCollection = useCallback(
     (collectionId: string) => {
+      const collection = sourceCollections.find((item) => item.id === collectionId);
+
+      if (collection?.isBuiltIn && !getCollectionPermissions(collection).delete) {
+        return;
+      }
+
       setLibraryState((previous) =>
         deleteCollectionFromLibrary(previous, sourceCollections, collectionId),
       );
@@ -203,6 +230,7 @@ export function useCollectionLibrary(baseCollections: readonly RankCollection[])
     refreshCollectionCandidates,
     createCollection,
     updateCollection,
+    moveCollectionToGroup,
     deleteCollection,
   };
 }

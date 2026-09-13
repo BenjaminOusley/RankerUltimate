@@ -1,3 +1,20 @@
+export type CollectionGroupId =
+  | 'movies-tv'
+  | 'games'
+  | 'books'
+  | 'people-characters'
+  | 'food-drink'
+  | 'restaurants'
+  | 'animals'
+  | 'various';
+
+export type CollectionPermissions = {
+  edit: boolean;
+  delete: boolean;
+  move: boolean;
+  refresh: boolean;
+};
+
 export type ItemSource = {
   provider: string;
   id: string;
@@ -45,4 +62,8 @@ export type RankCollection = {
   description?: string;
   items: RankItem[];
   candidateSource?: CollectionCandidateSource;
+  groupId?: CollectionGroupId;
+  rankingDomain?: string;
+  isBuiltIn?: boolean;
+  permissions?: Partial<CollectionPermissions>;
 };

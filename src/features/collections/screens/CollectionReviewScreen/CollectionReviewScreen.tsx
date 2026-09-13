@@ -1,6 +1,5 @@
 import { AppShell } from '@/app/AppShell';
 import type { RankCollection } from '@/domain/models';
-import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
 import { Button } from '@/shared/components/Button/Button';
 import { Poster } from '@/shared/components/Poster/Poster';
 import { SceneHeading, ScenePanel } from '@/shared/components/Scene/Scene';
@@ -12,7 +11,6 @@ type CollectionReviewScreenProps = {
   onSelectedItemIdsChange: (ids: Set<string>) => void;
   onBack: () => void;
   onStartRanking: () => void;
-  onMainMenu: () => void;
 };
 
 export function CollectionReviewScreen({
@@ -21,7 +19,6 @@ export function CollectionReviewScreen({
   onSelectedItemIdsChange,
   onBack,
   onStartRanking,
-  onMainMenu,
 }: CollectionReviewScreenProps) {
   const gridDensityClass =
     collection.items.length <= 5
@@ -46,8 +43,6 @@ export function CollectionReviewScreen({
 
   return (
     <AppShell>
-      <AppHeader onMainMenu={onMainMenu} />
-
       <ScenePanel className={styles.scene}>
         <SceneHeading className={styles.heading}>
           <div>

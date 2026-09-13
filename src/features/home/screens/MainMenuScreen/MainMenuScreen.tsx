@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { AppShell } from '@/app/AppShell';
-import { Logo } from '@/shared/components/Logo/Logo';
 import styles from './MainMenuScreen.module.css';
 
 const menuQuotes = [
@@ -23,11 +22,6 @@ export function MainMenuScreen({ onStartRanking, onCollections }: MainMenuScreen
   return (
     <AppShell>
       <section className={styles.card}>
-        <div className={styles.topline}>
-          <Logo />
-          <span className={styles.ghostIcon}>⚙</span>
-        </div>
-
         <div className={styles.copy}>
           <h1>Rank anything.</h1>
           <p>Discover what you actually prefer when you have to pick.</p>

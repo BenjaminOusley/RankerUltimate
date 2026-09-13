@@ -1,5 +1,14 @@
 import { getCanonicalItemKey, getLegacyItemKeys } from '@/domain/itemIdentity';
-import type { RankCollection, RankItem, RefreshableCollectionSource } from '@/domain/models';
+import type {
+  CollectionGroupId,
+  RankCollection,
+  RankItem,
+  RefreshableCollectionSource,
+} from '@/domain/models';
+import {
+  getCollectionGroupId,
+  getCollectionPermissions,
+} from '../model/collectionGroups';
 
 type CollectionOverride = {
   name?: string;
@@ -12,6 +21,7 @@ type CustomCollectionRecord = {
   name: string;
   description?: string;
   itemKeys: string[];
+  groupId?: CollectionGroupId;
 };
 
 type GeneratedCollectionRecord = {
@@ -20,6 +30,7 @@ type GeneratedCollectionRecord = {
   description?: string;
   candidateSource: RefreshableCollectionSource;
   excludedItemKeys: string[];
+  groupId?: CollectionGroupId;
 };
 
 export type CollectionLibraryState = {
@@ -130,6 +141,7 @@ function migrateLegacyState(
     name: collection.name,
     description: collection.description,
     itemKeys: normalizeItemKeys(collection.itemKeys ?? [], aliases),
+    groupId: 'various',
   }));
 
   const overrides: Record<string, CollectionOverride> = {};
@@ -253,6 +265,7 @@ export function buildStoredGeneratedCollectionShells(
     name: collection.name,
     description: collection.description,
     candidateSource: collection.candidateSource,
+    groupId: collection.groupId ?? 'various',
     items: [],
   }));
 }
@@ -333,6 +346,12 @@ export function materializeCollections(
         name: collection.name,
         description: collection.description,
         candidateSource: collection.candidateSource,
+        groupId: collection.groupId ?? getCollectionGroupId(sourceCollection ?? {
+          id: collection.id,
+          name: collection.name,
+          items: [],
+          candidateSource: collection.candidateSource,
+        }),
         items: (sourceCollection?.items ?? []).filter(
           (item) => !excludedItemKeys.has(getCollectionLibraryItemKey(item)),
         ),
@@ -349,6 +368,7 @@ export function materializeCollections(
       candidateSource: {
         kind: 'custom',
       },
+      groupId: collection.groupId ?? 'various',
     }),
   );
 
@@ -372,6 +392,7 @@ export function createCustomCollection(
         }
       : {}),
     itemKeys: [],
+    groupId: 'various',
   };
 
   return {
@@ -422,6 +443,7 @@ export function addGeneratedCollectionToLibrary(
       : {}),
     candidateSource: source,
     excludedItemKeys,
+    groupId: getCollectionGroupId(collection),
   };
 
   return {
@@ -436,6 +458,14 @@ export function updateCollectionInLibrary(
   updatedCollection: RankCollection,
   itemsChanged: boolean,
 ): CollectionLibraryState {
+  const sourceDefinition = sourceCollections.find(
+    (collection) => collection.id === updatedCollection.id,
+  );
+
+  if (sourceDefinition?.isBuiltIn && !getCollectionPermissions(sourceDefinition).edit) {
+    return state;
+  }
+
   const generatedIndex = state.generatedCollections.findIndex(
     (collection) => collection.id === updatedCollection.id,
   );
@@ -452,6 +482,7 @@ export function updateCollectionInLibrary(
     const nextRecord: GeneratedCollectionRecord = {
       ...existing,
       name: updatedCollection.name.trim(),
+      groupId: updatedCollection.groupId ?? existing.groupId ?? 'various',
       ...(trimmedDescription
         ? {
             description: trimmedDescription,
@@ -494,6 +525,10 @@ export function updateCollectionInLibrary(
           }
         : {}),
       itemKeys: updatedItemKeys,
+      groupId:
+        updatedCollection.groupId ??
+        state.customCollections.find((collection) => collection.id === updatedCollection.id)?.groupId ??
+        'various',
     };
 
     const existingIndex = state.customCollections.findIndex(
@@ -566,11 +601,67 @@ export function updateCollectionInLibrary(
   };
 }
 
+
+export function moveCollectionToGroupInLibrary(
+  state: CollectionLibraryState,
+  sourceCollections: readonly RankCollection[],
+  collectionId: string,
+  groupId: CollectionGroupId,
+): CollectionLibraryState {
+  const sourceDefinition = sourceCollections.find((collection) => collection.id === collectionId);
+
+  if (sourceDefinition?.isBuiltIn && !getCollectionPermissions(sourceDefinition).move) {
+    return state;
+  }
+
+  const generatedIndex = state.generatedCollections.findIndex(
+    (collection) => collection.id === collectionId,
+  );
+
+  if (generatedIndex >= 0) {
+    const generatedCollections = [...state.generatedCollections];
+    generatedCollections[generatedIndex] = {
+      ...generatedCollections[generatedIndex],
+      groupId,
+    };
+
+    return {
+      ...state,
+      generatedCollections,
+    };
+  }
+
+  const customIndex = state.customCollections.findIndex(
+    (collection) => collection.id === collectionId,
+  );
+
+  if (customIndex >= 0) {
+    const customCollections = [...state.customCollections];
+    customCollections[customIndex] = {
+      ...customCollections[customIndex],
+      groupId,
+    };
+
+    return {
+      ...state,
+      customCollections,
+    };
+  }
+
+  return state;
+}
+
 export function deleteCollectionFromLibrary(
   state: CollectionLibraryState,
   sourceCollections: readonly RankCollection[],
   collectionId: string,
 ): CollectionLibraryState {
+  const sourceDefinition = sourceCollections.find((collection) => collection.id === collectionId);
+
+  if (sourceDefinition?.isBuiltIn && !getCollectionPermissions(sourceDefinition).delete) {
+    return state;
+  }
+
   if (state.generatedCollections.some((collection) => collection.id === collectionId)) {
     return {
       ...state,

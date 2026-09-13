@@ -22,8 +22,10 @@ export function CollectionArtwork({ collection }: CollectionArtworkProps) {
           key={item.id}
           src={item.image}
           alt=""
+          draggable={false}
         />
       ))}
     </div>
   );
 }
+

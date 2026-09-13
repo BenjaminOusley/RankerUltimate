@@ -4,6 +4,16 @@ export const testGames: RankCollection = {
   id: 'test-games',
   name: 'Video Games',
   description: 'A test collection of video games.',
+
+  groupId: 'games',
+  rankingDomain: 'game',
+  isBuiltIn: true,
+  permissions: {
+    edit: false,
+    delete: false,
+    move: false,
+    refresh: false,
+  },
   candidateSource: {
     kind: 'embedded',
   },

@@ -4,6 +4,16 @@ export const mcuMovies: RankCollection = {
   id: 'mcu-movies',
   name: 'MCU Movies',
   description: 'Rank the MCU Movies.',
+
+  groupId: 'movies-tv',
+  rankingDomain: 'screen',
+  isBuiltIn: true,
+  permissions: {
+    edit: false,
+    delete: false,
+    move: false,
+    refresh: false,
+  },
   candidateSource: {
     kind: 'embedded',
     provider: 'tmdb',

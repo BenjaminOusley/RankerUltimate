@@ -107,6 +107,30 @@ describe('collection request resolver foundation', () => {
     });
   });
 
+  it('keeps the original subject when a clarification button repeats it with a relationship', () => {
+    const resolution = resolveCollectionRequestTurn({
+      text: 'Peter Jackson director',
+      context: {
+        subject: 'Peter Jackson',
+        mediaTypes: ['movie'],
+      },
+    });
+
+    expect(resolution).toEqual({
+      ok: true,
+      result: {
+        status: 'ready-for-planning',
+        requestText: 'Peter Jackson director',
+        subject: 'Peter Jackson',
+        mediaTypes: ['movie'],
+        context: {
+          subject: 'Peter Jackson',
+          mediaTypes: ['movie'],
+        },
+      },
+    });
+  });
+
   it('still replaces a broad subject with a genuinely more specific clarification', () => {
     const resolution = resolveCollectionRequestTurn({
       text: 'Marvel Studios company',

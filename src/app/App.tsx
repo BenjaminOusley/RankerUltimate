@@ -1,4 +1,5 @@
-import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
+import type { ReactNode } from 'react';
+
 import { CollectionPickerScreen } from '@/features/collections/screens/CollectionPickerScreen/CollectionPickerScreen';
 import { CollectionReviewScreen } from '@/features/collections/screens/CollectionReviewScreen/CollectionReviewScreen';
 import { CollectionsScreen } from '@/features/collections/screens/CollectionsScreen/CollectionsScreen';
@@ -14,18 +15,20 @@ import { PersonalRatingsScreen } from '@/features/ratings/screens/PersonalRating
 import { ResultsScreen } from '@/features/results/screens/ResultsScreen/ResultsScreen';
 import { ExitConfirmModal } from './components/ExitConfirmModal/ExitConfirmModal';
 import { useAppController } from './hooks/useAppController';
+import { AppNavigationProvider } from './navigation/AppNavigation';
 import { AppShell } from './AppShell';
 
 function App() {
   const app = useAppController();
   const { session } = app;
+  let content: ReactNode = null;
 
   if (app.resumePrompt) {
     const resumeCollection = app.collectionLibrary.availableCollections.find(
       (item) => item.id === app.resumePrompt?.collectionId,
     );
 
-    return (
+    content = (
       <ResumeRankingScreen
         collectionName={resumeCollection?.name ?? 'Previous ranking'}
         placedItems={app.resumePrompt.placedItems}
@@ -34,19 +37,15 @@ function App() {
         onDiscard={app.discardInterruptedRanking}
       />
     );
-  }
-
-  if (app.screen === 'home') {
-    return (
+  } else if (app.screen === 'home') {
+    content = (
       <MainMenuScreen
         onStartRanking={() => app.setScreen('collections')}
         onCollections={() => app.setScreen('manageCollections')}
       />
     );
-  }
-
-  if (app.screen === 'manageCollections') {
-    return (
+  } else if (app.screen === 'manageCollections') {
+    content = (
       <CollectionsScreen
         collections={app.collectionLibrary.availableCollections}
         itemLibrary={app.collectionLibrary.itemLibrary}
@@ -55,219 +54,187 @@ function App() {
         onCreate={app.collectionLibrary.createCollection}
         onUpdate={app.collectionLibrary.updateCollection}
         onRefreshSource={app.collectionLibrary.refreshCollectionCandidates}
+        onMoveToGroup={app.collectionLibrary.moveCollectionToGroup}
         onDelete={app.deleteCollection}
-        onMainMenu={app.requestMainMenu}
       />
     );
-  }
-
-  if (app.screen === 'generateCollection') {
-    return (
+  } else if (app.screen === 'generateCollection') {
+    content = (
       <CollectionGeneratorScreen
         onCreateGeneratedCollection={app.collectionLibrary.createGeneratedCollection}
         onComplete={() => app.setScreen('manageCollections')}
         onBack={() => app.setScreen('manageCollections')}
-        onMainMenu={app.requestMainMenu}
       />
     );
-  }
-
-  if (app.screen === 'collections') {
-    return (
+  } else if (app.screen === 'collections') {
+    content = (
       <CollectionPickerScreen
         collections={app.collectionLibrary.availableCollections}
         onSelect={app.selectCollection}
-        onMainMenu={app.requestMainMenu}
       />
     );
-  }
-
-  if (app.screen === 'review' && session.collection) {
-    return (
+  } else if (app.screen === 'review' && session.collection) {
+    content = (
       <CollectionReviewScreen
         collection={session.collection}
         selectedItemIds={session.selectedItemIds}
         onSelectedItemIdsChange={session.setSelectedItemIds}
         onBack={() => app.setScreen('collections')}
         onStartRanking={app.startRanking}
-        onMainMenu={app.requestMainMenu}
       />
     );
-  }
-
-  if (!session.collection || !session.rankingState) {
-    return null;
-  }
-
-  if (app.screen === 'ranking') {
-    if (!session.rankingState.current) {
-      return (
+  } else if (session.collection && session.rankingState) {
+    if (app.screen === 'ranking') {
+      if (!session.rankingState.current) {
+        content = (
+          <AppShell>
+            <FinalChoiceCheckpoint
+              title="Normal ranking complete"
+              first={session.normalLastChoice?.first ?? null}
+              second={session.normalLastChoice?.second ?? null}
+              winnerId={session.normalLastChoice?.winnerId ?? null}
+              onUndo={session.undoNormal}
+              onContinue={() => app.setScreen('rankingComplete')}
+            />
+            <ExitConfirmModal
+              open={app.exitConfirm}
+              onStay={app.cancelNavigation}
+              onExit={app.confirmNavigation}
+            />
+          </AppShell>
+        );
+      } else if (session.currentOpponent) {
+        content = (
+          <AppShell>
+            <RankingScreen
+              current={session.rankingState.current}
+              opponent={session.currentOpponent}
+              placedCount={session.displayedPlaced}
+              totalItems={session.selectedItemIds.size}
+              comparisons={session.rankingState.comparisons}
+              canUndo={session.rankingWinnerIds.length > 0}
+              onChoose={session.chooseNormal}
+              onUndo={session.undoNormal}
+            />
+            <ExitConfirmModal
+              open={app.exitConfirm}
+              onStay={app.cancelNavigation}
+              onExit={app.confirmNavigation}
+            />
+          </AppShell>
+        );
+      }
+    } else if (app.screen === 'rankingComplete') {
+      content = (
         <AppShell>
-          <AppHeader onMainMenu={app.requestMainMenu} />
-          <FinalChoiceCheckpoint
-            title="Normal ranking complete"
-            first={session.normalLastChoice?.first ?? null}
-            second={session.normalLastChoice?.second ?? null}
-            winnerId={session.normalLastChoice?.winnerId ?? null}
-            onUndo={session.undoNormal}
-            onContinue={() => app.setScreen('rankingComplete')}
+          <RankingCompleteScreen
+            collectionName={session.collection.name}
+            comparisons={session.rankingState.comparisons}
+            refinementCount={session.refinementOptions.length}
+            onRefine={app.startRefinement}
+            onRateItems={() => app.openRatings('rankingComplete')}
+            onSeeResults={app.showResults}
           />
           <ExitConfirmModal
             open={app.exitConfirm}
-            onStay={() => app.setExitConfirm(false)}
-            onExit={app.goHomeNow}
+            onStay={app.cancelNavigation}
+            onExit={app.confirmNavigation}
+          />
+        </AppShell>
+      );
+    } else if (app.screen === 'refinement') {
+      if (session.refinementIndex >= session.refinementPairs.length) {
+        content = (
+          <AppShell>
+            <FinalChoiceCheckpoint
+              title="Refinement choices complete"
+              first={session.refinementLastChoice?.first ?? null}
+              second={session.refinementLastChoice?.second ?? null}
+              winnerId={session.refinementLastChoice?.winnerId ?? null}
+              onUndo={session.undoRefinement}
+              onContinue={() => app.setScreen('refinementComplete')}
+            />
+            <ExitConfirmModal
+              open={app.exitConfirm}
+              onStay={app.cancelNavigation}
+              onExit={app.confirmNavigation}
+            />
+          </AppShell>
+        );
+      } else if (session.currentRefinementItems) {
+        content = (
+          <AppShell>
+            <RefinementScreen
+              first={session.currentRefinementItems.first}
+              second={session.currentRefinementItems.second}
+              index={session.refinementIndex}
+              total={session.refinementPairs.length}
+              canUndo={session.refinementWinnerIds.length > 0}
+              onChoose={session.chooseRefinement}
+              onUndo={session.undoRefinement}
+            />
+            <ExitConfirmModal
+              open={app.exitConfirm}
+              onStay={app.cancelNavigation}
+              onExit={app.confirmNavigation}
+            />
+          </AppShell>
+        );
+      }
+    } else if (app.screen === 'refinementComplete') {
+      content = (
+        <AppShell>
+          <RefinementCompleteScreen
+            onRateItems={() => app.openRatings('refinementComplete')}
+            onSeeResults={app.showResults}
+          />
+          <ExitConfirmModal
+            open={app.exitConfirm}
+            onStay={app.cancelNavigation}
+            onExit={app.confirmNavigation}
+          />
+        </AppShell>
+      );
+    } else if (app.screen === 'ratings') {
+      content = (
+        <AppShell>
+          <PersonalRatingsScreen
+            items={session.ratingOrder}
+            personalRatings={app.ratings.personalRatings}
+            onUpdateRating={app.ratings.updatePersonalRating}
+            onBack={() => app.setScreen(session.ratingBackScreen)}
+            onContinue={app.showResults}
+          />
+          <ExitConfirmModal
+            open={app.exitConfirm}
+            onStay={app.cancelNavigation}
+            onExit={app.confirmNavigation}
+          />
+        </AppShell>
+      );
+    } else if (app.screen === 'results') {
+      content = (
+        <AppShell>
+          <ResultsScreen
+            collection={session.collection}
+            rankingState={session.rankingState}
+            preferenceScores={session.preferenceScores}
+            personalRatings={app.ratings.personalRatings}
+            onNewRanking={app.startNewRanking}
           />
         </AppShell>
       );
     }
-
-    if (!session.currentOpponent) {
-      return null;
-    }
-
-    return (
-      <AppShell>
-        <AppHeader onMainMenu={app.requestMainMenu} />
-        <RankingScreen
-          current={session.rankingState.current}
-          opponent={session.currentOpponent}
-          placedCount={session.displayedPlaced}
-          totalItems={session.selectedItemIds.size}
-          comparisons={session.rankingState.comparisons}
-          canUndo={session.rankingWinnerIds.length > 0}
-          onChoose={session.chooseNormal}
-          onUndo={session.undoNormal}
-        />
-        <ExitConfirmModal
-          open={app.exitConfirm}
-          onStay={() => app.setExitConfirm(false)}
-          onExit={app.goHomeNow}
-        />
-      </AppShell>
-    );
   }
 
-  if (app.screen === 'rankingComplete') {
-    return (
-      <AppShell>
-        <AppHeader onMainMenu={app.requestMainMenu} />
-        <RankingCompleteScreen
-          collectionName={session.collection.name}
-          comparisons={session.rankingState.comparisons}
-          refinementCount={session.refinementOptions.length}
-          onRefine={app.startRefinement}
-          onRateItems={() => app.openRatings('rankingComplete')}
-          onSeeResults={app.showResults}
-        />
-        <ExitConfirmModal
-          open={app.exitConfirm}
-          onStay={() => app.setExitConfirm(false)}
-          onExit={app.goHomeNow}
-        />
-      </AppShell>
-    );
-  }
-
-  if (app.screen === 'refinement') {
-    if (session.refinementIndex >= session.refinementPairs.length) {
-      return (
-        <AppShell>
-          <AppHeader onMainMenu={app.requestMainMenu} />
-          <FinalChoiceCheckpoint
-            title="Refinement choices complete"
-            first={session.refinementLastChoice?.first ?? null}
-            second={session.refinementLastChoice?.second ?? null}
-            winnerId={session.refinementLastChoice?.winnerId ?? null}
-            onUndo={session.undoRefinement}
-            onContinue={() => app.setScreen('refinementComplete')}
-          />
-          <ExitConfirmModal
-            open={app.exitConfirm}
-            onStay={() => app.setExitConfirm(false)}
-            onExit={app.goHomeNow}
-          />
-        </AppShell>
-      );
-    }
-
-    if (!session.currentRefinementItems) {
-      return null;
-    }
-
-    return (
-      <AppShell>
-        <AppHeader onMainMenu={app.requestMainMenu} />
-        <RefinementScreen
-          first={session.currentRefinementItems.first}
-          second={session.currentRefinementItems.second}
-          index={session.refinementIndex}
-          total={session.refinementPairs.length}
-          canUndo={session.refinementWinnerIds.length > 0}
-          onChoose={session.chooseRefinement}
-          onUndo={session.undoRefinement}
-        />
-        <ExitConfirmModal
-          open={app.exitConfirm}
-          onStay={() => app.setExitConfirm(false)}
-          onExit={app.goHomeNow}
-        />
-      </AppShell>
-    );
-  }
-
-  if (app.screen === 'refinementComplete') {
-    return (
-      <AppShell>
-        <AppHeader onMainMenu={app.requestMainMenu} />
-        <RefinementCompleteScreen
-          onRateItems={() => app.openRatings('refinementComplete')}
-          onSeeResults={app.showResults}
-        />
-        <ExitConfirmModal
-          open={app.exitConfirm}
-          onStay={() => app.setExitConfirm(false)}
-          onExit={app.goHomeNow}
-        />
-      </AppShell>
-    );
-  }
-
-  if (app.screen === 'ratings') {
-    return (
-      <AppShell>
-        <AppHeader onMainMenu={app.requestMainMenu} />
-        <PersonalRatingsScreen
-          items={session.ratingOrder}
-          personalRatings={app.ratings.personalRatings}
-          onUpdateRating={app.ratings.updatePersonalRating}
-          onBack={() => app.setScreen(session.ratingBackScreen)}
-          onContinue={app.showResults}
-        />
-        <ExitConfirmModal
-          open={app.exitConfirm}
-          onStay={() => app.setExitConfirm(false)}
-          onExit={app.goHomeNow}
-        />
-      </AppShell>
-    );
-  }
-
-  if (app.screen === 'results') {
-    return (
-      <AppShell>
-        <AppHeader onMainMenu={app.requestMainMenu} />
-        <ResultsScreen
-          collection={session.collection}
-          rankingState={session.rankingState}
-          preferenceScores={session.preferenceScores}
-          personalRatings={app.ratings.personalRatings}
-          onNewRanking={app.startNewRanking}
-        />
-      </AppShell>
-    );
-  }
-
-  return null;
+  return (
+    <AppNavigationProvider
+      screen={app.screen}
+      navigate={app.requestNavigation}
+    >
+      {content}
+    </AppNavigationProvider>
+  );
 }
 
 export default App;

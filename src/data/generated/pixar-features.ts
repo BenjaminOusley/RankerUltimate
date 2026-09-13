@@ -4,6 +4,16 @@ export const pixarFeaturesMovies: RankCollection = {
   id: 'pixar-features-movies',
   name: 'Pixar Feature Films',
   description: 'Feature films produced by Pixar.',
+
+  groupId: 'movies-tv',
+  rankingDomain: 'screen',
+  isBuiltIn: true,
+  permissions: {
+    edit: false,
+    delete: false,
+    move: false,
+    refresh: true,
+  },
   candidateSource: {
     kind: 'generated',
     provider: 'tmdb',

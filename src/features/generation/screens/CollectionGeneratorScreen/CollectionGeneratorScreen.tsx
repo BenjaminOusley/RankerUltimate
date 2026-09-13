@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
 import { AppShell } from '@/app/AppShell';
-import type { RankCollection } from '@/domain/models';
-import { AppHeader } from '@/shared/components/AppHeader/AppHeader';
+import type { CollectionGroupId, RankCollection } from '@/domain/models';
 import { Button } from '@/shared/components/Button/Button';
 import { SceneHeading, ScenePanel, ScrollPanel } from '@/shared/components/Scene/Scene';
 import { generateCollection } from '../../api/generateCollection';
@@ -22,7 +21,6 @@ type CollectionGeneratorScreenProps = {
   ) => Promise<string>;
   onComplete: (collectionId: string) => void;
   onBack: () => void;
-  onMainMenu: () => void;
 };
 
 type GeneratorMode = 'conversation' | 'advanced';
@@ -31,7 +29,6 @@ export function CollectionGeneratorScreen({
   onCreateGeneratedCollection,
   onComplete,
   onBack,
-  onMainMenu,
 }: CollectionGeneratorScreenProps) {
   const [mode, setMode] = useState<GeneratorMode>('conversation');
   const [pendingCollection, setPendingCollection] = useState<RankCollection | null>(null);
@@ -50,7 +47,10 @@ export function CollectionGeneratorScreen({
     setSaveError(null);
   }
 
-  async function handleSave(selectedItemKeys: ReadonlySet<string>) {
+  async function handleSave(
+    selectedItemKeys: ReadonlySet<string>,
+    groupId: CollectionGroupId,
+  ) {
     if (!pendingCollection || isSaving) {
       return;
     }
@@ -60,7 +60,10 @@ export function CollectionGeneratorScreen({
 
     try {
       const collectionId = await onCreateGeneratedCollection(
-        pendingCollection,
+        {
+          ...pendingCollection,
+          groupId,
+        },
         selectedItemKeys,
       );
       onComplete(collectionId);
@@ -75,8 +78,6 @@ export function CollectionGeneratorScreen({
 
   return (
     <AppShell>
-      <AppHeader onMainMenu={onMainMenu} />
-
       <ScenePanel
         className={`${styles.scene} ${pendingCollection ? styles.reviewScene : ''}`}
       >
@@ -85,7 +86,7 @@ export function CollectionGeneratorScreen({
             <h1>{pendingCollection ? 'Review Collection' : 'Generate Collection'}</h1>
             <p>
               {pendingCollection
-                ? 'Check the generated items before adding this collection to your library.'
+                ? 'Check the generated items and group before adding this collection to your library.'
                 : mode === 'conversation'
                   ? 'Describe what you want to rank and clarify anything ambiguous in your own words.'
                   : 'Build movie, TV, or game collections directly from TMDB and IGDB.'}

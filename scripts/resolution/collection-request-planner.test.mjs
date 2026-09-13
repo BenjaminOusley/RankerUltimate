@@ -52,6 +52,26 @@ function createFakeTmdb() {
         ];
       }
 
+      if (query.toLowerCase() === 'peter jackson') {
+        return [
+          {
+            id: 108,
+            name: 'Peter Jackson',
+            known_for_department: 'Directing',
+          },
+          {
+            id: 880108,
+            name: 'Peter Jackson',
+            known_for_department: 'Directing',
+          },
+          {
+            id: 990108,
+            name: 'Peter Jackson',
+            known_for_department: 'Acting',
+          },
+        ];
+      }
+
       if (query.toLowerCase() === 'acme') {
         return [
           {
@@ -312,7 +332,7 @@ describe('collection request planner', () => {
     });
     expect(pixar.status).toBe('planned');
     expect(pixar.plan.sources[0]).toMatchObject({
-      mode: 'company',
+      mode: 'company-features',
       resolvedId: 3,
     });
 
@@ -334,6 +354,27 @@ describe('collection request planner', () => {
     expect(gosling.plan.sources[0]).toMatchObject({
       mode: 'actor',
       resolvedId: 30614,
+    });
+  });
+
+  it('keeps a selected director clarification attached to the original person name', async () => {
+    const result = await planCollectionRequest({
+      request: ready(
+        'Peter Jackson director',
+        ['movie'],
+        'Peter Jackson director',
+      ),
+      tmdb: createFakeTmdb(),
+    });
+
+    expect(result.status).toBe('planned');
+    expect(result.plan.sources[0]).toMatchObject({
+      provider: 'tmdb',
+      mediaType: 'movie',
+      mode: 'director',
+      query: 'Peter Jackson',
+      resolvedId: 108,
+      resolvedName: 'Peter Jackson',
     });
   });
 
@@ -360,7 +401,10 @@ describe('collection request planner', () => {
       'movie',
       'tv',
     ]);
-    expect(result.plan.sources.every((source) => source.mode === 'company')).toBe(true);
+    expect(result.plan.sources.map((source) => source.mode)).toEqual([
+      'company-features',
+      'company',
+    ]);
   });
 
   it('asks for clarification instead of inventing an unsupported provider mapping', async () => {
@@ -385,5 +429,6 @@ describe('collection request planner', () => {
     expect(result.matches.map((match) => match.mode).sort()).toEqual(['actor', 'company']);
   });
 });
+
 
 

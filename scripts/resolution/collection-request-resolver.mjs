@@ -49,6 +49,22 @@ function isRelationOnlyClarification(value) {
   return RELATION_ONLY_PATTERN.test(normalizeWhitespace(value));
 }
 
+function isRepeatedSubjectRelationClarification(value, previousSubject) {
+  const normalizedValue = normalizeWhitespace(value);
+  const normalizedSubject = normalizeWhitespace(previousSubject);
+
+  if (normalizedValue.length <= normalizedSubject.length) {
+    return false;
+  }
+
+  if (normalizedValue.slice(0, normalizedSubject.length).toLowerCase() !== normalizedSubject.toLowerCase()) {
+    return false;
+  }
+
+  const remainder = normalizedValue.slice(normalizedSubject.length).trim();
+  return isRelationOnlyClarification(remainder);
+}
+
 function isBookTargetOnlyClarification(value) {
   return /^(?:individual|single|series|trilogy)$/iu.test(normalizeWhitespace(value));
 }
@@ -225,6 +241,9 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
 
   if (previousContext.subject) {
     const relationOnly = extractedSubject && isRelationOnlyClarification(extractedSubject);
+    const repeatedSubjectRelation =
+      extractedSubject &&
+      isRepeatedSubjectRelationClarification(extractedSubject, previousContext.subject);
     const bookTargetOnly =
       mediaTypes.length === 1 &&
       mediaTypes[0] === 'book' &&
@@ -236,12 +255,16 @@ export function resolveCollectionRequestTurn({ text, context = null }) {
       // rebuilds the full request text so the planner still sees both pieces.
       subject = previousContext.subject;
       requestText = `${previousContext.subject} ${normalizedText}`;
-    } else if (relationOnly || bookTargetOnly) {
+    } else if (relationOnly || repeatedSubjectRelation || bookTargetOnly) {
       // Planner clarifications such as "series", "individual books", "the
       // company", or "franchise" describe the relationship of the existing
-      // subject rather than replacing it.
+      // subject rather than replacing it. Clarification buttons can repeat the
+      // subject (for example, "Peter Jackson director"), so keep the canonical
+      // subject while preserving the user's full wording for the planner.
       subject = previousContext.subject;
-      requestText = `${previousContext.subject} ${normalizedText}`;
+      requestText = repeatedSubjectRelation
+        ? normalizedText
+        : `${previousContext.subject} ${normalizedText}`;
     } else if (
       extractedSubject &&
       detectedMediaTypes.length === 0 &&

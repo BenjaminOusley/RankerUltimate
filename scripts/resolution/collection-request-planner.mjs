@@ -14,6 +14,7 @@ const SUPPORTED_MEDIA_TYPES = new Set(['movie', 'tv', 'game', 'book']);
 const DEFAULT_LIMIT = 50;
 const MAX_TMDB_COLLECTION_LIMIT = 250;
 const MAX_IGDB_COLLECTION_LIMIT = 500;
+const FEATURE_FILM_DEFAULT_COMPANY_IDS = new Set([3]); // Pixar Animation Studios
 const OPTIONAL_IGDB_GAME_TYPES = Object.freeze([
   ...DLC_EXPANSION_IGDB_GAME_TYPES,
   ...SEASON_IGDB_GAME_TYPES,
@@ -415,13 +416,16 @@ function cleanPlanningQuery(subject, requestText, mediaType) {
       /^(?:the\s+)?(?:(?:most\s+)?popular|(?:highest|best|top)\s+rated|newest|latest|most\s+recent|oldest|earliest)\s+/iu,
       '',
     )
-    .replace(/^(?:directed\s+by|starring|featuring|produced\s+by)\s+/iu, '')
     .replace(
-      /\s+(?:franchise|series|genre|platform|console|company|developer|publisher|studio)$/iu,
+      /^(?:directed\s+by|starring|featuring|produced\s+by|director|actor|actress)\s+/iu,
       '',
     )
     .replace(
-      /^(?:franchise|series|genre|platform|console|company|developer|publisher|studio)\s+/iu,
+      /\s+(?:franchise|series|genre|platform|console|company|developer|publisher|studio|director|actor|actress)$/iu,
+      '',
+    )
+    .replace(
+      /^(?:franchise|series|genre|platform|console|company|developer|publisher|studio|director|actor|actress)\s+/iu,
       '',
     )
     .replace(/\s+feature\s+films?$/iu, '')
@@ -607,7 +611,7 @@ function clarificationForMatches({ subject, mediaType, matches }) {
         : mediaType === 'game'
           ? 'game'
           : 'book';
-  const examples = matches.slice(0, 4).map((match) => {
+  const examples = [...new Set(matches.map((match) => {
     if (match.mode === 'parent-game') {
       const year = match.resolvedYear ? ` (${match.resolvedYear})` : '';
       const scopeLabel = getGameContentScopeLabel(match.gameTypes ?? []);
@@ -648,7 +652,7 @@ function clarificationForMatches({ subject, mediaType, matches }) {
     }
 
     return `${match.name} ${match.mode}`;
-  });
+  }))].slice(0, 4);
 
   return {
     status: 'clarification',
@@ -1016,10 +1020,15 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
 
     for (const company of companies) {
       if (entityNamesMatch(query, company.name)) {
+        const preferFeatureFilms =
+          mediaType === 'movie' &&
+          (relationHint === 'company-features' ||
+            (relationHint === null && FEATURE_FILM_DEFAULT_COMPANY_IDS.has(company.id)));
+
         plans.push(
           createTmdbPlan({
             mediaType,
-            mode: relationHint === 'company-features' ? 'company-features' : 'company',
+            mode: preferFeatureFilms ? 'company-features' : 'company',
             query,
             entity: company,
             sort,
@@ -1031,13 +1040,35 @@ async function findTmdbPlans({ tmdb, mediaType, subject, requestText }) {
   }
 
   if (!relationHint || relationHint === 'actor' || relationHint === 'director') {
-    const people = await tmdb.searchPerson(query);
+    const people = (await tmdb.searchPerson(query)).filter((person) =>
+      entityNamesMatch(query, person.name),
+    );
+    let relevantPeople = people;
 
-    for (const person of people) {
-      if (!entityNamesMatch(query, person.name)) {
-        continue;
+    if (relationHint === 'actor' || relationHint === 'director') {
+      const expectedDepartment = relationHint === 'actor' ? 'acting' : 'directing';
+      const departmentMatches = people.filter(
+        (person) => normalizeComparable(person.known_for_department ?? '') === expectedDepartment,
+      );
+
+      if (departmentMatches.length > 0) {
+        relevantPeople = departmentMatches;
       }
 
+      /*
+       * A role clarification such as "Peter Jackson director" has already
+       * resolved the user's intended relationship. TMDB can still return
+       * multiple exact-name people in that same department, and asking the
+       * identical role question again creates an endless clarification loop.
+       * TMDB search results are relevance ordered, so once the role is
+       * explicit, use the highest-ranked exact department match.
+       */
+      if (relevantPeople.length > 1) {
+        relevantPeople = relevantPeople.slice(0, 1);
+      }
+    }
+
+    for (const person of relevantPeople) {
       const mode = inferPersonMode(person, relationHint, mediaType);
 
       if (!mode) {
@@ -1247,5 +1278,6 @@ export async function planCollectionRequest({
     },
   };
 }
+
 
 

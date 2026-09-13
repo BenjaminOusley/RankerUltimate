@@ -11,12 +11,12 @@ type ExitConfirmModalProps = {
 export function ExitConfirmModal({ open, onStay, onExit }: ExitConfirmModalProps) {
   return (
     <Modal open={open} className={styles.modal} aria-labelledby="exit-title">
-      <h2 id="exit-title">Return to Main Menu?</h2>
+      <h2 id="exit-title">Leave this ranking?</h2>
       <p>This ranking isn’t being saved as a completed ranking yet. Leaving will discard it.</p>
       <div className={styles.actions}>
         <Button onClick={onStay}>Stay Here</Button>
         <Button variant="danger" onClick={onExit}>
-          Discard &amp; Exit
+          Discard &amp; Leave
         </Button>
       </div>
     </Modal>

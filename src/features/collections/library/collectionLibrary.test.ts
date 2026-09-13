@@ -9,6 +9,7 @@ import {
   getCollectionLibraryItemKey,
   loadCollectionLibraryState,
   materializeCollections,
+  moveCollectionToGroupInLibrary,
   saveCollectionLibraryState,
   updateCollectionInLibrary,
   type CollectionLibraryState,
@@ -196,6 +197,7 @@ describe('runtime generated collections', () => {
         description: 'Movies directed by Christopher Nolan.',
         candidateSource: generatedCollection.candidateSource,
         excludedItemKeys: [],
+        groupId: 'movies-tv',
       },
     ]);
 
@@ -203,6 +205,7 @@ describe('runtime generated collections', () => {
 
     expect(shell.items).toEqual([]);
     expect(shell.candidateSource).toEqual(generatedCollection.candidateSource);
+    expect(shell.groupId).toBe('movies-tv');
   });
 
   it('stores review-time deselections as generated collection exclusions', () => {
@@ -299,6 +302,23 @@ describe('runtime generated collections', () => {
     expect(nextState.deletedBuiltInIds).toEqual([]);
   });
 
+  it('persists group changes for generated collections', () => {
+    const state = addGeneratedCollectionToLibrary(
+      emptyState(),
+      baseCollections,
+      generatedCollection,
+    );
+
+    const moved = moveCollectionToGroupInLibrary(
+      state,
+      [...baseCollections, generatedCollection],
+      generatedCollection.id,
+      'various',
+    );
+
+    expect(moved.generatedCollections[0].groupId).toBe('various');
+  });
+
   it('stores a composite runtime source without freezing its candidate items', () => {
     const compositeCollection: RankCollection = {
       id: 'mixed-media',
@@ -345,6 +365,54 @@ describe('runtime generated collections', () => {
     expect(buildStoredGeneratedCollectionShells(state)[0].items).toEqual([]);
   });
 
+});
+
+describe('locked built-in collections', () => {
+  const lockedCollection: RankCollection = {
+    ...baseCollections[0],
+    isBuiltIn: true,
+    groupId: 'movies-tv',
+    permissions: {
+      edit: false,
+      delete: false,
+      move: false,
+      refresh: true,
+    },
+  };
+
+  const lockedSources = [lockedCollection, baseCollections[1]];
+
+  it('does not allow locked built-ins to be edited through library state', () => {
+    const state = emptyState();
+    const nextState = updateCollectionInLibrary(
+      state,
+      lockedSources,
+      {
+        ...lockedCollection,
+        name: 'Renamed MCU',
+        items: [lockedCollection.items[0]],
+      },
+      true,
+    );
+
+    expect(nextState).toBe(state);
+  });
+
+  it('does not allow locked built-ins to be deleted or moved', () => {
+    const state = emptyState();
+
+    expect(
+      deleteCollectionFromLibrary(state, lockedSources, lockedCollection.id),
+    ).toBe(state);
+    expect(
+      moveCollectionToGroupInLibrary(
+        state,
+        lockedSources,
+        lockedCollection.id,
+        'various',
+      ),
+    ).toBe(state);
+  });
 });
 
 describe('collection storage migration', () => {

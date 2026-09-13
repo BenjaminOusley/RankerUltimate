@@ -10,6 +10,43 @@ import {
   resolveCollectionRequestTurn,
 } from './collection-request-resolver.mjs';
 
+function createFakeTmdb() {
+  return {
+    async getMovieGenres() {
+      return [];
+    },
+    async getTvGenres() {
+      return [];
+    },
+    async searchCompany() {
+      return [];
+    },
+    async searchPerson(query) {
+      if (query.toLowerCase() !== 'peter jackson') {
+        return [];
+      }
+
+      return [
+        {
+          id: 108,
+          name: 'Peter Jackson',
+          known_for_department: 'Directing',
+        },
+        {
+          id: 880108,
+          name: 'Peter Jackson',
+          known_for_department: 'Directing',
+        },
+        {
+          id: 990108,
+          name: 'Peter Jackson',
+          known_for_department: 'Acting',
+        },
+      ];
+    },
+  };
+}
+
 function createFakeIgdb() {
   return {
     async searchGenres() {
@@ -50,6 +87,58 @@ describe('conversational collection request flow', () => {
     expect(extractCollectionRequestSubject('Halo games and movies')).toBe('Halo');
   });
 
+  it('carries a selected person role through the next conversational turn', async () => {
+    const firstResolution = resolveCollectionRequestTurn({
+      text: 'Peter Jackson movies',
+    });
+
+    expect(firstResolution.ok).toBe(true);
+    expect(firstResolution.result.status).toBe('ready-for-planning');
+
+    const firstPlan = await planCollectionRequest({
+      request: firstResolution.result,
+      tmdb: createFakeTmdb(),
+    });
+
+    expect(firstPlan.status).toBe('clarification');
+    expect(firstPlan.examples).toContain('Peter Jackson director');
+
+    const secondResolution = resolveCollectionRequestTurn({
+      text: 'Peter Jackson director',
+      context: firstPlan.context,
+    });
+
+    expect(secondResolution).toMatchObject({
+      ok: true,
+      result: {
+        status: 'ready-for-planning',
+        subject: 'Peter Jackson',
+        requestText: 'Peter Jackson director',
+        mediaTypes: ['movie'],
+      },
+    });
+
+    const secondPlan = await planCollectionRequest({
+      request: secondResolution.result,
+      tmdb: createFakeTmdb(),
+    });
+
+    expect(secondPlan).toMatchObject({
+      status: 'planned',
+      plan: {
+        sources: [
+          {
+            provider: 'tmdb',
+            mediaType: 'movie',
+            mode: 'director',
+            query: 'Peter Jackson',
+            resolvedId: 108,
+          },
+        ],
+      },
+    });
+  });
+
   it('preserves DLC/expansion intent from resolver through planner', async () => {
     const resolution = resolveCollectionRequestTurn({
       text: 'top 100 Halo games including DLC and expansions',
@@ -87,3 +176,4 @@ describe('conversational collection request flow', () => {
     });
   });
 });
+

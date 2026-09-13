@@ -27,6 +27,7 @@ export function useAppController() {
     loadRankingRecovery(),
   );
   const [exitConfirm, setExitConfirm] = useState(false);
+  const [pendingNavigationScreen, setPendingNavigationScreen] = useState<AppScreen | null>(null);
 
   const collectionLibrary = useCollectionLibrary(collections);
   const ratings = usePersonalRatings(collectionLibrary.itemLibrary);
@@ -72,21 +73,52 @@ export function useAppController() {
     clearRankingRecovery();
     session.clearSession();
     setExitConfirm(false);
+    setPendingNavigationScreen(null);
     setScreen('home');
   }
 
-  function requestMainMenu() {
-    if (screen === 'results') {
-      goHomeNow();
+  function navigateNow(target: AppScreen) {
+    if (screen === 'results' || screen === 'review') {
+      clearRankingRecovery();
+      session.clearSession();
+    }
+
+    setExitConfirm(false);
+    setPendingNavigationScreen(null);
+    setScreen(target);
+  }
+
+  function requestNavigation(target: AppScreen) {
+    if (target === screen) {
       return;
     }
 
     if (recoverableScreens.has(screen)) {
+      setPendingNavigationScreen(target);
       setExitConfirm(true);
       return;
     }
 
-    setScreen('home');
+    navigateNow(target);
+  }
+
+  function cancelNavigation() {
+    setExitConfirm(false);
+    setPendingNavigationScreen(null);
+  }
+
+  function confirmNavigation() {
+    const target = pendingNavigationScreen ?? 'home';
+
+    clearRankingRecovery();
+    session.clearSession();
+    setExitConfirm(false);
+    setPendingNavigationScreen(null);
+    setScreen(target);
+  }
+
+  function requestMainMenu() {
+    requestNavigation('home');
   }
 
   function selectCollection(selectedCollection: RankCollection) {
@@ -169,10 +201,14 @@ export function useAppController() {
     resumePrompt,
     exitConfirm,
     setExitConfirm,
+    pendingNavigationScreen,
     collectionLibrary,
     ratings,
     session,
+    requestNavigation,
     requestMainMenu,
+    cancelNavigation,
+    confirmNavigation,
     goHomeNow,
     selectCollection,
     startRanking,
