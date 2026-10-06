@@ -28,3 +28,8 @@ dist-ssr
 !.env.example
 
 .vercel
+
+# Local project snapshots and provider diagnostics
+RankerUltimate-source*.txt
+scripts/provider-spikes/
+**/*spike*-results.*

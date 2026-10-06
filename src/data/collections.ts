@@ -1,4 +1,3 @@
-import { mcuMovies } from './generated/mcu';
-import { pixarFeaturesMovies } from './generated/pixar-features';
+import { curatedDefaultCollections } from './curated/defaultCollections';
 
-export const collections = [mcuMovies, pixarFeaturesMovies];
+export const collections = curatedDefaultCollections;

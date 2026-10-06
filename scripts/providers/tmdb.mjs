@@ -25,14 +25,35 @@ export function createItemId(title, tmdbId) {
   return `${slug}-${tmdbId}`;
 }
 
+export function getTvRunLabel(item) {
+  const startYear = item.first_air_date?.slice(0, 4);
+
+  if (!startYear) {
+    return undefined;
+  }
+
+  const status = String(item.status ?? '')
+    .trim()
+    .toLowerCase();
+  const hasEnded = status === 'ended' || status === 'canceled';
+
+  if (!hasEnded) {
+    return `${startYear}–`;
+  }
+
+  const endYear = item.last_air_date?.slice(0, 4) || startYear;
+
+  return endYear === startYear ? startYear : `${startYear}–${endYear}`;
+}
+
 export function createRankItem(item, mediaType = 'movie') {
   const title = mediaType === 'tv' ? item.name : item.title;
-  const releaseYear = getReleaseYear(item, mediaType);
+  const subtitle = mediaType === 'tv' ? getTvRunLabel(item) : getReleaseYear(item, mediaType);
 
   return {
     id: createItemId(title, item.id),
     name: title,
-    subtitle: releaseYear,
+    subtitle,
     image: item.poster_path ? `${TMDB_IMAGE_BASE}${item.poster_path}` : undefined,
     source: {
       provider: 'tmdb',
@@ -72,6 +93,17 @@ export function createTmdbProvider(token) {
       language: 'en-US',
       include_adult: 'false',
       primary_release_year: year,
+    });
+
+    return data.results ?? [];
+  }
+
+  async function searchTv(title, year) {
+    const data = await request('/search/tv', {
+      query: title,
+      language: 'en-US',
+      include_adult: 'false',
+      first_air_date_year: year,
     });
 
     return data.results ?? [];
@@ -199,6 +231,7 @@ export function createTmdbProvider(token) {
 
   return {
     searchMovie,
+    searchTv,
     getMovieById,
     getTvById,
     searchCompany,

@@ -991,7 +991,7 @@ export function CollectionsScreen({
                 onClick={selectAllVisibleCollections}
                 disabled={visibleSelectableCollectionIds.length === 0}
               >
-                Select all visible
+                {searching ? 'Select all results' : 'Select all'}
               </Button>
               <Button
                 size="small"

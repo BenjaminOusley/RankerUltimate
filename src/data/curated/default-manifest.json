@@ -1,0 +1,4139 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": 3,
+  "generatedAt": "2026-10-06T05:46:25.102Z",
+  "sources": [
+    {
+      "id": "tmdb",
+      "url": "https://www.themoviedb.org/",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "star-wars-guide",
+      "url": "https://www.starwars.com/news/star-wars-movies-and-series-guide",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "disney-princess",
+      "url": "https://princess.disney.com/",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "best-selling-games",
+      "url": "https://en.wikipedia.org/wiki/List_of_best-selling_video_games",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "stephen-king-novel",
+      "url": "https://stephenking.com/works/novel/grid.html",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "stephen-king-collection",
+      "url": "https://stephenking.com/works/collection/grid.html",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "stephen-king-nonfiction",
+      "url": "https://stephenking.com/works/nonfiction/grid.html",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "stephen-king-other-project",
+      "url": "https://stephenking.com/works/other-project/grid.html",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    },
+    {
+      "id": "igdb",
+      "url": "https://www.igdb.com/",
+      "checkedAt": "2026-10-06T05:46:25.102Z"
+    }
+  ],
+  "collections": [
+    {
+      "id": "mcu-movies",
+      "name": "MCU Movies",
+      "description": "Feature films in the Marvel Cinematic Universe.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "iron-man-1726",
+          "name": "Iron Man",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/78lPtwv72eTNqFW9COBYI0dWDJa.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1726",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-incredible-hulk-1724",
+          "name": "The Incredible Hulk",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/gKzYx79y0AQTL4UAk1cBQJ3nvrm.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1724",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "iron-man-2-10138",
+          "name": "Iron Man 2",
+          "subtitle": "2010",
+          "image": "https://image.tmdb.org/t/p/w500/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10138",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-america-the-first-avenger-1771",
+          "name": "Captain America: The First Avenger",
+          "subtitle": "2011",
+          "image": "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1771",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thor-10195",
+          "name": "Thor",
+          "subtitle": "2011",
+          "image": "https://image.tmdb.org/t/p/w500/prSfAi1xGrhLQNxVSUFh61xQ4Qy.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10195",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-avengers-24428",
+          "name": "The Avengers",
+          "subtitle": "2012",
+          "image": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "24428",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "iron-man-3-68721",
+          "name": "Iron Man 3",
+          "subtitle": "2013",
+          "image": "https://image.tmdb.org/t/p/w500/qhPtAc1TKbMPqNvcdXSOn9Bn7hZ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "68721",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thor-the-dark-world-76338",
+          "name": "Thor: The Dark World",
+          "subtitle": "2013",
+          "image": "https://image.tmdb.org/t/p/w500/wp6OxE4poJ4G7c0U2ZIXasTSMR7.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "76338",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-america-the-winter-soldier-100402",
+          "name": "Captain America: The Winter Soldier",
+          "subtitle": "2014",
+          "image": "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "100402",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "guardians-of-the-galaxy-118340",
+          "name": "Guardians of the Galaxy",
+          "subtitle": "2014",
+          "image": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "118340",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ant-man-102899",
+          "name": "Ant-Man",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/rQRnQfUl3kfp78nCWq8Ks04vnq1.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "102899",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "avengers-age-of-ultron-99861",
+          "name": "Avengers: Age of Ultron",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "99861",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-america-civil-war-271110",
+          "name": "Captain America: Civil War",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/rAGiXaUfPzY7CDEyNKUofk3Kw2e.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "271110",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "doctor-strange-284052",
+          "name": "Doctor Strange",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "284052",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "guardians-of-the-galaxy-vol-2-283995",
+          "name": "Guardians of the Galaxy Vol. 2",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "283995",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-homecoming-315635",
+          "name": "Spider-Man: Homecoming",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "315635",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thor-ragnarok-284053",
+          "name": "Thor: Ragnarok",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/rzRwTcFvttcN1ZpX2xv4j3tSdJu.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "284053",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ant-man-and-the-wasp-363088",
+          "name": "Ant-Man and the Wasp",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/cFQEO687n1K6umXbInzocxcnAQz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "363088",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "avengers-infinity-war-299536",
+          "name": "Avengers: Infinity War",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "299536",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "black-panther-284054",
+          "name": "Black Panther",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "284054",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "avengers-endgame-299534",
+          "name": "Avengers: Endgame",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "299534",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-marvel-299537",
+          "name": "Captain Marvel",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "299537",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-far-from-home-429617",
+          "name": "Spider-Man: Far From Home",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "429617",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "black-widow-497698",
+          "name": "Black Widow",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "497698",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "eternals-524434",
+          "name": "Eternals",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/lFByFSLV5WDJEv3KabbdAF959F2.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "524434",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "shang-chi-and-the-legend-of-the-ten-rings-566525",
+          "name": "Shang-Chi and the Legend of the Ten Rings",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/9f2Q0U3IOsLgrI2HkvldwSABZy5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "566525",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-no-way-home-634649",
+          "name": "Spider-Man: No Way Home",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "634649",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "black-panther-wakanda-forever-505642",
+          "name": "Black Panther: Wakanda Forever",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "505642",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "doctor-strange-in-the-multiverse-of-madness-453395",
+          "name": "Doctor Strange in the Multiverse of Madness",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/ddJcSKbcp4rKZTmuyWaMhuwcfMz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "453395",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thor-love-and-thunder-616037",
+          "name": "Thor: Love and Thunder",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "616037",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "werewolf-by-night-894205",
+          "name": "Werewolf by Night",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/mvIvNKRIJPPS7WSFarFhOAGIVnU.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "894205",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ant-man-and-the-wasp-quantumania-640146",
+          "name": "Ant-Man and the Wasp: Quantumania",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/qnqGbB22YJ7dSs4o6M7exTpNxPz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "640146",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "guardians-of-the-galaxy-vol-3-447365",
+          "name": "Guardians of the Galaxy Vol. 3",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "447365",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-marvels-609681",
+          "name": "The Marvels",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMMTps5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "609681",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "deadpool-wolverine-533535",
+          "name": "Deadpool & Wolverine",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "533535",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-america-brave-new-world-822119",
+          "name": "Captain America: Brave New World",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "822119",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-fantastic-4-first-steps-617126",
+          "name": "The Fantastic 4: First Steps",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/nf5qaSEvyYSNeFH0YhSs5EsBLX9.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "617126",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thunderbolts-986056",
+          "name": "Thunderbolts*",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/hqcexYHbiTBfDIdDWxrxPtVndBX.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "986056",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-brand-new-day-969681",
+          "name": "Spider-Man: Brand New Day",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/bjiS5ipwxb9JFy3XRRN4OAilSeX.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "969681",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-punisher-one-last-kill-1439930",
+          "name": "The Punisher: One Last Kill",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/qQclTgLMDvGBuUBFGHRipxkEwWR.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1439930",
+            "type": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mcu-tv-shows",
+      "name": "MCU TV Shows",
+      "description": "Marvel Cinematic Universe television series, including the canon Defenders-era shows.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "marvel-s-agents-of-s-h-i-e-l-d-1403",
+          "name": "Marvel's Agents of S.H.I.E.L.D.",
+          "subtitle": "2013–2020",
+          "image": "https://image.tmdb.org/t/p/w500/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1403",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-agent-carter-61550",
+          "name": "Marvel's Agent Carter",
+          "subtitle": "2015–2016",
+          "image": "https://image.tmdb.org/t/p/w500/fe79VYyLp5ZBstpJ4oukpuUT3B.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "61550",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-daredevil-61889",
+          "name": "Marvel's Daredevil",
+          "subtitle": "2015–2018",
+          "image": "https://image.tmdb.org/t/p/w500/QWbPaDxiB6LW2LjASknzYBvjMj.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "61889",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-jessica-jones-38472",
+          "name": "Marvel's Jessica Jones",
+          "subtitle": "2015–2019",
+          "image": "https://image.tmdb.org/t/p/w500/oxnWofiE9fHOgUfs9NJa6nG6NTR.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "38472",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-luke-cage-62126",
+          "name": "Marvel's Luke Cage",
+          "subtitle": "2016–2018",
+          "image": "https://image.tmdb.org/t/p/w500/yzM1hMB3PUJqbISX0f421b3xOjB.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62126",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-inhumans-68716",
+          "name": "Marvel's Inhumans",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/zKfGip55oJ9tdzhyd9ayGyFFhuo.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "68716",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-iron-fist-62127",
+          "name": "Marvel's Iron Fist",
+          "subtitle": "2017–2018",
+          "image": "https://image.tmdb.org/t/p/w500/4l6KD9HhtD6nCDEfg10Lp6C6zah.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62127",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-the-defenders-62285",
+          "name": "Marvel's The Defenders",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/49XzINhH4LFsgz7cx6TOPcHUJUL.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62285",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-the-punisher-67178",
+          "name": "Marvel's The Punisher",
+          "subtitle": "2017–2019",
+          "image": "https://image.tmdb.org/t/p/w500/tM6xqRKXoloH9UchaJEyyRE9O1w.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "67178",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "hawkeye-88329",
+          "name": "Hawkeye",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/ct5pNE5dDHryHLDnxyZPYcqO1sz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "88329",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "loki-84958",
+          "name": "Loki",
+          "subtitle": "2021–2023",
+          "image": "https://image.tmdb.org/t/p/w500/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "84958",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "the-falcon-and-the-winter-soldier-88396",
+          "name": "The Falcon and the Winter Soldier",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "88396",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "wandavision-85271",
+          "name": "WandaVision",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/ijWWwINc8h71NQ8j1LTJMFSj5wr.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "85271",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "what-if-91363",
+          "name": "What If...?",
+          "subtitle": "2021–2024",
+          "image": "https://image.tmdb.org/t/p/w500/lztz5XBMG1x6Y5ubz7CxfPFsAcW.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "91363",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "moon-knight-92749",
+          "name": "Moon Knight",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/9K3lbMf8TKvL9xGEbzi7TggWCNQ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92749",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "ms-marvel-92782",
+          "name": "Ms. Marvel",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/3HWWh92kZbD7odwJX7nKmXNZsYo.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92782",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "she-hulk-attorney-at-law-92783",
+          "name": "She-Hulk: Attorney at Law",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/5xz2orV8f0usyrfGNshcoXHmiaV.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92783",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "secret-invasion-114472",
+          "name": "Secret Invasion",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/3rINdUPSy9AklJg74jWHOyUXuZd.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "114472",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "agatha-all-along-138501",
+          "name": "Agatha All Along",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/mGsxKwXUjojitRv2E9qMTbxbBRd.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "138501",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "echo-122226",
+          "name": "Echo",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/vFyJH630cF68LohVYjQW49074Sy.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "122226",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "daredevil-born-again-202555",
+          "name": "Daredevil: Born Again",
+          "subtitle": "2025–",
+          "image": "https://image.tmdb.org/t/p/w500/xDUoAsU8lQHOOoRkFiBuarmACDN.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "202555",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "eyes-of-wakanda-241388",
+          "name": "Eyes of Wakanda",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/yuOfb1MgnaGPa4guzV0n1IFYVGN.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "241388",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "ironheart-114471",
+          "name": "Ironheart",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/dOh6MJpdlQhYpLBhzhNQeYGKTZ5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "114471",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-zombies-138505",
+          "name": "Marvel Zombies",
+          "subtitle": "2025–",
+          "image": "https://image.tmdb.org/t/p/w500/mwKj9ERGFXsWot0nXgQ5yMQf9I7.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "138505",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "wonder-man-198178",
+          "name": "Wonder Man",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/6yy9nQlFt2l6UVWzrfhszFCaZ5C.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "198178",
+            "type": "tv"
+          }
+        }
+      ]
+    },
+    {
+      "id": "marvel-cinematic-universe",
+      "name": "Marvel Cinematic Universe",
+      "description": "MCU movies and television shows in one collection.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "iron-man-1726",
+          "name": "Iron Man",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/78lPtwv72eTNqFW9COBYI0dWDJa.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1726",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-incredible-hulk-1724",
+          "name": "The Incredible Hulk",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/gKzYx79y0AQTL4UAk1cBQJ3nvrm.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1724",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "iron-man-2-10138",
+          "name": "Iron Man 2",
+          "subtitle": "2010",
+          "image": "https://image.tmdb.org/t/p/w500/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10138",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-america-the-first-avenger-1771",
+          "name": "Captain America: The First Avenger",
+          "subtitle": "2011",
+          "image": "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1771",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thor-10195",
+          "name": "Thor",
+          "subtitle": "2011",
+          "image": "https://image.tmdb.org/t/p/w500/prSfAi1xGrhLQNxVSUFh61xQ4Qy.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10195",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-avengers-24428",
+          "name": "The Avengers",
+          "subtitle": "2012",
+          "image": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "24428",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "iron-man-3-68721",
+          "name": "Iron Man 3",
+          "subtitle": "2013",
+          "image": "https://image.tmdb.org/t/p/w500/qhPtAc1TKbMPqNvcdXSOn9Bn7hZ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "68721",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "marvel-s-agents-of-s-h-i-e-l-d-1403",
+          "name": "Marvel's Agents of S.H.I.E.L.D.",
+          "subtitle": "2013–2020",
+          "image": "https://image.tmdb.org/t/p/w500/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1403",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "thor-the-dark-world-76338",
+          "name": "Thor: The Dark World",
+          "subtitle": "2013",
+          "image": "https://image.tmdb.org/t/p/w500/wp6OxE4poJ4G7c0U2ZIXasTSMR7.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "76338",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-america-the-winter-soldier-100402",
+          "name": "Captain America: The Winter Soldier",
+          "subtitle": "2014",
+          "image": "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "100402",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "guardians-of-the-galaxy-118340",
+          "name": "Guardians of the Galaxy",
+          "subtitle": "2014",
+          "image": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "118340",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ant-man-102899",
+          "name": "Ant-Man",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/rQRnQfUl3kfp78nCWq8Ks04vnq1.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "102899",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "avengers-age-of-ultron-99861",
+          "name": "Avengers: Age of Ultron",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "99861",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "marvel-s-agent-carter-61550",
+          "name": "Marvel's Agent Carter",
+          "subtitle": "2015–2016",
+          "image": "https://image.tmdb.org/t/p/w500/fe79VYyLp5ZBstpJ4oukpuUT3B.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "61550",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-daredevil-61889",
+          "name": "Marvel's Daredevil",
+          "subtitle": "2015–2018",
+          "image": "https://image.tmdb.org/t/p/w500/QWbPaDxiB6LW2LjASknzYBvjMj.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "61889",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-jessica-jones-38472",
+          "name": "Marvel's Jessica Jones",
+          "subtitle": "2015–2019",
+          "image": "https://image.tmdb.org/t/p/w500/oxnWofiE9fHOgUfs9NJa6nG6NTR.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "38472",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "captain-america-civil-war-271110",
+          "name": "Captain America: Civil War",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/rAGiXaUfPzY7CDEyNKUofk3Kw2e.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "271110",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "doctor-strange-284052",
+          "name": "Doctor Strange",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "284052",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "marvel-s-luke-cage-62126",
+          "name": "Marvel's Luke Cage",
+          "subtitle": "2016–2018",
+          "image": "https://image.tmdb.org/t/p/w500/yzM1hMB3PUJqbISX0f421b3xOjB.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62126",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "guardians-of-the-galaxy-vol-2-283995",
+          "name": "Guardians of the Galaxy Vol. 2",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "283995",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "marvel-s-inhumans-68716",
+          "name": "Marvel's Inhumans",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/zKfGip55oJ9tdzhyd9ayGyFFhuo.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "68716",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-iron-fist-62127",
+          "name": "Marvel's Iron Fist",
+          "subtitle": "2017–2018",
+          "image": "https://image.tmdb.org/t/p/w500/4l6KD9HhtD6nCDEfg10Lp6C6zah.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62127",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-the-defenders-62285",
+          "name": "Marvel's The Defenders",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/49XzINhH4LFsgz7cx6TOPcHUJUL.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62285",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-s-the-punisher-67178",
+          "name": "Marvel's The Punisher",
+          "subtitle": "2017–2019",
+          "image": "https://image.tmdb.org/t/p/w500/tM6xqRKXoloH9UchaJEyyRE9O1w.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "67178",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "spider-man-homecoming-315635",
+          "name": "Spider-Man: Homecoming",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "315635",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thor-ragnarok-284053",
+          "name": "Thor: Ragnarok",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/rzRwTcFvttcN1ZpX2xv4j3tSdJu.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "284053",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ant-man-and-the-wasp-363088",
+          "name": "Ant-Man and the Wasp",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/cFQEO687n1K6umXbInzocxcnAQz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "363088",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "avengers-infinity-war-299536",
+          "name": "Avengers: Infinity War",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "299536",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "black-panther-284054",
+          "name": "Black Panther",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "284054",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "avengers-endgame-299534",
+          "name": "Avengers: Endgame",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "299534",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "captain-marvel-299537",
+          "name": "Captain Marvel",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "299537",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-far-from-home-429617",
+          "name": "Spider-Man: Far From Home",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "429617",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "black-widow-497698",
+          "name": "Black Widow",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "497698",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "eternals-524434",
+          "name": "Eternals",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/lFByFSLV5WDJEv3KabbdAF959F2.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "524434",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "hawkeye-88329",
+          "name": "Hawkeye",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/ct5pNE5dDHryHLDnxyZPYcqO1sz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "88329",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "loki-84958",
+          "name": "Loki",
+          "subtitle": "2021–2023",
+          "image": "https://image.tmdb.org/t/p/w500/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "84958",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "shang-chi-and-the-legend-of-the-ten-rings-566525",
+          "name": "Shang-Chi and the Legend of the Ten Rings",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/9f2Q0U3IOsLgrI2HkvldwSABZy5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "566525",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-no-way-home-634649",
+          "name": "Spider-Man: No Way Home",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "634649",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-falcon-and-the-winter-soldier-88396",
+          "name": "The Falcon and the Winter Soldier",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "88396",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "wandavision-85271",
+          "name": "WandaVision",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/ijWWwINc8h71NQ8j1LTJMFSj5wr.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "85271",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "what-if-91363",
+          "name": "What If...?",
+          "subtitle": "2021–2024",
+          "image": "https://image.tmdb.org/t/p/w500/lztz5XBMG1x6Y5ubz7CxfPFsAcW.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "91363",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "black-panther-wakanda-forever-505642",
+          "name": "Black Panther: Wakanda Forever",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "505642",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "doctor-strange-in-the-multiverse-of-madness-453395",
+          "name": "Doctor Strange in the Multiverse of Madness",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/ddJcSKbcp4rKZTmuyWaMhuwcfMz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "453395",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "moon-knight-92749",
+          "name": "Moon Knight",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/9K3lbMf8TKvL9xGEbzi7TggWCNQ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92749",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "ms-marvel-92782",
+          "name": "Ms. Marvel",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/3HWWh92kZbD7odwJX7nKmXNZsYo.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92782",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "she-hulk-attorney-at-law-92783",
+          "name": "She-Hulk: Attorney at Law",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/5xz2orV8f0usyrfGNshcoXHmiaV.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92783",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "thor-love-and-thunder-616037",
+          "name": "Thor: Love and Thunder",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "616037",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "werewolf-by-night-894205",
+          "name": "Werewolf by Night",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/mvIvNKRIJPPS7WSFarFhOAGIVnU.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "894205",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ant-man-and-the-wasp-quantumania-640146",
+          "name": "Ant-Man and the Wasp: Quantumania",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/qnqGbB22YJ7dSs4o6M7exTpNxPz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "640146",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "guardians-of-the-galaxy-vol-3-447365",
+          "name": "Guardians of the Galaxy Vol. 3",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "447365",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "secret-invasion-114472",
+          "name": "Secret Invasion",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/3rINdUPSy9AklJg74jWHOyUXuZd.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "114472",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "the-marvels-609681",
+          "name": "The Marvels",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMMTps5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "609681",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "agatha-all-along-138501",
+          "name": "Agatha All Along",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/mGsxKwXUjojitRv2E9qMTbxbBRd.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "138501",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "deadpool-wolverine-533535",
+          "name": "Deadpool & Wolverine",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "533535",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "echo-122226",
+          "name": "Echo",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/vFyJH630cF68LohVYjQW49074Sy.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "122226",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "captain-america-brave-new-world-822119",
+          "name": "Captain America: Brave New World",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "822119",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "daredevil-born-again-202555",
+          "name": "Daredevil: Born Again",
+          "subtitle": "2025–",
+          "image": "https://image.tmdb.org/t/p/w500/xDUoAsU8lQHOOoRkFiBuarmACDN.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "202555",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "eyes-of-wakanda-241388",
+          "name": "Eyes of Wakanda",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/yuOfb1MgnaGPa4guzV0n1IFYVGN.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "241388",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "ironheart-114471",
+          "name": "Ironheart",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/dOh6MJpdlQhYpLBhzhNQeYGKTZ5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "114471",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "marvel-zombies-138505",
+          "name": "Marvel Zombies",
+          "subtitle": "2025–",
+          "image": "https://image.tmdb.org/t/p/w500/mwKj9ERGFXsWot0nXgQ5yMQf9I7.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "138505",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "the-fantastic-4-first-steps-617126",
+          "name": "The Fantastic 4: First Steps",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/nf5qaSEvyYSNeFH0YhSs5EsBLX9.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "617126",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "thunderbolts-986056",
+          "name": "Thunderbolts*",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/hqcexYHbiTBfDIdDWxrxPtVndBX.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "986056",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-brand-new-day-969681",
+          "name": "Spider-Man: Brand New Day",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/bjiS5ipwxb9JFy3XRRN4OAilSeX.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "969681",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-punisher-one-last-kill-1439930",
+          "name": "The Punisher: One Last Kill",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/qQclTgLMDvGBuUBFGHRipxkEwWR.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1439930",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "wonder-man-198178",
+          "name": "Wonder Man",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/6yy9nQlFt2l6UVWzrfhszFCaZ5C.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "198178",
+            "type": "tv"
+          }
+        }
+      ]
+    },
+    {
+      "id": "christopher-nolan-movies",
+      "name": "Christopher Nolan Movies",
+      "description": "Feature films directed by Christopher Nolan.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "following-11660",
+          "name": "Following",
+          "subtitle": "1999",
+          "image": "https://image.tmdb.org/t/p/w500/3bX6VVSMf0dvzk5pMT4ALG5A92d.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "11660",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "memento-77",
+          "name": "Memento",
+          "subtitle": "2000",
+          "image": "https://image.tmdb.org/t/p/w500/nzlv62aC0octS5AklAiWpXLX9Z0.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "77",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "insomnia-320",
+          "name": "Insomnia",
+          "subtitle": "2002",
+          "image": "https://image.tmdb.org/t/p/w500/riVXh3EimGO0y5dgQxEWPRy5Itg.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "320",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "batman-begins-272",
+          "name": "Batman Begins",
+          "subtitle": "2005",
+          "image": "https://image.tmdb.org/t/p/w500/sPX89Td70IDDjVr85jdSBb4rWGr.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "272",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-prestige-1124",
+          "name": "The Prestige",
+          "subtitle": "2006",
+          "image": "https://image.tmdb.org/t/p/w500/Ag2B2KHKQPukjH7WutmgnnSNurZ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1124",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-dark-knight-155",
+          "name": "The Dark Knight",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "155",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "inception-27205",
+          "name": "Inception",
+          "subtitle": "2010",
+          "image": "https://image.tmdb.org/t/p/w500/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "27205",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-dark-knight-rises-49026",
+          "name": "The Dark Knight Rises",
+          "subtitle": "2012",
+          "image": "https://image.tmdb.org/t/p/w500/hr0L2aueqlP2BYUblTTjmtn0hw4.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "49026",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "interstellar-157336",
+          "name": "Interstellar",
+          "subtitle": "2014",
+          "image": "https://image.tmdb.org/t/p/w500/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "157336",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "dunkirk-374720",
+          "name": "Dunkirk",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/b4Oe15CGLL61Ped0RAS9JpqdmCt.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "374720",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "tenet-577922",
+          "name": "Tenet",
+          "subtitle": "2020",
+          "image": "https://image.tmdb.org/t/p/w500/aCIFMriQh8rvhxpN1IWGgvH0Tlg.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "577922",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "oppenheimer-872585",
+          "name": "Oppenheimer",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "872585",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-odyssey-1368337",
+          "name": "The Odyssey",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1368337",
+            "type": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pixar-feature-films",
+      "name": "Pixar Feature Films",
+      "description": "Feature films produced by Pixar Animation Studios.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "toy-story-862",
+          "name": "Toy Story",
+          "subtitle": "1995",
+          "image": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "862",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "a-bug-s-life-9487",
+          "name": "A Bug's Life",
+          "subtitle": "1998",
+          "image": "https://image.tmdb.org/t/p/w500/Ah3J9OJVc2CNCuH2zMydXy9fmIC.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "9487",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "toy-story-2-863",
+          "name": "Toy Story 2",
+          "subtitle": "1999",
+          "image": "https://image.tmdb.org/t/p/w500/4rbcp3ng8n1MKHjpeqW0L7Fnpzz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "863",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "monsters-inc-585",
+          "name": "Monsters, Inc.",
+          "subtitle": "2001",
+          "image": "https://image.tmdb.org/t/p/w500/wFSpyMsp7H0ttERbxY7Trlv8xry.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "585",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "finding-nemo-12",
+          "name": "Finding Nemo",
+          "subtitle": "2003",
+          "image": "https://image.tmdb.org/t/p/w500/eHuGQ10FUzK1mdOY69wF5pGgEf5.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "12",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-incredibles-9806",
+          "name": "The Incredibles",
+          "subtitle": "2004",
+          "image": "https://image.tmdb.org/t/p/w500/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "9806",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "cars-920",
+          "name": "Cars",
+          "subtitle": "2006",
+          "image": "https://image.tmdb.org/t/p/w500/2Touk3m5gzsqr1VsvxypdyHY5ci.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "920",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "ratatouille-2062",
+          "name": "Ratatouille",
+          "subtitle": "2007",
+          "image": "https://image.tmdb.org/t/p/w500/t3vaWRPSf6WjDSamIkKDs1iQWna.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "2062",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "wall-e-10681",
+          "name": "WALL·E",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/hbhFnRzzg6ZDmm8YAmxBnQpQIPh.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10681",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "up-14160",
+          "name": "Up",
+          "subtitle": "2009",
+          "image": "https://image.tmdb.org/t/p/w500/mFvoEwSfLqbcWwFsDjQebn9bzFe.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "14160",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "toy-story-3-10193",
+          "name": "Toy Story 3",
+          "subtitle": "2010",
+          "image": "https://image.tmdb.org/t/p/w500/AbbXspMOwdvwWZgVN0nabZq03Ec.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10193",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "cars-2-49013",
+          "name": "Cars 2",
+          "subtitle": "2011",
+          "image": "https://image.tmdb.org/t/p/w500/okIz1HyxeVOMzYwwHUjH2pHi74I.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "49013",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "brave-62177",
+          "name": "Brave",
+          "subtitle": "2012",
+          "image": "https://image.tmdb.org/t/p/w500/1XAuDtMWpL0sYSFK0R6EZate2Ux.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62177",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "monsters-university-62211",
+          "name": "Monsters University",
+          "subtitle": "2013",
+          "image": "https://image.tmdb.org/t/p/w500/y7thwJ7z5Bplv6vwl6RI0yteaDD.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62211",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "inside-out-150540",
+          "name": "Inside Out",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "150540",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-good-dinosaur-105864",
+          "name": "The Good Dinosaur",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/8RSkxOO80btfKjyiC5ZiTaCHIT8.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "105864",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "finding-dory-127380",
+          "name": "Finding Dory",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/3UVe8NL1E2ZdUZ9EDlKGJY5UzE.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "127380",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "cars-3-260514",
+          "name": "Cars 3",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/zg5RDxvIIAKsucjuU2EZJIHEIvz.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "260514",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "coco-354912",
+          "name": "Coco",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/6Ryitt95xrO8KXuqRGm1fUuNwqF.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "354912",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "incredibles-2-260513",
+          "name": "Incredibles 2",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/9lFKBtaVIhP7E2Pk0IY1CwTKTMZ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "260513",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "toy-story-4-301528",
+          "name": "Toy Story 4",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/w9kR8qbmQ01HwnvK4alvnQ2ca0L.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "301528",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "onward-508439",
+          "name": "Onward",
+          "subtitle": "2020",
+          "image": "https://image.tmdb.org/t/p/w500/f4aul3FyD3jv3v4bul1IrkWZvzq.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "508439",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "soul-508442",
+          "name": "Soul",
+          "subtitle": "2020",
+          "image": "https://image.tmdb.org/t/p/w500/hm58Jw4Lw8OIeECIq5qyPYhAeRJ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "508442",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "luca-508943",
+          "name": "Luca",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/9x4i9uKGXt8IiiIF5Ey0DIoY738.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "508943",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "turning-red-508947",
+          "name": "Turning Red",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/qsdjk9oAKSQMWs0Vt5Pyfh6O4GZ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "508947",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "lightyear-718789",
+          "name": "Lightyear",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/ox4goZd956BxqJH6iLwhWPL9ct4.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "718789",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "elemental-976573",
+          "name": "Elemental",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/4Y1WNkd88JXmGfhtWR7dmDAo1T2.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "976573",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "inside-out-2-1022789",
+          "name": "Inside Out 2",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1022789",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "elio-1022787",
+          "name": "Elio",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/7z8jDiTZZco9moIKpTUImFtTy7o.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1022787",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "hoppers-1327819",
+          "name": "Hoppers",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/xjtWQ2CL1mpmMNwuU5HeS4Iuwuu.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1327819",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "toy-story-5-1084244",
+          "name": "Toy Story 5",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/sfQtVlIHljToOwYjhe21KPGzZWK.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1084244",
+            "type": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "id": "star-wars-movies-tv",
+      "name": "Star Wars Movies & TV Shows",
+      "description": "Current-canon Star Wars movies and television series, excluding LEGO, Visions, shorts, documentaries, and Legends.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "star-wars-11",
+          "name": "Star Wars",
+          "subtitle": "1977",
+          "image": "https://image.tmdb.org/t/p/w500/fai0rspsNeJCS69wHNjOdWxcI7P.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "11",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-empire-strikes-back-1891",
+          "name": "The Empire Strikes Back",
+          "subtitle": "1980",
+          "image": "https://image.tmdb.org/t/p/w500/nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1891",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "return-of-the-jedi-1892",
+          "name": "Return of the Jedi",
+          "subtitle": "1983",
+          "image": "https://image.tmdb.org/t/p/w500/jQYlydvHm3kUix1f8prMucrplhm.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1892",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-episode-i-the-phantom-menace-1893",
+          "name": "Star Wars: Episode I - The Phantom Menace",
+          "subtitle": "1999",
+          "image": "https://image.tmdb.org/t/p/w500/6wkfovpn7Eq8dYNKaG5PY3q2oq6.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1893",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-episode-ii-attack-of-the-clones-1894",
+          "name": "Star Wars: Episode II - Attack of the Clones",
+          "subtitle": "2002",
+          "image": "https://image.tmdb.org/t/p/w500/oZNPzxqM2s5DyVWab09NTQScDQt.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1894",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-episode-iii-revenge-of-the-sith-1895",
+          "name": "Star Wars: Episode III - Revenge of the Sith",
+          "subtitle": "2005",
+          "image": "https://image.tmdb.org/t/p/w500/xfSAoBEm9MNBjmlNcDYLvLSMlnq.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1895",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-the-clone-wars-12180",
+          "name": "Star Wars: The Clone Wars",
+          "subtitle": "2008",
+          "image": "https://image.tmdb.org/t/p/w500/iJQfixW818LUdSXlCDL3JZm0S0g.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "12180",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-the-clone-wars-4194",
+          "name": "Star Wars: The Clone Wars",
+          "subtitle": "2008–2020",
+          "image": "https://image.tmdb.org/t/p/w500/e1nWfnnCVqxS2LeTO3dwGyAsG2V.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "4194",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-rebels-60554",
+          "name": "Star Wars Rebels",
+          "subtitle": "2014–2018",
+          "image": "https://image.tmdb.org/t/p/w500/eLrScs6Bs26JMcS8hiZhf7YRROr.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "60554",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-the-force-awakens-140607",
+          "name": "Star Wars: The Force Awakens",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/wqnLdwVXoBjKibFRR5U3y0aDUhs.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "140607",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "rogue-one-a-star-wars-story-330459",
+          "name": "Rogue One: A Star Wars Story",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/i0yw1mFbB7sNGHCs7EXZPzFkdA1.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "330459",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-the-last-jedi-181808",
+          "name": "Star Wars: The Last Jedi",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "181808",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "solo-a-star-wars-story-348350",
+          "name": "Solo: A Star Wars Story",
+          "subtitle": "2018",
+          "image": "https://image.tmdb.org/t/p/w500/4oD6VEccFkorEBTEDXtpLAaz0Rl.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "348350",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "star-wars-resistance-79093",
+          "name": "Star Wars Resistance",
+          "subtitle": "2018–2020",
+          "image": "https://image.tmdb.org/t/p/w500/xul6SG8rar3wkHPY8YusUtxcdlZ.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "79093",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-the-rise-of-skywalker-181812",
+          "name": "Star Wars: The Rise of Skywalker",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/db32LaOibwEliAmSL2jjDF6oDdj.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "181812",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-mandalorian-82856",
+          "name": "The Mandalorian",
+          "subtitle": "2019–2023",
+          "image": "https://image.tmdb.org/t/p/w500/sWgBv7LV2PRoQgkxwlibdGXKz1S.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "82856",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-the-bad-batch-105971",
+          "name": "Star Wars: The Bad Batch",
+          "subtitle": "2021–2024",
+          "image": "https://image.tmdb.org/t/p/w500/5mHus672nuinyaE0FtqvD0AddcY.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "105971",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "the-book-of-boba-fett-115036",
+          "name": "The Book of Boba Fett",
+          "subtitle": "2021–2022",
+          "image": "https://image.tmdb.org/t/p/w500/gNbdjDi1HamTCrfvM9JeA94bNi2.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "115036",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "andor-83867",
+          "name": "Andor",
+          "subtitle": "2022–2025",
+          "image": "https://image.tmdb.org/t/p/w500/khZqmwHQicTYoS7Flreb9EddFZC.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "83867",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "obi-wan-kenobi-92830",
+          "name": "Obi-Wan Kenobi",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/qJRB789ceLryrLvOKrZqLKr2CGf.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "92830",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-tales-of-the-jedi-203085",
+          "name": "Star Wars: Tales of the Jedi",
+          "subtitle": "2022",
+          "image": "https://image.tmdb.org/t/p/w500/k3nWQb0E8mLSR8acSkJP78VRVMv.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "203085",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "ahsoka-114461",
+          "name": "Ahsoka",
+          "subtitle": "2023–",
+          "image": "https://image.tmdb.org/t/p/w500/eiJeWeCAEZAmRppnXHiTWDcCd3Q.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "114461",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-young-jedi-adventures-202998",
+          "name": "Star Wars: Young Jedi Adventures",
+          "subtitle": "2023–2025",
+          "image": "https://image.tmdb.org/t/p/w500/bC2Mix1WPUiY6pldh77oiFl1MvI.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "202998",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-skeleton-crew-202879",
+          "name": "Star Wars: Skeleton Crew",
+          "subtitle": "2024–2025",
+          "image": "https://image.tmdb.org/t/p/w500/srQbJhLRKoAwRrNN5ga7webPHbC.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "202879",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-tales-of-the-empire-251091",
+          "name": "Star Wars: Tales of the Empire",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/qA28nLteurVboSSzltuyYt1lvlC.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "251091",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "the-acolyte-114479",
+          "name": "The Acolyte",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/mztdt3y6GBsJR69zHtszFezTCLT.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "114479",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-tales-of-the-underworld-288055",
+          "name": "Star Wars: Tales of the Underworld",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/qv1hagzp08cDJF6C04LyJVhcI1x.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "288055",
+            "type": "tv"
+          }
+        },
+        {
+          "id": "star-wars-maul-shadow-lord-289219",
+          "name": "Star Wars: Maul - Shadow Lord",
+          "subtitle": "2026–",
+          "image": "https://image.tmdb.org/t/p/w500/fTfLd3s9yBNOzbFHD2aXvwEs93H.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "289219",
+            "type": "tv"
+          }
+        }
+      ]
+    },
+    {
+      "id": "disney-princess-movies",
+      "name": "Disney Princess Movies",
+      "description": "Disney Princess theatrical originals, theatrical sequels, direct live-action adaptations, plus Frozen and Frozen II.",
+      "groupId": "movies-tv",
+      "rankingDomain": "screen",
+      "items": [
+        {
+          "id": "snow-white-and-the-seven-dwarfs-408",
+          "name": "Snow White and the Seven Dwarfs",
+          "subtitle": "1938",
+          "image": "https://image.tmdb.org/t/p/w500/3VAHfuNb6Z7UiW12iYKANSPBl8m.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "408",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "cinderella-11224",
+          "name": "Cinderella",
+          "subtitle": "1950",
+          "image": "https://image.tmdb.org/t/p/w500/4nssBcQUBadCTBjrAkX46mVEKts.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "11224",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "sleeping-beauty-10882",
+          "name": "Sleeping Beauty",
+          "subtitle": "1959",
+          "image": "https://image.tmdb.org/t/p/w500/pO9YMLSmj3essVSWSGygjGxX6Kw.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10882",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-little-mermaid-10144",
+          "name": "The Little Mermaid",
+          "subtitle": "1989",
+          "image": "https://image.tmdb.org/t/p/w500/plcZXvI310FkbwIptvd6rqk63LP.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10144",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "beauty-and-the-beast-10020",
+          "name": "Beauty and the Beast",
+          "subtitle": "1991",
+          "image": "https://image.tmdb.org/t/p/w500/hUJ0UvQ5tgE2Z9WpfuduVSdiCiU.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10020",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "aladdin-812",
+          "name": "Aladdin",
+          "subtitle": "1992",
+          "image": "https://image.tmdb.org/t/p/w500/eLFfl7vS8dkeG1hKp5mwbm37V83.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "812",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "pocahontas-10530",
+          "name": "Pocahontas",
+          "subtitle": "1995",
+          "image": "https://image.tmdb.org/t/p/w500/kZ1ft0QZ4e3zDUPMBftEkwI9ftd.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10530",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "mulan-10674",
+          "name": "Mulan",
+          "subtitle": "1998",
+          "image": "https://image.tmdb.org/t/p/w500/jAbexAtB0aSfP5Ay4TpWHARyVnG.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10674",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-princess-and-the-frog-10198",
+          "name": "The Princess and the Frog",
+          "subtitle": "2009",
+          "image": "https://image.tmdb.org/t/p/w500/yprv5PbnEksoVj2v6XEnDBg9joR.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "10198",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "tangled-38757",
+          "name": "Tangled",
+          "subtitle": "2010",
+          "image": "https://image.tmdb.org/t/p/w500/ym7Kst6a4uodryxqbGOxmewF235.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "38757",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "brave-62177",
+          "name": "Brave",
+          "subtitle": "2012",
+          "image": "https://image.tmdb.org/t/p/w500/1XAuDtMWpL0sYSFK0R6EZate2Ux.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "62177",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "frozen-109445",
+          "name": "Frozen",
+          "subtitle": "2013",
+          "image": "https://image.tmdb.org/t/p/w500/itAKcobTYGpYT8Phwjd8c9hleTo.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "109445",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "cinderella-150689",
+          "name": "Cinderella",
+          "subtitle": "2015",
+          "image": "https://image.tmdb.org/t/p/w500/j91LJmcWo16CArFOoapsz84bwxb.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "150689",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "moana-277834",
+          "name": "Moana",
+          "subtitle": "2016",
+          "image": "https://image.tmdb.org/t/p/w500/4JeejGugONWpJkbnvL12hVoYEDa.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "277834",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "beauty-and-the-beast-321612",
+          "name": "Beauty and the Beast",
+          "subtitle": "2017",
+          "image": "https://image.tmdb.org/t/p/w500/hKegSKIDep2ewJWPUQD7u0KqFIp.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "321612",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "aladdin-420817",
+          "name": "Aladdin",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/ykUEbfpkf8d0w49pHh0AD2KrT52.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "420817",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "frozen-ii-330457",
+          "name": "Frozen II",
+          "subtitle": "2019",
+          "image": "https://image.tmdb.org/t/p/w500/mINJaa34MtknCYl5AjtNJzWj8cD.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "330457",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "mulan-337401",
+          "name": "Mulan",
+          "subtitle": "2020",
+          "image": "https://image.tmdb.org/t/p/w500/aKx1ARwG55zZ0GpRvU2WrGrCG9o.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "337401",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "raya-and-the-last-dragon-527774",
+          "name": "Raya and the Last Dragon",
+          "subtitle": "2021",
+          "image": "https://image.tmdb.org/t/p/w500/5nVhgCzxKbK47OLIKxCR1syulOn.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "527774",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "the-little-mermaid-447277",
+          "name": "The Little Mermaid",
+          "subtitle": "2023",
+          "image": "https://image.tmdb.org/t/p/w500/ym1dxyOk4jFcSl4Q2zmRrA5BEEN.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "447277",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "moana-2-1241982",
+          "name": "Moana 2",
+          "subtitle": "2024",
+          "image": "https://image.tmdb.org/t/p/w500/aLVkiINlIeCkcZIzb7XHzPYgO6L.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1241982",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "snow-white-447273",
+          "name": "Snow White",
+          "subtitle": "2025",
+          "image": "https://image.tmdb.org/t/p/w500/oLxWocqheC8XbXbxqJ3x422j9PW.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "447273",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "moana-1108427",
+          "name": "Moana",
+          "subtitle": "2026",
+          "image": "https://image.tmdb.org/t/p/w500/gaet1xQ2nxrG0V1Ep9T20ZMNEIC.jpg",
+          "source": {
+            "provider": "tmdb",
+            "id": "1108427",
+            "type": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "id": "top-50-best-selling-video-games",
+      "name": "Top 50 Best-Selling Video Games",
+      "description": "The 50 best-selling video games by reported worldwide software unit sales.",
+      "groupId": "games",
+      "rankingDomain": "game",
+      "items": [
+        {
+          "id": "best-selling-tetris",
+          "name": "Tetris",
+          "subtitle": "520M sold • 1988",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co25k4.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "tetris",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-minecraft",
+          "name": "Minecraft",
+          "subtitle": "425M sold • 2011",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coa6qm.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "minecraft",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-grand-theft-auto-v",
+          "name": "Grand Theft Auto V",
+          "subtitle": "230M sold • 2013",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2lbd.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "grand-theft-auto-v",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-red-dead-redemption-2",
+          "name": "Red Dead Redemption 2",
+          "subtitle": "87M sold • 2018",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1q1f.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "red-dead-redemption-2",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-wii-sports",
+          "name": "Wii Sports",
+          "subtitle": "82.9M sold • 2006",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3vge.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "wii-sports",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-mario-kart-8-deluxe",
+          "name": "Mario Kart 8 / Deluxe",
+          "subtitle": "79.99M sold • 2014",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co213q.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "mario-kart-8-deluxe",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pubg-battlegrounds",
+          "name": "PUBG: Battlegrounds",
+          "subtitle": "75M sold • 2017",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaam4.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pubg-battlegrounds",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-terraria",
+          "name": "Terraria",
+          "subtitle": "70M sold • 2011",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaamg.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "terraria",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-the-elder-scrolls-v-skyrim",
+          "name": "The Elder Scrolls V: Skyrim",
+          "subtitle": "65M sold • 2011",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocs1l.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "the-elder-scrolls-v-skyrim",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-the-witcher-3-wild-hunt",
+          "name": "The Witcher 3: Wild Hunt",
+          "subtitle": "65M sold • 2015",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaarl.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "the-witcher-3-wild-hunt",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-super-mario-bros",
+          "name": "Super Mario Bros.",
+          "subtitle": "58M sold • 1985",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5k7b.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "super-mario-bros",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-human-fall-flat",
+          "name": "Human: Fall Flat",
+          "subtitle": "58M sold • 2016",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coctbu.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "human-fall-flat",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-animal-crossing-new-horizons",
+          "name": "Animal Crossing: New Horizons",
+          "subtitle": "50.29M sold • 2020",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3wls.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "animal-crossing-new-horizons",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-the-sims",
+          "name": "The Sims",
+          "subtitle": "50M sold • 2000",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8j9a.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "the-sims",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-stardew-valley",
+          "name": "Stardew Valley",
+          "subtitle": "50M sold • 2016",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coa93h.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "stardew-valley",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-overwatch",
+          "name": "Overwatch",
+          "subtitle": "50M sold • 2016",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocqgt.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "overwatch",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pokemon-red-blue-yellow",
+          "name": "Pokémon Red / Blue / Yellow",
+          "subtitle": "47.44M sold • 1996",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5pi4.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pokemon-red-blue-yellow",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-wii-fit-plus",
+          "name": "Wii Fit / Plus",
+          "subtitle": "43.8M sold • 2007",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co86ml.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "wii-fit-plus",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-call-of-duty-black-ops-iii",
+          "name": "Call of Duty: Black Ops III",
+          "subtitle": "43M sold • 2015",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co20yw.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "call-of-duty-black-ops-iii",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-call-of-duty-modern-warfare",
+          "name": "Call of Duty: Modern Warfare",
+          "subtitle": "41M sold • 2019",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1rsg.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "call-of-duty-modern-warfare",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-sonic-the-hedgehog",
+          "name": "Sonic the Hedgehog",
+          "subtitle": "40M sold • 1991",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8ubt.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "sonic-the-hedgehog",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-payday-2",
+          "name": "Payday 2",
+          "subtitle": "40M sold • 2013",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaaqu.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "payday-2",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-cyberpunk-2077",
+          "name": "Cyberpunk 2077",
+          "subtitle": "40M sold • 2020",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaih8.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "cyberpunk-2077",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-hogwarts-legacy",
+          "name": "Hogwarts Legacy",
+          "subtitle": "40M sold • 2023",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaav6.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "hogwarts-legacy",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-super-smash-bros-ultimate",
+          "name": "Super Smash Bros. Ultimate",
+          "subtitle": "38.14M sold • 2018",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2255.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "super-smash-bros-ultimate",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-mario-kart-wii",
+          "name": "Mario Kart Wii",
+          "subtitle": "37.38M sold • 2008",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co214e.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "mario-kart-wii",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-the-legend-of-zelda-breath-of-the-wild",
+          "name": "The Legend of Zelda: Breath of the Wild",
+          "subtitle": "35.76M sold • 2017",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3p2d.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "the-legend-of-zelda-breath-of-the-wild",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-fallout-4",
+          "name": "Fallout 4",
+          "subtitle": "35M sold • 2015",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1yc6.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "fallout-4",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-wii-sports-resort",
+          "name": "Wii Sports Resort",
+          "subtitle": "33.14M sold • 2009",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocdbp.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "wii-sports-resort",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-borderlands-2",
+          "name": "Borderlands 2",
+          "subtitle": "31M sold • 2012",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co9ba3.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "borderlands-2",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-new-super-mario-bros",
+          "name": "New Super Mario Bros.",
+          "subtitle": "30.8M sold • 2006",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co21rm.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "new-super-mario-bros",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-super-mario-odyssey",
+          "name": "Super Mario Odyssey",
+          "subtitle": "30.8M sold • 2017",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1mxf.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "super-mario-odyssey",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-monster-hunter-world",
+          "name": "Monster Hunter: World",
+          "subtitle": "30.4M sold • 2018",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1rst.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "monster-hunter-world",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-new-super-mario-bros-wii",
+          "name": "New Super Mario Bros. Wii",
+          "subtitle": "30.32M sold • 2009",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co21tj.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "new-super-mario-bros-wii",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pokemon-gold-silver-crystal",
+          "name": "Pokémon Gold / Silver / Crystal",
+          "subtitle": "30.12M sold • 1999",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5pia.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pokemon-gold-silver-crystal",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-call-of-duty-black-ops-cold-war",
+          "name": "Call of Duty: Black Ops Cold War",
+          "subtitle": "30M sold • 2020",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2n6j.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "call-of-duty-black-ops-cold-war",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-it-takes-two",
+          "name": "It Takes Two",
+          "subtitle": "30M sold • 2021",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cob22v.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "it-takes-two",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-elden-ring",
+          "name": "Elden Ring",
+          "subtitle": "30M sold • 2022",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co4jni.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "elden-ring",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pokemon-scarlet-violet",
+          "name": "Pokémon Scarlet / Violet",
+          "subtitle": "28.46M sold • 2022",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5sfi.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pokemon-scarlet-violet",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-duck-hunt",
+          "name": "Duck Hunt",
+          "subtitle": "28.3M sold • 1984",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co42pf.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "duck-hunt",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-wii-play",
+          "name": "Wii Play",
+          "subtitle": "28.02M sold • 2006",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cobwcx.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "wii-play",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-black-myth-wukong",
+          "name": "Black Myth: Wukong",
+          "subtitle": "28M sold • 2024",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8h3y.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "black-myth-wukong",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-grand-theft-auto-san-andreas",
+          "name": "Grand Theft Auto: San Andreas",
+          "subtitle": "27.5M sold • 2004",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2lb9.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "grand-theft-auto-san-andreas",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pokemon-sword-shield",
+          "name": "Pokémon Sword / Shield",
+          "subtitle": "27.26M sold • 2019",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1zk2.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pokemon-sword-shield",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-call-of-duty-modern-warfare-3",
+          "name": "Call of Duty: Modern Warfare 3",
+          "subtitle": "26.5M sold • 2011",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1wkn.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "call-of-duty-modern-warfare-3",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-call-of-duty-black-ops",
+          "name": "Call of Duty: Black Ops",
+          "subtitle": "26.2M sold • 2010",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1wkl.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "call-of-duty-black-ops",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pokemon-sun-moon-ultra-sun-ultra-moon",
+          "name": "Pokémon Sun / Moon / Ultra Sun / Ultra Moon",
+          "subtitle": "25.62M sold • 2016",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3co7.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pokemon-sun-moon-ultra-sun-ultra-moon",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-garrys-mod",
+          "name": "Garry's Mod",
+          "subtitle": "25.56M sold • 2006",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8pgw.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "garrys-mod",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-pokemon-diamond-pearl-platinum",
+          "name": "Pokémon Diamond / Pearl / Platinum",
+          "subtitle": "25.5M sold • 2006",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1zht.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "pokemon-diamond-pearl-platinum",
+            "type": "game"
+          }
+        },
+        {
+          "id": "best-selling-grand-theft-auto-iv",
+          "name": "Grand Theft Auto IV",
+          "subtitle": "25M sold • 2008",
+          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2lbv.jpg",
+          "source": {
+            "provider": "reported-sales",
+            "id": "grand-theft-auto-iv",
+            "type": "game"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stephen-king-books",
+      "name": "Stephen King Books",
+      "description": "Stephen King novels, story collections, nonfiction books, and qualifying pseudonymous book-length works.",
+      "groupId": "books",
+      "rankingDomain": "book",
+      "items": [
+        {
+          "id": "stephen-king-carrie-novel-april-5th-1974",
+          "name": "Carrie",
+          "subtitle": "1974",
+          "image": "https://stephenking.com/images/books/carrie/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "carrie-novel-april-5th-1974",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-salems-lot-novel-october-17th-1975",
+          "name": "'Salem's Lot",
+          "subtitle": "1975",
+          "image": "https://stephenking.com/images/books/salems_lot/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "salems-lot-novel-october-17th-1975",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-rage-bachman-novel-december-1976",
+          "name": "Rage",
+          "subtitle": "1976",
+          "image": "https://stephenking.com/images/books/rage/paperback_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "rage-bachman-novel-december-1976",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-shining-novel-january-1977",
+          "name": "The Shining",
+          "subtitle": "1977",
+          "image": "https://stephenking.com/images/books/shining/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-shining-novel-january-1977",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-night-shift-collection-february-1978",
+          "name": "Night Shift",
+          "subtitle": "1978",
+          "image": "https://stephenking.com/images/books/nightshift/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "night-shift-collection-february-1978",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-long-walk-bachman-novel-december-1978",
+          "name": "The Long Walk",
+          "subtitle": "1978",
+          "image": "https://stephenking.com/images/books/long_walk/paperback_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-long-walk-bachman-novel-december-1978",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-stand-novel-october-1978",
+          "name": "The Stand",
+          "subtitle": "1978",
+          "image": "https://stephenking.com/images/books/78_stand/prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-stand-novel-october-1978",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dead-zone-novel-august-1979",
+          "name": "The Dead Zone",
+          "subtitle": "1979",
+          "image": "https://stephenking.com/images/books/dead_zone/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dead-zone-novel-august-1979",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-firestarter-novel-september-29th-1980",
+          "name": "Firestarter",
+          "subtitle": "1980",
+          "image": "https://stephenking.com/images/books/firestarter/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "firestarter-novel-september-29th-1980",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-roadwork-bachman-novel-december-1980",
+          "name": "Roadwork",
+          "subtitle": "1980",
+          "image": "https://stephenking.com/images/books/roadwork/paperback_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "roadwork-bachman-novel-december-1980",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-cujo-novel-september-8th-1981",
+          "name": "Cujo",
+          "subtitle": "1981",
+          "image": "https://stephenking.com/images/books/cujo/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "cujo-novel-september-8th-1981",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-danse-macabre-nonfiction-work-1981",
+          "name": "Danse Macabre",
+          "subtitle": "1981",
+          "image": "https://stephenking.com/images/books/danse_macabre/danse_macabre_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "danse-macabre-nonfiction-work-1981",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-running-man-bachman-novel-december-1981",
+          "name": "The Running Man",
+          "subtitle": "1981",
+          "image": "https://stephenking.com/images/books/running_man/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-running-man-bachman-novel-december-1981",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-different-seasons-collection-august-1982",
+          "name": "Different Seasons",
+          "subtitle": "1982",
+          "image": "https://stephenking.com/images/books/different_seasons/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "different-seasons-collection-august-1982",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-the-gunslinger-novel-june-1982",
+          "name": "The Dark Tower: The Gunslinger",
+          "subtitle": "1982",
+          "image": "https://stephenking.com/images/novel/70/the_gunslinger.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-the-gunslinger-novel-june-1982",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-christine-novel-april-29th-1983",
+          "name": "Christine",
+          "subtitle": "1983",
+          "image": "https://stephenking.com/images/books/christine/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "christine-novel-april-29th-1983",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-pet-sematary-novel-november-1983",
+          "name": "Pet Sematary",
+          "subtitle": "1983",
+          "image": "https://stephenking.com/images/books/pet_sematary/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "pet-sematary-novel-november-1983",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-talisman-novel-november-1984",
+          "name": "The Talisman",
+          "subtitle": "1984",
+          "image": "https://stephenking.com/images/books/talisman/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-talisman-novel-november-1984",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-thinner-bachman-novel-november-1984",
+          "name": "Thinner",
+          "subtitle": "1984",
+          "image": "https://stephenking.com/images/books/thinner/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "thinner-bachman-novel-november-1984",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-cycle-of-the-werewolf-novel-april-1985",
+          "name": "Cycle of the Werewolf",
+          "subtitle": "1985",
+          "image": "https://stephenking.com/images/books/cycle_of_the_werewolf/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "cycle-of-the-werewolf-novel-april-1985",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-skeleton-crew-collection-june-1985",
+          "name": "Skeleton Crew",
+          "subtitle": "1985",
+          "image": "https://stephenking.com/images/books/skeleton_crew/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "skeleton-crew-collection-june-1985",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-bachman-books-bachman-novel-october-1985",
+          "name": "The Bachman Books",
+          "subtitle": "1985",
+          "image": "https://stephenking.com/images/bachman_novel/7/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-bachman-books-bachman-novel-october-1985",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-it-novel-september-1986",
+          "name": "IT",
+          "subtitle": "1986",
+          "image": "https://stephenking.com/images/books/it/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "it-novel-september-1986",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-misery-novel-june-1987",
+          "name": "Misery",
+          "subtitle": "1987",
+          "image": "https://stephenking.com/images/books/misery/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "misery-novel-june-1987",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-the-drawing-of-the-three-novel-may-1987",
+          "name": "The Dark Tower: The Drawing of the Three",
+          "subtitle": "1987",
+          "image": "https://stephenking.com/images/novel/12/the_drawing_of_the_three.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-the-drawing-of-the-three-novel-may-1987",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-eyes-of-the-dragon-novel-february-1987",
+          "name": "The Eyes of the Dragon",
+          "subtitle": "1987",
+          "image": "https://stephenking.com/images/books/eyes_of_the_dragon/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-eyes-of-the-dragon-novel-february-1987",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-tommyknockers-novel-november-1987",
+          "name": "The Tommyknockers",
+          "subtitle": "1987",
+          "image": "https://stephenking.com/images/books/tommyknockers/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-tommyknockers-novel-november-1987",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-nightmares-in-the-sky-nonfiction-work-with-f-stop-fitzgerald-1988",
+          "name": "Nightmares in the Sky",
+          "subtitle": "1988",
+          "image": "https://stephenking.com/images/nonfiction/6/nightmaresinthesky.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "nightmares-in-the-sky-nonfiction-work-with-f-stop-fitzgerald-1988",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-half-novel-november-1989",
+          "name": "The Dark Half",
+          "subtitle": "1989",
+          "image": "https://stephenking.com/images/novel/1/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-half-novel-november-1989",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-four-past-midnight-collection-september-1990",
+          "name": "Four Past Midnight",
+          "subtitle": "1990",
+          "image": "https://stephenking.com/images/books/four_past_midnight/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "four-past-midnight-collection-september-1990",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-stand-the-complete-uncut-edition-novel-may-1990",
+          "name": "The Stand: The Complete & Uncut Edition",
+          "subtitle": "1990",
+          "image": "https://stephenking.com/images/books/stand/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-stand-the-complete-uncut-edition-novel-may-1990",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-needful-things-novel-october-1991",
+          "name": "Needful Things",
+          "subtitle": "1991",
+          "image": "https://stephenking.com/images/books/needfull_things/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "needful-things-novel-october-1991",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-the-waste-lands-novel-august-1991",
+          "name": "The Dark Tower: The Waste Lands",
+          "subtitle": "1991",
+          "image": "https://stephenking.com/images/novel/13/the_waste_lands.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-the-waste-lands-novel-august-1991",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-geralds-game-novel-may-1992",
+          "name": "Gerald's Game",
+          "subtitle": "1992",
+          "image": "https://stephenking.com/images/books/geralds_game/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "geralds-game-novel-may-1992",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-dolores-claiborne-novel-november-1993",
+          "name": "Dolores Claiborne",
+          "subtitle": "1993",
+          "image": "https://stephenking.com/images/books/dolores_claiborne/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "dolores-claiborne-novel-november-1993",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-nightmares-dreamscapes-collection-october-1993",
+          "name": "Nightmares & Dreamscapes",
+          "subtitle": "1993",
+          "image": "https://stephenking.com/images/books/nightmares_and_dreamscapes/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "nightmares-dreamscapes-collection-october-1993",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-insomnia-novel-september-1994",
+          "name": "Insomnia",
+          "subtitle": "1994",
+          "image": "https://stephenking.com/images/books/insomnia/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "insomnia-novel-september-1994",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-mid-life-confidential-the-rock-bottom-remainders-tour-america-with-three-chords-and-an-attitude-nonfiction-work-with-dave-barry-amy-tan-et-al-1994",
+          "name": "Mid-Life Confidential: The Rock Bottom Remainders Tour America With Three Chords and an Attitude",
+          "subtitle": "1994",
+          "image": "https://stephenking.com/images/nonfiction/5/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "mid-life-confidential-the-rock-bottom-remainders-tour-america-with-three-chords-and-an-attitude-nonfiction-work-with-dave-barry-amy-tan-et-al-1994",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-rose-madder-novel-june-1995",
+          "name": "Rose Madder",
+          "subtitle": "1995",
+          "image": "https://stephenking.com/images/books/rose_madder/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "rose-madder-novel-june-1995",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-regulators-bachman-novel-december-1995",
+          "name": "The Regulators",
+          "subtitle": "1995",
+          "image": "https://stephenking.com/images/books/regulators/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-regulators-bachman-novel-december-1995",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-desperation-novel-september-24th-1996",
+          "name": "Desperation",
+          "subtitle": "1996",
+          "image": "https://stephenking.com/images/books/desperation/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "desperation-novel-september-24th-1996",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-green-mile",
+          "name": "The Green Mile",
+          "subtitle": "1996",
+          "image": "https://stephenking.com/images/novel/43/paperback_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-green-mile",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-wizard-and-glass-novel-november-1997",
+          "name": "The Dark Tower: Wizard and Glass",
+          "subtitle": "1997",
+          "image": "https://stephenking.com/images/novel/14/wizard_and_glass.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-wizard-and-glass-novel-november-1997",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-bag-of-bones-novel-september-22nd-1998",
+          "name": "Bag of Bones",
+          "subtitle": "1998",
+          "image": "https://stephenking.com/images/books/bag_of_bones/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "bag-of-bones-novel-september-22nd-1998",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-hearts-in-atlantis-collection-september-1999",
+          "name": "Hearts in Atlantis",
+          "subtitle": "1999",
+          "image": "https://stephenking.com/images/books/hearts_in_atlantis/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "hearts-in-atlantis-collection-september-1999",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-girl-who-loved-tom-gordon-novel-april-1999",
+          "name": "The Girl Who Loved Tom Gordon",
+          "subtitle": "1999",
+          "image": "https://stephenking.com/images/books/girl_who_loved_tom_gordon/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-girl-who-loved-tom-gordon-novel-april-1999",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-on-writing-a-memoir-of-the-craft-nonfiction-work-2000",
+          "name": "On Writing: A Memoir of the Craft",
+          "subtitle": "2000",
+          "image": "https://stephenking.com/images/books/on_writing/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "on-writing-a-memoir-of-the-craft-nonfiction-work-2000",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-secret-windows-essays-and-fiction-on-the-craft-of-writing-nonfiction-work-2000",
+          "name": "Secret Windows: Essays and Fiction on the Craft of Writing",
+          "subtitle": "2000",
+          "image": "https://stephenking.com/images/books/secret_windows/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "secret-windows-essays-and-fiction-on-the-craft-of-writing-nonfiction-work-2000",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-black-house-novel-september-15th-2001",
+          "name": "Black House",
+          "subtitle": "2001",
+          "image": "https://stephenking.com/images/books/black_house/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "black-house-novel-september-15th-2001",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-dreamcatcher-novel-february-20th-2001",
+          "name": "Dreamcatcher",
+          "subtitle": "2001",
+          "image": "https://stephenking.com/images/books/dreamcatcher/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "dreamcatcher-novel-february-20th-2001",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-everythings-eventual-collection-march-2002",
+          "name": "Everything's Eventual",
+          "subtitle": "2002",
+          "image": "https://stephenking.com/images/books/everythings_eventual/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "everythings-eventual-collection-march-2002",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-from-a-buick-8-novel-september-24th-2002",
+          "name": "From A Buick 8",
+          "subtitle": "2002",
+          "image": "https://stephenking.com/images/books/from_a_buick_8/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "from-a-buick-8-novel-september-24th-2002",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-wolves-of-the-calla-novel-november-2003",
+          "name": "The Dark Tower: Wolves of the Calla",
+          "subtitle": "2003",
+          "image": "https://stephenking.com/images/novel/16/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-wolves-of-the-calla-novel-november-2003",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-novel-september-2004",
+          "name": "The Dark Tower",
+          "subtitle": "2004",
+          "image": "https://stephenking.com/images/books/dark_tower/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-novel-september-2004",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-song-of-susannah-novel-june-2004",
+          "name": "The Dark Tower: Song of Susannah",
+          "subtitle": "2004",
+          "image": "https://stephenking.com/images/books/song_of_sussanah/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-song-of-susannah-novel-june-2004",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-faithful-nonfiction-work-with-stewart-onan-september-2005",
+          "name": "Faithful",
+          "subtitle": "2005",
+          "image": "https://stephenking.com/images/books/faithful/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "faithful-nonfiction-work-with-stewart-onan-september-2005",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-colorado-kid-novel-october-2005",
+          "name": "The Colorado Kid",
+          "subtitle": "2005",
+          "image": "https://stephenking.com/images/books/colorado_kid/paperback_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-colorado-kid-novel-october-2005",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-blaze-bachman-novel-december-2006",
+          "name": "Blaze",
+          "subtitle": "2006",
+          "image": "https://stephenking.com/images/books/blaze/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "blaze-bachman-novel-december-2006",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-cell-novel-january-24th-2006",
+          "name": "Cell",
+          "subtitle": "2006",
+          "image": "https://stephenking.com/images/books/cell/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "cell-novel-january-24th-2006",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-liseys-story-novel-october-2006",
+          "name": "Lisey's Story",
+          "subtitle": "2006",
+          "image": "https://stephenking.com/images/books/liseys_story/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "liseys-story-novel-october-2006",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-duma-key-novel-january-22nd-2008",
+          "name": "Duma Key",
+          "subtitle": "2008",
+          "image": "https://stephenking.com/images/books/duma_key/hardcover_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "duma-key-novel-january-22nd-2008",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-just-after-sunset-collection-november-2008",
+          "name": "Just After Sunset",
+          "subtitle": "2008",
+          "image": "https://stephenking.com/images/story_collection/8/just_after_sunset.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "just-after-sunset-collection-november-2008",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-stephen-king-goes-to-the-movies-collection-january-2009",
+          "name": "Stephen King Goes to the Movies",
+          "subtitle": "2009",
+          "image": "https://stephenking.com/images/new_in_stores/skgttm/skgttm_full.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "stephen-king-goes-to-the-movies-collection-january-2009",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-under-the-dome-novel-november-2009",
+          "name": "Under the Dome",
+          "subtitle": "2009",
+          "image": "https://stephenking.com/images/novel/56/utd.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "under-the-dome-novel-november-2009",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-full-dark-no-stars-collection-november-2010",
+          "name": "Full Dark, No Stars",
+          "subtitle": "2010",
+          "image": "https://stephenking.com/images/books/full_dark_no_stars/full_dark_no_stars_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "full-dark-no-stars-collection-november-2010",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-11-22-63-novel-november-8th-2011",
+          "name": "11/22/63",
+          "subtitle": "2011",
+          "image": "https://stephenking.com/images/books/11-22-63/11-22-63_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "11-22-63-novel-november-8th-2011",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-dark-tower-the-wind-through-the-keyhole-novel-april-2012",
+          "name": "The Dark Tower: The Wind Through the Keyhole",
+          "subtitle": "2012",
+          "image": "https://stephenking.com/images/books/wind_through_the_keyhole/wind_through_the_keyhole_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-dark-tower-the-wind-through-the-keyhole-novel-april-2012",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-doctor-sleep-novel-september-24th-2013",
+          "name": "Doctor Sleep",
+          "subtitle": "2013",
+          "image": "https://stephenking.com/images/books/doctor_sleep/doctor_sleep_property_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "doctor-sleep-novel-september-24th-2013",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-guns-nonfiction-work-january-2013",
+          "name": "GUNS",
+          "subtitle": "2013",
+          "image": "https://stephenking.com/images/nonfiction/guns/guns_property_emebed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "guns-nonfiction-work-january-2013",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-joyland-novel-june-2013",
+          "name": "Joyland",
+          "subtitle": "2013",
+          "image": "https://stephenking.com/images/books/joyland/joyland_property_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "joyland-novel-june-2013",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-mr-mercedes-novel-june-2014",
+          "name": "Mr. Mercedes",
+          "subtitle": "2014",
+          "image": "https://stephenking.com/images/books/mr_mercedes/mr_mecedes_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "mr-mercedes-novel-june-2014",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-revival-novel-november-2014",
+          "name": "Revival",
+          "subtitle": "2014",
+          "image": "https://stephenking.com/images/books/revival/revival_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "revival-novel-november-2014",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-finders-keepers-novel-june-2nd-2015",
+          "name": "Finders Keepers",
+          "subtitle": "2015",
+          "image": "https://stephenking.com/images/books/finders-keepers/finders_keepers_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "finders-keepers-novel-june-2nd-2015",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-bazaar-of-bad-dreams-collection-november-2015",
+          "name": "The Bazaar of Bad Dreams",
+          "subtitle": "2015",
+          "image": "https://stephenking.com/images/books/bazaar-of-bad-dreams/bobd_cover_1_prop_embed.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-bazaar-of-bad-dreams-collection-november-2015",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-charlie-the-choo-choo",
+          "name": "Charlie the Choo-Choo",
+          "subtitle": "2016",
+          "image": "https://stephenking.com/images/other_project/54/charliereduced.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "charlie-the-choo-choo",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-end-of-watch-novel-june-7th-2016",
+          "name": "End of Watch",
+          "subtitle": "2016",
+          "image": "https://stephenking.com/images/novel/68/end_of_watch_rev_lr.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "end-of-watch-novel-june-7th-2016",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-sleeping-beauties-novel-september-26th-2017",
+          "name": "Sleeping Beauties",
+          "subtitle": "2017",
+          "image": "https://stephenking.com/images/books/sleeping_beauties/sleeping_beauties_prop_embed.png",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "sleeping-beauties-novel-september-26th-2017",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-outsider-novel-may-2018",
+          "name": "The Outsider",
+          "subtitle": "2018",
+          "image": "https://stephenking.com/images/novel/71/outsider.png",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-outsider-novel-may-2018",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-the-institute-novel-september-2019",
+          "name": "The Institute",
+          "subtitle": "2019",
+          "image": "https://stephenking.com/images/novel/72/institutem.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "the-institute-novel-september-2019",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-if-it-bleeds-collection-april-2020",
+          "name": "If It Bleeds",
+          "subtitle": "2020",
+          "image": "https://stephenking.com/images/story_collection/12/bleeds.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "if-it-bleeds-collection-april-2020",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-billy-summers-novel-august-3rd-2021",
+          "name": "Billy Summers",
+          "subtitle": "2021",
+          "image": "https://stephenking.com/images/novel/billy-summers.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "billy-summers-novel-august-3rd-2021",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-later-novel-march-2nd-2021",
+          "name": "Later",
+          "subtitle": "2021",
+          "image": "https://stephenking.com/images/novel/74/later.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "later-novel-march-2nd-2021",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-fairy-tale-novel-september-6th-2022",
+          "name": "Fairy Tale",
+          "subtitle": "2022",
+          "image": "https://stephenking.com/images/novel/fairy-tale.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "fairy-tale-novel-september-6th-2022",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-gwendys-final-task-novel-february-15th-2022",
+          "name": "Gwendy's Final Task",
+          "subtitle": "2022",
+          "image": "https://stephenking.com/images/novel/gwendy-ft.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "gwendys-final-task-novel-february-15th-2022",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-holly-novel-september-5th-2023",
+          "name": "Holly",
+          "subtitle": "2023",
+          "image": "https://stephenking.com/images/novel/holly.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "holly-novel-september-5th-2023",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-you-like-it-darker-collection-may-2024",
+          "name": "You Like It Darker",
+          "subtitle": "2024",
+          "image": "https://stephenking.com/images/novel/like-it-darker.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "you-like-it-darker-collection-may-2024",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-hansel-and-gretel",
+          "name": "Hansel and Gretel",
+          "subtitle": "2025",
+          "image": "https://stephenking.com/images/other_project/hansel/hansel-cover-lg.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "hansel-and-gretel",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-never-flinch-novel-may-27th-2025",
+          "name": "Never Flinch",
+          "subtitle": "2025",
+          "image": "https://stephenking.com/images/novel/never-flinch.jpg",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "never-flinch-novel-may-27th-2025",
+            "type": "book"
+          }
+        },
+        {
+          "id": "stephen-king-other-worlds-than-these",
+          "name": "Other Worlds Than These",
+          "subtitle": "2026",
+          "image": "https://stephenking.com/images/novel/other-worlds-cover.png",
+          "source": {
+            "provider": "stephenking.com",
+            "id": "other-worlds-than-these",
+            "type": "book"
+          }
+        }
+      ]
+    }
+  ]
+}

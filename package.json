@@ -17,7 +17,9 @@
     "test": "vitest run",
     "test:igdb": "node --env-file=.env scripts/check-igdb-source.mjs",
     "verify": "node scripts/verify.mjs",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "update:defaults": "node --env-file-if-exists=.env scripts/curated/update-default-manifest.mjs",
+    "validate:defaults": "node scripts/curated/validate-default-manifest.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

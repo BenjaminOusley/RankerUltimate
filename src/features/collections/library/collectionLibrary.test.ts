@@ -429,6 +429,10 @@ describe('runtime generated collections', () => {
 });
 
 describe('locked built-in collections', () => {
+  beforeEach(() => {
+    installLocalStorage();
+  });
+
   const lockedCollection: RankCollection = {
     ...baseCollections[0],
     isBuiltIn: true,
@@ -484,6 +488,33 @@ describe('locked built-in collections', () => {
         'various',
       ),
     ).toBe(state);
+  });
+
+  it('restores locked built-ins that were hidden or overridden by legacy local state', () => {
+    const staleState: CollectionLibraryState = {
+      ...emptyState(),
+      overrides: {
+        [lockedCollection.id]: {
+          name: 'Old custom MCU name',
+          excludedItemKeys: [getCollectionLibraryItemKey(lockedCollection.items[0])],
+        },
+      },
+      deletedBuiltInIds: [lockedCollection.id],
+    };
+
+    localStorage.setItem(
+      'rankerultimate:collections:v3',
+      JSON.stringify(staleState),
+    );
+
+    const loaded = loadCollectionLibraryState(lockedSources);
+    const materialized = materializeCollections(lockedSources, staleState);
+    const restored = materialized.find((collection) => collection.id === lockedCollection.id);
+
+    expect(loaded.overrides[lockedCollection.id]).toBeUndefined();
+    expect(loaded.deletedBuiltInIds).not.toContain(lockedCollection.id);
+    expect(restored?.name).toBe(lockedCollection.name);
+    expect(restored?.items).toHaveLength(lockedCollection.items.length);
   });
 });
 

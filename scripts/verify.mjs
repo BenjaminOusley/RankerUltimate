@@ -21,6 +21,10 @@ const checks = [
     args: ['run', 'build'],
   },
   {
+    name: 'Curated default manifest',
+    args: ['run', 'validate:defaults'],
+  },
+  {
     name: 'IGDB live source check',
     args: ['run', 'test:igdb'],
   },

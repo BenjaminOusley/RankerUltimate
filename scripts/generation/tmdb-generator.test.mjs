@@ -653,7 +653,7 @@ describe('generateTmdbCollection', () => {
     expect(result.collection.items).toEqual([
       expect.objectContaining({
         name: 'Test Drama',
-        subtitle: '2020',
+        subtitle: '2020\u2013',
         source: {
           provider: 'tmdb',
           id: '100',
@@ -728,10 +728,6 @@ describe('generateTmdbCollection', () => {
     });
 
     expect(result.collection.name).toBe('Test Actor TV Shows');
-    expect(result.collection.items.map((item) => item.name)).toEqual([
-      'Newer Show',
-      'Older Show',
-    ]);
+    expect(result.collection.items.map((item) => item.name)).toEqual(['Newer Show', 'Older Show']);
   });
-
 });

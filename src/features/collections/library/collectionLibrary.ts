@@ -82,6 +82,48 @@ function createEmptyState(): CollectionLibraryState {
   };
 }
 
+function sanitizeLockedBuiltInState(
+  state: CollectionLibraryState,
+  baseCollections: readonly RankCollection[],
+): CollectionLibraryState {
+  const lockedBuiltInIds = new Set(
+    baseCollections
+      .filter(
+        (collection) =>
+          collection.isBuiltIn &&
+          !getCollectionPermissions(collection).edit &&
+          !getCollectionPermissions(collection).delete,
+      )
+      .map((collection) => collection.id),
+  );
+
+  if (lockedBuiltInIds.size === 0) {
+    return state;
+  }
+
+  const overrides = Object.fromEntries(
+    Object.entries(state.overrides).filter(
+      ([collectionId]) => !lockedBuiltInIds.has(collectionId),
+    ),
+  );
+  const deletedBuiltInIds = state.deletedBuiltInIds.filter(
+    (collectionId) => !lockedBuiltInIds.has(collectionId),
+  );
+
+  if (
+    Object.keys(overrides).length === Object.keys(state.overrides).length &&
+    deletedBuiltInIds.length === state.deletedBuiltInIds.length
+  ) {
+    return state;
+  }
+
+  return {
+    ...state,
+    overrides,
+    deletedBuiltInIds,
+  };
+}
+
 export function getCollectionLibraryItemKey(item: RankItem) {
   return getCanonicalItemKey(item);
 }
@@ -213,13 +255,16 @@ export function loadCollectionLibraryState(
       const parsed = JSON.parse(currentRaw) as Partial<CollectionLibraryState>;
 
       if (parsed.version === 3) {
-        return {
-          version: 3,
-          customCollections: parsed.customCollections ?? [],
-          generatedCollections: parsed.generatedCollections ?? [],
-          overrides: parsed.overrides ?? {},
-          deletedBuiltInIds: parsed.deletedBuiltInIds ?? [],
-        };
+        return sanitizeLockedBuiltInState(
+          {
+            version: 3,
+            customCollections: parsed.customCollections ?? [],
+            generatedCollections: parsed.generatedCollections ?? [],
+            overrides: parsed.overrides ?? {},
+            deletedBuiltInIds: parsed.deletedBuiltInIds ?? [],
+          },
+          baseCollections,
+        );
       }
     }
 
@@ -229,7 +274,7 @@ export function loadCollectionLibraryState(
       const parsed = JSON.parse(v2Raw) as CollectionLibraryStateV2;
 
       if (parsed.version === 2) {
-        return migrateV2State(parsed);
+        return sanitizeLockedBuiltInState(migrateV2State(parsed), baseCollections);
       }
     }
 
@@ -245,7 +290,10 @@ export function loadCollectionLibraryState(
       return createEmptyState();
     }
 
-    return migrateLegacyState(legacyState, baseCollections);
+    return sanitizeLockedBuiltInState(
+      migrateLegacyState(legacyState, baseCollections),
+      baseCollections,
+    );
   } catch {
     return createEmptyState();
   }
@@ -306,11 +354,28 @@ export function materializeCollections(
   );
 
   const builtInCollections = sourceCollections
-    .filter(
-      (collection) =>
-        !generatedIds.has(collection.id) && !deletedIds.has(collection.id),
-    )
+    .filter((collection) => {
+      if (generatedIds.has(collection.id)) {
+        return false;
+      }
+
+      if (
+        collection.isBuiltIn &&
+        !getCollectionPermissions(collection).delete
+      ) {
+        return true;
+      }
+
+      return !deletedIds.has(collection.id);
+    })
     .map((collection) => {
+      if (
+        collection.isBuiltIn &&
+        !getCollectionPermissions(collection).edit
+      ) {
+        return collection;
+      }
+
       const override = state.overrides[collection.id];
 
       if (!override) {
@@ -725,4 +790,3 @@ export function deleteCollectionsFromLibrary(
     state,
   );
 }
-
