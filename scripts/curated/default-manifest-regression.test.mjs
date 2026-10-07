@@ -28,6 +28,16 @@ function getItemBySourceId(collection, sourceId) {
   return collection.items.find((item) => String(item?.source?.id) === String(sourceId));
 }
 
+function expectCachedImage(item) {
+  expect(item.image).toBeTruthy();
+
+  const imageUrl = new URL(item.image);
+
+  expect(imageUrl.protocol).toBe('https:');
+  expect(imageUrl.hostname.endsWith('.public.blob.vercel-storage.com')).toBe(true);
+  expect(imageUrl.pathname.startsWith('/catalog-images/v1/')).toBe(true);
+}
+
 function expectTmdbItem(collection, { sourceId, name, subtitle, type }) {
   const item = getItemBySourceId(collection, sourceId);
 
@@ -41,7 +51,7 @@ function expectTmdbItem(collection, { sourceId, name, subtitle, type }) {
     },
   });
 
-  expect(item.image).toBeTruthy();
+  expectCachedImage(item);
 
   return item;
 }
@@ -51,6 +61,14 @@ describe('generated curated manifest regressions', () => {
     expect(updaterSource).not.toContain('STAR_WARS_PINNED_TMDB');
 
     expect(updaterSource).not.toContain('DISNEY_PRINCESS_PINNED_ORIGINALS');
+  });
+
+  it('serves every curated image from the shared RankerUltimate Blob cache', () => {
+    for (const collection of manifest.collections) {
+      for (const item of collection.items) {
+        expectCachedImage(item);
+      }
+    }
   });
 
   it('keeps canonical Star Wars identities and artwork', () => {
@@ -149,7 +167,7 @@ describe('generated curated manifest regressions', () => {
      * its representative IGDB artwork must resolve.
      */
     if (pokemon) {
-      expect(pokemon.image).toMatch(/^https:\/\/images\.igdb\.com\//);
+      expectCachedImage(pokemon);
     }
   });
 

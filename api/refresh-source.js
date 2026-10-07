@@ -1,5 +1,6 @@
 import process from 'node:process';
 
+import { cacheCollectionImages } from '../scripts/assets/image-cache.mjs';
 import {
   refreshGeneratedCollectionSource,
   validateRefreshSourceRequest,
@@ -129,8 +130,10 @@ export default {
         refreshers: createSourceRefreshers(),
       });
 
+      const collection = await cacheCollectionImages(result.collection);
+
       return json({
-        collection: result.collection,
+        collection,
         meta: {
           candidateCount: result.candidateCount,
           validatedCount: result.validatedCount,

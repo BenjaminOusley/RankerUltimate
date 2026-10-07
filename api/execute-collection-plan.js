@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import process from 'node:process';
 
+import { cacheCollectionImages } from '../scripts/assets/image-cache.mjs';
 import { createHardcoverProvider } from '../scripts/providers/hardcover.mjs';
 import { createIgdbProvider } from '../scripts/providers/igdb.mjs';
 import { createTmdbProvider } from '../scripts/providers/tmdb.mjs';
@@ -91,8 +92,10 @@ export default {
           : null,
       });
 
+      const collection = await cacheCollectionImages(result.collection);
+
       return json({
-        collection: result.collection,
+        collection,
         meta: {
           candidateCount: result.candidateCount,
           validatedCount: result.validatedCount,

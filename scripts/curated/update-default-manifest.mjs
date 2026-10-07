@@ -3,6 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
+import { cacheManifestImages } from '../assets/image-cache.mjs';
 import { generateTmdbCollection } from '../generation/tmdb-generator.mjs';
 import { createIgdbProvider, createIgdbRankItem } from '../providers/igdb.mjs';
 import {
@@ -1088,7 +1089,8 @@ async function buildManifest(previousManifest) {
 async function main() {
   const ignoreChanged = await ensureRepoIgnores();
   const previousManifest = await readExistingManifest();
-  const nextManifest = await buildManifest(previousManifest);
+  const generatedManifest = await buildManifest(previousManifest);
+  const nextManifest = await cacheManifestImages(generatedManifest);
 
   assertValidDefaultManifest(nextManifest, { previousManifest });
 

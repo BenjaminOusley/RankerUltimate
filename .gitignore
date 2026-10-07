@@ -33,3 +33,5 @@ dist-ssr
 RankerUltimate-source*.txt
 scripts/provider-spikes/
 **/*spike*-results.*
+.vercel
+.env*

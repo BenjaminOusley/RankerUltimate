@@ -1,52 +1,52 @@
 {
   "schemaVersion": 1,
   "policyVersion": 3,
-  "generatedAt": "2026-10-06T05:46:25.102Z",
+  "generatedAt": "2026-10-07T04:32:48.757Z",
   "sources": [
     {
       "id": "tmdb",
       "url": "https://www.themoviedb.org/",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "star-wars-guide",
       "url": "https://www.starwars.com/news/star-wars-movies-and-series-guide",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "disney-princess",
       "url": "https://princess.disney.com/",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "best-selling-games",
       "url": "https://en.wikipedia.org/wiki/List_of_best-selling_video_games",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "stephen-king-novel",
       "url": "https://stephenking.com/works/novel/grid.html",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "stephen-king-collection",
       "url": "https://stephenking.com/works/collection/grid.html",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "stephen-king-nonfiction",
       "url": "https://stephenking.com/works/nonfiction/grid.html",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "stephen-king-other-project",
       "url": "https://stephenking.com/works/other-project/grid.html",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     },
     {
       "id": "igdb",
       "url": "https://www.igdb.com/",
-      "checkedAt": "2026-10-06T05:46:25.102Z"
+      "checkedAt": "2026-10-07T04:32:48.757Z"
     }
   ],
   "collections": [
@@ -61,7 +61,7 @@
           "id": "iron-man-1726",
           "name": "Iron Man",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/78lPtwv72eTNqFW9COBYI0dWDJa.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2073bbc843b973019cfc8b4076f624b877b2b67029ce68e928e6803f6a8c8009",
           "source": {
             "provider": "tmdb",
             "id": "1726",
@@ -72,7 +72,7 @@
           "id": "the-incredible-hulk-1724",
           "name": "The Incredible Hulk",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/gKzYx79y0AQTL4UAk1cBQJ3nvrm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/04cfda2a3196513d4a816ba828a87a8f10186cef26db84bc6bbc3f15ddc86e7e",
           "source": {
             "provider": "tmdb",
             "id": "1724",
@@ -83,7 +83,7 @@
           "id": "iron-man-2-10138",
           "name": "Iron Man 2",
           "subtitle": "2010",
-          "image": "https://image.tmdb.org/t/p/w500/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/969631a30360d456451124f7a1f14444638bb81740b35fa0ddbad16bba63ae85",
           "source": {
             "provider": "tmdb",
             "id": "10138",
@@ -94,7 +94,7 @@
           "id": "captain-america-the-first-avenger-1771",
           "name": "Captain America: The First Avenger",
           "subtitle": "2011",
-          "image": "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ec22c16a09072db69c16d927c49a78951f54dcf63f0b71c29a57a1b939e668f4",
           "source": {
             "provider": "tmdb",
             "id": "1771",
@@ -105,7 +105,7 @@
           "id": "thor-10195",
           "name": "Thor",
           "subtitle": "2011",
-          "image": "https://image.tmdb.org/t/p/w500/prSfAi1xGrhLQNxVSUFh61xQ4Qy.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/588024fd1f89d7250c664577e2bc3ec508d4a161c3b7992bdeb69a643242b902",
           "source": {
             "provider": "tmdb",
             "id": "10195",
@@ -116,7 +116,7 @@
           "id": "the-avengers-24428",
           "name": "The Avengers",
           "subtitle": "2012",
-          "image": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/cc0f735ddb4953275fb8cbc758ccbcaec51523dd13c71602d39cbf7df7cc0046",
           "source": {
             "provider": "tmdb",
             "id": "24428",
@@ -127,7 +127,7 @@
           "id": "iron-man-3-68721",
           "name": "Iron Man 3",
           "subtitle": "2013",
-          "image": "https://image.tmdb.org/t/p/w500/qhPtAc1TKbMPqNvcdXSOn9Bn7hZ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a0df8ba2f57e9fedcee0acda685d9f6d837972ad702d5dc205ee8fe53a3b24e4",
           "source": {
             "provider": "tmdb",
             "id": "68721",
@@ -138,7 +138,7 @@
           "id": "thor-the-dark-world-76338",
           "name": "Thor: The Dark World",
           "subtitle": "2013",
-          "image": "https://image.tmdb.org/t/p/w500/wp6OxE4poJ4G7c0U2ZIXasTSMR7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/44c2271be3630e55714c886c63731d8da37bd422a724d38885fde284b958ff7a",
           "source": {
             "provider": "tmdb",
             "id": "76338",
@@ -149,7 +149,7 @@
           "id": "captain-america-the-winter-soldier-100402",
           "name": "Captain America: The Winter Soldier",
           "subtitle": "2014",
-          "image": "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1a2e7c7adbc66b0129e978b7613c31e73712d47dd672752d0620d6a489f32b59",
           "source": {
             "provider": "tmdb",
             "id": "100402",
@@ -160,7 +160,7 @@
           "id": "guardians-of-the-galaxy-118340",
           "name": "Guardians of the Galaxy",
           "subtitle": "2014",
-          "image": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/eb2cd3888acb2ed030fe7ee9a2a27163ad9f709f88761f7f84045791f249ffe8",
           "source": {
             "provider": "tmdb",
             "id": "118340",
@@ -171,7 +171,7 @@
           "id": "ant-man-102899",
           "name": "Ant-Man",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/rQRnQfUl3kfp78nCWq8Ks04vnq1.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/8ef3eb2fdbfd3e0f7dac38c89133b3861f2f6ccbc1c5f771afdbeaed521ccbac",
           "source": {
             "provider": "tmdb",
             "id": "102899",
@@ -182,7 +182,7 @@
           "id": "avengers-age-of-ultron-99861",
           "name": "Avengers: Age of Ultron",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/90fb229f684e0b2573edba32b95142c34041e2c5180fa5cd4c52b26a0821dd06",
           "source": {
             "provider": "tmdb",
             "id": "99861",
@@ -193,7 +193,7 @@
           "id": "captain-america-civil-war-271110",
           "name": "Captain America: Civil War",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/rAGiXaUfPzY7CDEyNKUofk3Kw2e.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a583986622b1f2670a10512ed868c2011c16bb515cbc9ddf984c5271f4f816cc",
           "source": {
             "provider": "tmdb",
             "id": "271110",
@@ -204,7 +204,7 @@
           "id": "doctor-strange-284052",
           "name": "Doctor Strange",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/08c4bb77105031ec01dc1c2e43704d95ceba4a3b2694092f467906acca6a3eb5",
           "source": {
             "provider": "tmdb",
             "id": "284052",
@@ -215,7 +215,7 @@
           "id": "guardians-of-the-galaxy-vol-2-283995",
           "name": "Guardians of the Galaxy Vol. 2",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/5a28d82a12e167529a35871669b7fc2692a433ff3fb4ce59afc053d6f95598dc",
           "source": {
             "provider": "tmdb",
             "id": "283995",
@@ -226,7 +226,7 @@
           "id": "spider-man-homecoming-315635",
           "name": "Spider-Man: Homecoming",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/5b233fc9456c51c0e3d9df2208a4d339fbd8e6028c47be39150be86bb93a8a46",
           "source": {
             "provider": "tmdb",
             "id": "315635",
@@ -237,7 +237,7 @@
           "id": "thor-ragnarok-284053",
           "name": "Thor: Ragnarok",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/rzRwTcFvttcN1ZpX2xv4j3tSdJu.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/629d1c3e907fa9bb95f0c80521a2d02124d551dfb299b165aa01762c634f423e",
           "source": {
             "provider": "tmdb",
             "id": "284053",
@@ -248,7 +248,7 @@
           "id": "ant-man-and-the-wasp-363088",
           "name": "Ant-Man and the Wasp",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/cFQEO687n1K6umXbInzocxcnAQz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/546532e2f1a951f518389c9571295742f59a4acd7773538328eedbfa5c16f8b4",
           "source": {
             "provider": "tmdb",
             "id": "363088",
@@ -259,7 +259,7 @@
           "id": "avengers-infinity-war-299536",
           "name": "Avengers: Infinity War",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ff1030e70649a0729507668f4c23715e2cc75c686ff262502065a4564997b72e",
           "source": {
             "provider": "tmdb",
             "id": "299536",
@@ -270,7 +270,7 @@
           "id": "black-panther-284054",
           "name": "Black Panther",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/91ef2ac265e3078bd56164ece958683ae76232caaeb59cfb5b2ce651e56d8f18",
           "source": {
             "provider": "tmdb",
             "id": "284054",
@@ -281,7 +281,7 @@
           "id": "avengers-endgame-299534",
           "name": "Avengers: Endgame",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c1859ca5667e2294c744ba29255c9f4bf6a145e50ff53a8b95d582bc3e990651",
           "source": {
             "provider": "tmdb",
             "id": "299534",
@@ -292,7 +292,7 @@
           "id": "captain-marvel-299537",
           "name": "Captain Marvel",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1bb899dbfa7e8b6cd5f71114d52447e06ac8ade7439f391366deffa13847abeb",
           "source": {
             "provider": "tmdb",
             "id": "299537",
@@ -303,7 +303,7 @@
           "id": "spider-man-far-from-home-429617",
           "name": "Spider-Man: Far From Home",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4702028015649b5f7b0e469fb62ec0aff64b3a2550a94e197336f7589f2b5238",
           "source": {
             "provider": "tmdb",
             "id": "429617",
@@ -314,7 +314,7 @@
           "id": "black-widow-497698",
           "name": "Black Widow",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/59953983d7a6c57c9aacd90c66c66c40c2c83890ff7386a57f4f19fa94d3a4e0",
           "source": {
             "provider": "tmdb",
             "id": "497698",
@@ -325,7 +325,7 @@
           "id": "eternals-524434",
           "name": "Eternals",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/lFByFSLV5WDJEv3KabbdAF959F2.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/d77ba7aa057c06918ad4e8ff8bda767fc61aa84c02bf0d4766a2c3b305543bbc",
           "source": {
             "provider": "tmdb",
             "id": "524434",
@@ -336,7 +336,7 @@
           "id": "shang-chi-and-the-legend-of-the-ten-rings-566525",
           "name": "Shang-Chi and the Legend of the Ten Rings",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/9f2Q0U3IOsLgrI2HkvldwSABZy5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7fdb948b71bf82f24138cb80508b8a93db2f792114e37950d5869575959b7ede",
           "source": {
             "provider": "tmdb",
             "id": "566525",
@@ -347,7 +347,7 @@
           "id": "spider-man-no-way-home-634649",
           "name": "Spider-Man: No Way Home",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ac659f209a0d138de47d9c63e8a96bf5705bfa6221ab36e4fc348ea08ca7bbf2",
           "source": {
             "provider": "tmdb",
             "id": "634649",
@@ -358,7 +358,7 @@
           "id": "black-panther-wakanda-forever-505642",
           "name": "Black Panther: Wakanda Forever",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/326a8e43b734f4005be49955d970034e3f602e1cb87f1ba8768beb2e3f3cd3d9",
           "source": {
             "provider": "tmdb",
             "id": "505642",
@@ -369,7 +369,7 @@
           "id": "doctor-strange-in-the-multiverse-of-madness-453395",
           "name": "Doctor Strange in the Multiverse of Madness",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/ddJcSKbcp4rKZTmuyWaMhuwcfMz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c3745e887fe9d7ff886053288c641a0280860c1d267ff157bca91e137ca799f9",
           "source": {
             "provider": "tmdb",
             "id": "453395",
@@ -380,7 +380,7 @@
           "id": "thor-love-and-thunder-616037",
           "name": "Thor: Love and Thunder",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ec1e8679786c29d5fc9f23b65703c8c7c8cef17356fb6a5c47792b49f9349901",
           "source": {
             "provider": "tmdb",
             "id": "616037",
@@ -391,7 +391,7 @@
           "id": "werewolf-by-night-894205",
           "name": "Werewolf by Night",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/mvIvNKRIJPPS7WSFarFhOAGIVnU.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/61c61f737bf994effcbd5336fc00aba9cee5f88903c85a66f73e163b8a37bf60",
           "source": {
             "provider": "tmdb",
             "id": "894205",
@@ -402,7 +402,7 @@
           "id": "ant-man-and-the-wasp-quantumania-640146",
           "name": "Ant-Man and the Wasp: Quantumania",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/qnqGbB22YJ7dSs4o6M7exTpNxPz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/660eb8827d2efb8ed0afeed3feba2ab853d83f0133660a91b6985e3891c2c065",
           "source": {
             "provider": "tmdb",
             "id": "640146",
@@ -413,7 +413,7 @@
           "id": "guardians-of-the-galaxy-vol-3-447365",
           "name": "Guardians of the Galaxy Vol. 3",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/74d5160f7f1eb5bb736ff1973ea4c00953b6f3e7197846f766e1e8c88f52980a",
           "source": {
             "provider": "tmdb",
             "id": "447365",
@@ -424,7 +424,7 @@
           "id": "the-marvels-609681",
           "name": "The Marvels",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMMTps5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/5a266262f6400e150a1618ded58d6afbd0cb96f16fb5b762e9e4938205cf9b84",
           "source": {
             "provider": "tmdb",
             "id": "609681",
@@ -435,7 +435,7 @@
           "id": "deadpool-wolverine-533535",
           "name": "Deadpool & Wolverine",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f9fefaf4ee012b16b7d2ecd7180c524bd91c407f530c5ded5b294d8cc704881e",
           "source": {
             "provider": "tmdb",
             "id": "533535",
@@ -446,7 +446,7 @@
           "id": "captain-america-brave-new-world-822119",
           "name": "Captain America: Brave New World",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ead798b8e0c12213674be1dd7f0c4689147edc1954d1229ea47027e7b48d5ed6",
           "source": {
             "provider": "tmdb",
             "id": "822119",
@@ -457,7 +457,7 @@
           "id": "the-fantastic-4-first-steps-617126",
           "name": "The Fantastic 4: First Steps",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/nf5qaSEvyYSNeFH0YhSs5EsBLX9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3f6b7dfeb5de6f1f44a873c302b1215ddf0af0adc1493074a71c227ba7af796c",
           "source": {
             "provider": "tmdb",
             "id": "617126",
@@ -468,7 +468,7 @@
           "id": "thunderbolts-986056",
           "name": "Thunderbolts*",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/hqcexYHbiTBfDIdDWxrxPtVndBX.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/17b33ce05b5449deb5da5f75e062380223cdef14f270b9704908ddc9b80f43a5",
           "source": {
             "provider": "tmdb",
             "id": "986056",
@@ -479,7 +479,7 @@
           "id": "spider-man-brand-new-day-969681",
           "name": "Spider-Man: Brand New Day",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/bjiS5ipwxb9JFy3XRRN4OAilSeX.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3e0410fcef55e771c2cd12b93d9a671e6ddb273badf4b2b71ba9656af61ea318",
           "source": {
             "provider": "tmdb",
             "id": "969681",
@@ -490,7 +490,7 @@
           "id": "the-punisher-one-last-kill-1439930",
           "name": "The Punisher: One Last Kill",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/qQclTgLMDvGBuUBFGHRipxkEwWR.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/8aa1dc550b089fdeaa1d739cd1de601568d4df75655853930df05e481788c577",
           "source": {
             "provider": "tmdb",
             "id": "1439930",
@@ -510,7 +510,7 @@
           "id": "marvel-s-agents-of-s-h-i-e-l-d-1403",
           "name": "Marvel's Agents of S.H.I.E.L.D.",
           "subtitle": "2013–2020",
-          "image": "https://image.tmdb.org/t/p/w500/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/03a547ae1fcbca91bec6690943373182ee6583431943f4246fefc7dcc8e65f38",
           "source": {
             "provider": "tmdb",
             "id": "1403",
@@ -521,7 +521,7 @@
           "id": "marvel-s-agent-carter-61550",
           "name": "Marvel's Agent Carter",
           "subtitle": "2015–2016",
-          "image": "https://image.tmdb.org/t/p/w500/fe79VYyLp5ZBstpJ4oukpuUT3B.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f9585af1adc2b3ddc653ee8982994e92d66aaabea26d90b2e1a7192340688184",
           "source": {
             "provider": "tmdb",
             "id": "61550",
@@ -532,7 +532,7 @@
           "id": "marvel-s-daredevil-61889",
           "name": "Marvel's Daredevil",
           "subtitle": "2015–2018",
-          "image": "https://image.tmdb.org/t/p/w500/QWbPaDxiB6LW2LjASknzYBvjMj.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ed4193a39422e3f86c35351b94b6d350aa133c5b9f89a13fba0ee289a2654b8d",
           "source": {
             "provider": "tmdb",
             "id": "61889",
@@ -543,7 +543,7 @@
           "id": "marvel-s-jessica-jones-38472",
           "name": "Marvel's Jessica Jones",
           "subtitle": "2015–2019",
-          "image": "https://image.tmdb.org/t/p/w500/oxnWofiE9fHOgUfs9NJa6nG6NTR.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3834bbe29c32b93bce390663525fb808455e34971b91224be03ac76a06814cb1",
           "source": {
             "provider": "tmdb",
             "id": "38472",
@@ -554,7 +554,7 @@
           "id": "marvel-s-luke-cage-62126",
           "name": "Marvel's Luke Cage",
           "subtitle": "2016–2018",
-          "image": "https://image.tmdb.org/t/p/w500/yzM1hMB3PUJqbISX0f421b3xOjB.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/362e0dde0006a884f0457fe490304f3027268df01490e1bd3ebe5d47e0cc212b",
           "source": {
             "provider": "tmdb",
             "id": "62126",
@@ -565,7 +565,7 @@
           "id": "marvel-s-inhumans-68716",
           "name": "Marvel's Inhumans",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/zKfGip55oJ9tdzhyd9ayGyFFhuo.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b84b69de22d5d7dc802012cce462b3f482968b672be1807d71f8acbe70af6e37",
           "source": {
             "provider": "tmdb",
             "id": "68716",
@@ -576,7 +576,7 @@
           "id": "marvel-s-iron-fist-62127",
           "name": "Marvel's Iron Fist",
           "subtitle": "2017–2018",
-          "image": "https://image.tmdb.org/t/p/w500/4l6KD9HhtD6nCDEfg10Lp6C6zah.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4486b312519f737b98af14e5cc5f85f4cf0986d418bc2a91b3f8cb1cd7def799",
           "source": {
             "provider": "tmdb",
             "id": "62127",
@@ -587,7 +587,7 @@
           "id": "marvel-s-the-defenders-62285",
           "name": "Marvel's The Defenders",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/49XzINhH4LFsgz7cx6TOPcHUJUL.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/818924aadac9b7329442475854a4115895ff16e917fcd6fbb35d5b5cd0c47288",
           "source": {
             "provider": "tmdb",
             "id": "62285",
@@ -598,7 +598,7 @@
           "id": "marvel-s-the-punisher-67178",
           "name": "Marvel's The Punisher",
           "subtitle": "2017–2019",
-          "image": "https://image.tmdb.org/t/p/w500/tM6xqRKXoloH9UchaJEyyRE9O1w.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2135cf11d83f89a38cbe97be882f4d0b56dedfb74c8429de64533049544e9a17",
           "source": {
             "provider": "tmdb",
             "id": "67178",
@@ -609,7 +609,7 @@
           "id": "hawkeye-88329",
           "name": "Hawkeye",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/ct5pNE5dDHryHLDnxyZPYcqO1sz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/dd1f65435621f3f92e54dec4d199553880a5d38b751f10dc65d182e89f9b153c",
           "source": {
             "provider": "tmdb",
             "id": "88329",
@@ -620,7 +620,7 @@
           "id": "loki-84958",
           "name": "Loki",
           "subtitle": "2021–2023",
-          "image": "https://image.tmdb.org/t/p/w500/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b507d3e4269f5a75a615571429ff91bdc08923876a35a02a57f6a9e04d81bedc",
           "source": {
             "provider": "tmdb",
             "id": "84958",
@@ -631,7 +631,7 @@
           "id": "the-falcon-and-the-winter-soldier-88396",
           "name": "The Falcon and the Winter Soldier",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7cc9bd1a2126061797e272c9cb39d2726ce3f0bda10a1bc31f3e869299c2a1f4",
           "source": {
             "provider": "tmdb",
             "id": "88396",
@@ -642,7 +642,7 @@
           "id": "wandavision-85271",
           "name": "WandaVision",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/ijWWwINc8h71NQ8j1LTJMFSj5wr.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e442d2ca6994823daae9b9ee7e88cabddc00c99d6b82a5cab6fafbf41bce64c6",
           "source": {
             "provider": "tmdb",
             "id": "85271",
@@ -653,7 +653,7 @@
           "id": "what-if-91363",
           "name": "What If...?",
           "subtitle": "2021–2024",
-          "image": "https://image.tmdb.org/t/p/w500/lztz5XBMG1x6Y5ubz7CxfPFsAcW.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/564550b42ead7a240c11c16d5a87ffd22a1955fd2ccf40ee4370f5505219b9f3",
           "source": {
             "provider": "tmdb",
             "id": "91363",
@@ -664,7 +664,7 @@
           "id": "moon-knight-92749",
           "name": "Moon Knight",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/9K3lbMf8TKvL9xGEbzi7TggWCNQ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7891ca15fd8db22dc96eecd1d397c175e7b8cae3341a5904b0b8f481edc95a96",
           "source": {
             "provider": "tmdb",
             "id": "92749",
@@ -675,7 +675,7 @@
           "id": "ms-marvel-92782",
           "name": "Ms. Marvel",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/3HWWh92kZbD7odwJX7nKmXNZsYo.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b3720c78dca59d213dc1d939709213167d3adfc5337b3d3acae3ae837d7728f1",
           "source": {
             "provider": "tmdb",
             "id": "92782",
@@ -686,7 +686,7 @@
           "id": "she-hulk-attorney-at-law-92783",
           "name": "She-Hulk: Attorney at Law",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/5xz2orV8f0usyrfGNshcoXHmiaV.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/33c7d2f109f57e4aa8feb8f64a459c32d9899de1e523d15e69a59ec7fb2391c5",
           "source": {
             "provider": "tmdb",
             "id": "92783",
@@ -697,7 +697,7 @@
           "id": "secret-invasion-114472",
           "name": "Secret Invasion",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/3rINdUPSy9AklJg74jWHOyUXuZd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2d5fb94673b950f569728804c20495d3cd0cb05ee96f74165861c649a03a37ab",
           "source": {
             "provider": "tmdb",
             "id": "114472",
@@ -708,7 +708,7 @@
           "id": "agatha-all-along-138501",
           "name": "Agatha All Along",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/mGsxKwXUjojitRv2E9qMTbxbBRd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b51ef2c4d620c1cb148fa86366aba01c31634a9ba4eb394b72790f59348b7902",
           "source": {
             "provider": "tmdb",
             "id": "138501",
@@ -719,7 +719,7 @@
           "id": "echo-122226",
           "name": "Echo",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/vFyJH630cF68LohVYjQW49074Sy.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1aa0124c938a37c77854c3835853f8169fe5c7a5e7a99dc79c9f8f0d053cdae9",
           "source": {
             "provider": "tmdb",
             "id": "122226",
@@ -730,7 +730,7 @@
           "id": "daredevil-born-again-202555",
           "name": "Daredevil: Born Again",
           "subtitle": "2025–",
-          "image": "https://image.tmdb.org/t/p/w500/xDUoAsU8lQHOOoRkFiBuarmACDN.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f2479639ef24c3c033ff6032f02e0d293f5809c52fb70aeef541c7ea88f23e02",
           "source": {
             "provider": "tmdb",
             "id": "202555",
@@ -741,7 +741,7 @@
           "id": "eyes-of-wakanda-241388",
           "name": "Eyes of Wakanda",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/yuOfb1MgnaGPa4guzV0n1IFYVGN.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/0251d106c93338d553ef36d6508720e447ee422353f5ef45b22ca54932897b0b",
           "source": {
             "provider": "tmdb",
             "id": "241388",
@@ -752,7 +752,7 @@
           "id": "ironheart-114471",
           "name": "Ironheart",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/dOh6MJpdlQhYpLBhzhNQeYGKTZ5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a721b3598b13839cf70feeda4cbedb82fd5e5b27a31c2f10e0cab35828e31e32",
           "source": {
             "provider": "tmdb",
             "id": "114471",
@@ -763,7 +763,7 @@
           "id": "marvel-zombies-138505",
           "name": "Marvel Zombies",
           "subtitle": "2025–",
-          "image": "https://image.tmdb.org/t/p/w500/mwKj9ERGFXsWot0nXgQ5yMQf9I7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/fc9dcd150219b3116c6203a54826383d8cde81b58538d1246cf3605917260e84",
           "source": {
             "provider": "tmdb",
             "id": "138505",
@@ -774,7 +774,7 @@
           "id": "wonder-man-198178",
           "name": "Wonder Man",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/6yy9nQlFt2l6UVWzrfhszFCaZ5C.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4fa961dcc931e87c9d219da0bcd36b6d8cfbd4c192ed08d86e53e96c524825db",
           "source": {
             "provider": "tmdb",
             "id": "198178",
@@ -794,7 +794,7 @@
           "id": "iron-man-1726",
           "name": "Iron Man",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/78lPtwv72eTNqFW9COBYI0dWDJa.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2073bbc843b973019cfc8b4076f624b877b2b67029ce68e928e6803f6a8c8009",
           "source": {
             "provider": "tmdb",
             "id": "1726",
@@ -805,7 +805,7 @@
           "id": "the-incredible-hulk-1724",
           "name": "The Incredible Hulk",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/gKzYx79y0AQTL4UAk1cBQJ3nvrm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/04cfda2a3196513d4a816ba828a87a8f10186cef26db84bc6bbc3f15ddc86e7e",
           "source": {
             "provider": "tmdb",
             "id": "1724",
@@ -816,7 +816,7 @@
           "id": "iron-man-2-10138",
           "name": "Iron Man 2",
           "subtitle": "2010",
-          "image": "https://image.tmdb.org/t/p/w500/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/969631a30360d456451124f7a1f14444638bb81740b35fa0ddbad16bba63ae85",
           "source": {
             "provider": "tmdb",
             "id": "10138",
@@ -827,7 +827,7 @@
           "id": "captain-america-the-first-avenger-1771",
           "name": "Captain America: The First Avenger",
           "subtitle": "2011",
-          "image": "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ec22c16a09072db69c16d927c49a78951f54dcf63f0b71c29a57a1b939e668f4",
           "source": {
             "provider": "tmdb",
             "id": "1771",
@@ -838,7 +838,7 @@
           "id": "thor-10195",
           "name": "Thor",
           "subtitle": "2011",
-          "image": "https://image.tmdb.org/t/p/w500/prSfAi1xGrhLQNxVSUFh61xQ4Qy.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/588024fd1f89d7250c664577e2bc3ec508d4a161c3b7992bdeb69a643242b902",
           "source": {
             "provider": "tmdb",
             "id": "10195",
@@ -849,7 +849,7 @@
           "id": "the-avengers-24428",
           "name": "The Avengers",
           "subtitle": "2012",
-          "image": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/cc0f735ddb4953275fb8cbc758ccbcaec51523dd13c71602d39cbf7df7cc0046",
           "source": {
             "provider": "tmdb",
             "id": "24428",
@@ -860,7 +860,7 @@
           "id": "iron-man-3-68721",
           "name": "Iron Man 3",
           "subtitle": "2013",
-          "image": "https://image.tmdb.org/t/p/w500/qhPtAc1TKbMPqNvcdXSOn9Bn7hZ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a0df8ba2f57e9fedcee0acda685d9f6d837972ad702d5dc205ee8fe53a3b24e4",
           "source": {
             "provider": "tmdb",
             "id": "68721",
@@ -871,7 +871,7 @@
           "id": "marvel-s-agents-of-s-h-i-e-l-d-1403",
           "name": "Marvel's Agents of S.H.I.E.L.D.",
           "subtitle": "2013–2020",
-          "image": "https://image.tmdb.org/t/p/w500/gHUCCMy1vvj58tzE3dZqeC9SXus.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/03a547ae1fcbca91bec6690943373182ee6583431943f4246fefc7dcc8e65f38",
           "source": {
             "provider": "tmdb",
             "id": "1403",
@@ -882,7 +882,7 @@
           "id": "thor-the-dark-world-76338",
           "name": "Thor: The Dark World",
           "subtitle": "2013",
-          "image": "https://image.tmdb.org/t/p/w500/wp6OxE4poJ4G7c0U2ZIXasTSMR7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/44c2271be3630e55714c886c63731d8da37bd422a724d38885fde284b958ff7a",
           "source": {
             "provider": "tmdb",
             "id": "76338",
@@ -893,7 +893,7 @@
           "id": "captain-america-the-winter-soldier-100402",
           "name": "Captain America: The Winter Soldier",
           "subtitle": "2014",
-          "image": "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1a2e7c7adbc66b0129e978b7613c31e73712d47dd672752d0620d6a489f32b59",
           "source": {
             "provider": "tmdb",
             "id": "100402",
@@ -904,7 +904,7 @@
           "id": "guardians-of-the-galaxy-118340",
           "name": "Guardians of the Galaxy",
           "subtitle": "2014",
-          "image": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/eb2cd3888acb2ed030fe7ee9a2a27163ad9f709f88761f7f84045791f249ffe8",
           "source": {
             "provider": "tmdb",
             "id": "118340",
@@ -915,7 +915,7 @@
           "id": "ant-man-102899",
           "name": "Ant-Man",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/rQRnQfUl3kfp78nCWq8Ks04vnq1.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/8ef3eb2fdbfd3e0f7dac38c89133b3861f2f6ccbc1c5f771afdbeaed521ccbac",
           "source": {
             "provider": "tmdb",
             "id": "102899",
@@ -926,7 +926,7 @@
           "id": "avengers-age-of-ultron-99861",
           "name": "Avengers: Age of Ultron",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/90fb229f684e0b2573edba32b95142c34041e2c5180fa5cd4c52b26a0821dd06",
           "source": {
             "provider": "tmdb",
             "id": "99861",
@@ -937,7 +937,7 @@
           "id": "marvel-s-agent-carter-61550",
           "name": "Marvel's Agent Carter",
           "subtitle": "2015–2016",
-          "image": "https://image.tmdb.org/t/p/w500/fe79VYyLp5ZBstpJ4oukpuUT3B.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f9585af1adc2b3ddc653ee8982994e92d66aaabea26d90b2e1a7192340688184",
           "source": {
             "provider": "tmdb",
             "id": "61550",
@@ -948,7 +948,7 @@
           "id": "marvel-s-daredevil-61889",
           "name": "Marvel's Daredevil",
           "subtitle": "2015–2018",
-          "image": "https://image.tmdb.org/t/p/w500/QWbPaDxiB6LW2LjASknzYBvjMj.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ed4193a39422e3f86c35351b94b6d350aa133c5b9f89a13fba0ee289a2654b8d",
           "source": {
             "provider": "tmdb",
             "id": "61889",
@@ -959,7 +959,7 @@
           "id": "marvel-s-jessica-jones-38472",
           "name": "Marvel's Jessica Jones",
           "subtitle": "2015–2019",
-          "image": "https://image.tmdb.org/t/p/w500/oxnWofiE9fHOgUfs9NJa6nG6NTR.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3834bbe29c32b93bce390663525fb808455e34971b91224be03ac76a06814cb1",
           "source": {
             "provider": "tmdb",
             "id": "38472",
@@ -970,7 +970,7 @@
           "id": "captain-america-civil-war-271110",
           "name": "Captain America: Civil War",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/rAGiXaUfPzY7CDEyNKUofk3Kw2e.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a583986622b1f2670a10512ed868c2011c16bb515cbc9ddf984c5271f4f816cc",
           "source": {
             "provider": "tmdb",
             "id": "271110",
@@ -981,7 +981,7 @@
           "id": "doctor-strange-284052",
           "name": "Doctor Strange",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/08c4bb77105031ec01dc1c2e43704d95ceba4a3b2694092f467906acca6a3eb5",
           "source": {
             "provider": "tmdb",
             "id": "284052",
@@ -992,7 +992,7 @@
           "id": "marvel-s-luke-cage-62126",
           "name": "Marvel's Luke Cage",
           "subtitle": "2016–2018",
-          "image": "https://image.tmdb.org/t/p/w500/yzM1hMB3PUJqbISX0f421b3xOjB.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/362e0dde0006a884f0457fe490304f3027268df01490e1bd3ebe5d47e0cc212b",
           "source": {
             "provider": "tmdb",
             "id": "62126",
@@ -1003,7 +1003,7 @@
           "id": "guardians-of-the-galaxy-vol-2-283995",
           "name": "Guardians of the Galaxy Vol. 2",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/5a28d82a12e167529a35871669b7fc2692a433ff3fb4ce59afc053d6f95598dc",
           "source": {
             "provider": "tmdb",
             "id": "283995",
@@ -1014,7 +1014,7 @@
           "id": "marvel-s-inhumans-68716",
           "name": "Marvel's Inhumans",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/zKfGip55oJ9tdzhyd9ayGyFFhuo.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b84b69de22d5d7dc802012cce462b3f482968b672be1807d71f8acbe70af6e37",
           "source": {
             "provider": "tmdb",
             "id": "68716",
@@ -1025,7 +1025,7 @@
           "id": "marvel-s-iron-fist-62127",
           "name": "Marvel's Iron Fist",
           "subtitle": "2017–2018",
-          "image": "https://image.tmdb.org/t/p/w500/4l6KD9HhtD6nCDEfg10Lp6C6zah.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4486b312519f737b98af14e5cc5f85f4cf0986d418bc2a91b3f8cb1cd7def799",
           "source": {
             "provider": "tmdb",
             "id": "62127",
@@ -1036,7 +1036,7 @@
           "id": "marvel-s-the-defenders-62285",
           "name": "Marvel's The Defenders",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/49XzINhH4LFsgz7cx6TOPcHUJUL.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/818924aadac9b7329442475854a4115895ff16e917fcd6fbb35d5b5cd0c47288",
           "source": {
             "provider": "tmdb",
             "id": "62285",
@@ -1047,7 +1047,7 @@
           "id": "marvel-s-the-punisher-67178",
           "name": "Marvel's The Punisher",
           "subtitle": "2017–2019",
-          "image": "https://image.tmdb.org/t/p/w500/tM6xqRKXoloH9UchaJEyyRE9O1w.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2135cf11d83f89a38cbe97be882f4d0b56dedfb74c8429de64533049544e9a17",
           "source": {
             "provider": "tmdb",
             "id": "67178",
@@ -1058,7 +1058,7 @@
           "id": "spider-man-homecoming-315635",
           "name": "Spider-Man: Homecoming",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/5b233fc9456c51c0e3d9df2208a4d339fbd8e6028c47be39150be86bb93a8a46",
           "source": {
             "provider": "tmdb",
             "id": "315635",
@@ -1069,7 +1069,7 @@
           "id": "thor-ragnarok-284053",
           "name": "Thor: Ragnarok",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/rzRwTcFvttcN1ZpX2xv4j3tSdJu.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/629d1c3e907fa9bb95f0c80521a2d02124d551dfb299b165aa01762c634f423e",
           "source": {
             "provider": "tmdb",
             "id": "284053",
@@ -1080,7 +1080,7 @@
           "id": "ant-man-and-the-wasp-363088",
           "name": "Ant-Man and the Wasp",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/cFQEO687n1K6umXbInzocxcnAQz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/546532e2f1a951f518389c9571295742f59a4acd7773538328eedbfa5c16f8b4",
           "source": {
             "provider": "tmdb",
             "id": "363088",
@@ -1091,7 +1091,7 @@
           "id": "avengers-infinity-war-299536",
           "name": "Avengers: Infinity War",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ff1030e70649a0729507668f4c23715e2cc75c686ff262502065a4564997b72e",
           "source": {
             "provider": "tmdb",
             "id": "299536",
@@ -1102,7 +1102,7 @@
           "id": "black-panther-284054",
           "name": "Black Panther",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/91ef2ac265e3078bd56164ece958683ae76232caaeb59cfb5b2ce651e56d8f18",
           "source": {
             "provider": "tmdb",
             "id": "284054",
@@ -1113,7 +1113,7 @@
           "id": "avengers-endgame-299534",
           "name": "Avengers: Endgame",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c1859ca5667e2294c744ba29255c9f4bf6a145e50ff53a8b95d582bc3e990651",
           "source": {
             "provider": "tmdb",
             "id": "299534",
@@ -1124,7 +1124,7 @@
           "id": "captain-marvel-299537",
           "name": "Captain Marvel",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1bb899dbfa7e8b6cd5f71114d52447e06ac8ade7439f391366deffa13847abeb",
           "source": {
             "provider": "tmdb",
             "id": "299537",
@@ -1135,7 +1135,7 @@
           "id": "spider-man-far-from-home-429617",
           "name": "Spider-Man: Far From Home",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4702028015649b5f7b0e469fb62ec0aff64b3a2550a94e197336f7589f2b5238",
           "source": {
             "provider": "tmdb",
             "id": "429617",
@@ -1146,7 +1146,7 @@
           "id": "black-widow-497698",
           "name": "Black Widow",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/59953983d7a6c57c9aacd90c66c66c40c2c83890ff7386a57f4f19fa94d3a4e0",
           "source": {
             "provider": "tmdb",
             "id": "497698",
@@ -1157,7 +1157,7 @@
           "id": "eternals-524434",
           "name": "Eternals",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/lFByFSLV5WDJEv3KabbdAF959F2.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/d77ba7aa057c06918ad4e8ff8bda767fc61aa84c02bf0d4766a2c3b305543bbc",
           "source": {
             "provider": "tmdb",
             "id": "524434",
@@ -1168,7 +1168,7 @@
           "id": "hawkeye-88329",
           "name": "Hawkeye",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/ct5pNE5dDHryHLDnxyZPYcqO1sz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/dd1f65435621f3f92e54dec4d199553880a5d38b751f10dc65d182e89f9b153c",
           "source": {
             "provider": "tmdb",
             "id": "88329",
@@ -1179,7 +1179,7 @@
           "id": "loki-84958",
           "name": "Loki",
           "subtitle": "2021–2023",
-          "image": "https://image.tmdb.org/t/p/w500/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b507d3e4269f5a75a615571429ff91bdc08923876a35a02a57f6a9e04d81bedc",
           "source": {
             "provider": "tmdb",
             "id": "84958",
@@ -1190,7 +1190,7 @@
           "id": "shang-chi-and-the-legend-of-the-ten-rings-566525",
           "name": "Shang-Chi and the Legend of the Ten Rings",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/9f2Q0U3IOsLgrI2HkvldwSABZy5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7fdb948b71bf82f24138cb80508b8a93db2f792114e37950d5869575959b7ede",
           "source": {
             "provider": "tmdb",
             "id": "566525",
@@ -1201,7 +1201,7 @@
           "id": "spider-man-no-way-home-634649",
           "name": "Spider-Man: No Way Home",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ac659f209a0d138de47d9c63e8a96bf5705bfa6221ab36e4fc348ea08ca7bbf2",
           "source": {
             "provider": "tmdb",
             "id": "634649",
@@ -1212,7 +1212,7 @@
           "id": "the-falcon-and-the-winter-soldier-88396",
           "name": "The Falcon and the Winter Soldier",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7cc9bd1a2126061797e272c9cb39d2726ce3f0bda10a1bc31f3e869299c2a1f4",
           "source": {
             "provider": "tmdb",
             "id": "88396",
@@ -1223,7 +1223,7 @@
           "id": "wandavision-85271",
           "name": "WandaVision",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/ijWWwINc8h71NQ8j1LTJMFSj5wr.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e442d2ca6994823daae9b9ee7e88cabddc00c99d6b82a5cab6fafbf41bce64c6",
           "source": {
             "provider": "tmdb",
             "id": "85271",
@@ -1234,7 +1234,7 @@
           "id": "what-if-91363",
           "name": "What If...?",
           "subtitle": "2021–2024",
-          "image": "https://image.tmdb.org/t/p/w500/lztz5XBMG1x6Y5ubz7CxfPFsAcW.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/564550b42ead7a240c11c16d5a87ffd22a1955fd2ccf40ee4370f5505219b9f3",
           "source": {
             "provider": "tmdb",
             "id": "91363",
@@ -1245,7 +1245,7 @@
           "id": "black-panther-wakanda-forever-505642",
           "name": "Black Panther: Wakanda Forever",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/326a8e43b734f4005be49955d970034e3f602e1cb87f1ba8768beb2e3f3cd3d9",
           "source": {
             "provider": "tmdb",
             "id": "505642",
@@ -1256,7 +1256,7 @@
           "id": "doctor-strange-in-the-multiverse-of-madness-453395",
           "name": "Doctor Strange in the Multiverse of Madness",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/ddJcSKbcp4rKZTmuyWaMhuwcfMz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c3745e887fe9d7ff886053288c641a0280860c1d267ff157bca91e137ca799f9",
           "source": {
             "provider": "tmdb",
             "id": "453395",
@@ -1267,7 +1267,7 @@
           "id": "moon-knight-92749",
           "name": "Moon Knight",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/9K3lbMf8TKvL9xGEbzi7TggWCNQ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7891ca15fd8db22dc96eecd1d397c175e7b8cae3341a5904b0b8f481edc95a96",
           "source": {
             "provider": "tmdb",
             "id": "92749",
@@ -1278,7 +1278,7 @@
           "id": "ms-marvel-92782",
           "name": "Ms. Marvel",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/3HWWh92kZbD7odwJX7nKmXNZsYo.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b3720c78dca59d213dc1d939709213167d3adfc5337b3d3acae3ae837d7728f1",
           "source": {
             "provider": "tmdb",
             "id": "92782",
@@ -1289,7 +1289,7 @@
           "id": "she-hulk-attorney-at-law-92783",
           "name": "She-Hulk: Attorney at Law",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/5xz2orV8f0usyrfGNshcoXHmiaV.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/33c7d2f109f57e4aa8feb8f64a459c32d9899de1e523d15e69a59ec7fb2391c5",
           "source": {
             "provider": "tmdb",
             "id": "92783",
@@ -1300,7 +1300,7 @@
           "id": "thor-love-and-thunder-616037",
           "name": "Thor: Love and Thunder",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ec1e8679786c29d5fc9f23b65703c8c7c8cef17356fb6a5c47792b49f9349901",
           "source": {
             "provider": "tmdb",
             "id": "616037",
@@ -1311,7 +1311,7 @@
           "id": "werewolf-by-night-894205",
           "name": "Werewolf by Night",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/mvIvNKRIJPPS7WSFarFhOAGIVnU.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/61c61f737bf994effcbd5336fc00aba9cee5f88903c85a66f73e163b8a37bf60",
           "source": {
             "provider": "tmdb",
             "id": "894205",
@@ -1322,7 +1322,7 @@
           "id": "ant-man-and-the-wasp-quantumania-640146",
           "name": "Ant-Man and the Wasp: Quantumania",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/qnqGbB22YJ7dSs4o6M7exTpNxPz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/660eb8827d2efb8ed0afeed3feba2ab853d83f0133660a91b6985e3891c2c065",
           "source": {
             "provider": "tmdb",
             "id": "640146",
@@ -1333,7 +1333,7 @@
           "id": "guardians-of-the-galaxy-vol-3-447365",
           "name": "Guardians of the Galaxy Vol. 3",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/74d5160f7f1eb5bb736ff1973ea4c00953b6f3e7197846f766e1e8c88f52980a",
           "source": {
             "provider": "tmdb",
             "id": "447365",
@@ -1344,7 +1344,7 @@
           "id": "secret-invasion-114472",
           "name": "Secret Invasion",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/3rINdUPSy9AklJg74jWHOyUXuZd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2d5fb94673b950f569728804c20495d3cd0cb05ee96f74165861c649a03a37ab",
           "source": {
             "provider": "tmdb",
             "id": "114472",
@@ -1355,7 +1355,7 @@
           "id": "the-marvels-609681",
           "name": "The Marvels",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMMTps5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/5a266262f6400e150a1618ded58d6afbd0cb96f16fb5b762e9e4938205cf9b84",
           "source": {
             "provider": "tmdb",
             "id": "609681",
@@ -1366,7 +1366,7 @@
           "id": "agatha-all-along-138501",
           "name": "Agatha All Along",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/mGsxKwXUjojitRv2E9qMTbxbBRd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b51ef2c4d620c1cb148fa86366aba01c31634a9ba4eb394b72790f59348b7902",
           "source": {
             "provider": "tmdb",
             "id": "138501",
@@ -1377,7 +1377,7 @@
           "id": "deadpool-wolverine-533535",
           "name": "Deadpool & Wolverine",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f9fefaf4ee012b16b7d2ecd7180c524bd91c407f530c5ded5b294d8cc704881e",
           "source": {
             "provider": "tmdb",
             "id": "533535",
@@ -1388,7 +1388,7 @@
           "id": "echo-122226",
           "name": "Echo",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/vFyJH630cF68LohVYjQW49074Sy.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1aa0124c938a37c77854c3835853f8169fe5c7a5e7a99dc79c9f8f0d053cdae9",
           "source": {
             "provider": "tmdb",
             "id": "122226",
@@ -1399,7 +1399,7 @@
           "id": "captain-america-brave-new-world-822119",
           "name": "Captain America: Brave New World",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ead798b8e0c12213674be1dd7f0c4689147edc1954d1229ea47027e7b48d5ed6",
           "source": {
             "provider": "tmdb",
             "id": "822119",
@@ -1410,7 +1410,7 @@
           "id": "daredevil-born-again-202555",
           "name": "Daredevil: Born Again",
           "subtitle": "2025–",
-          "image": "https://image.tmdb.org/t/p/w500/xDUoAsU8lQHOOoRkFiBuarmACDN.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f2479639ef24c3c033ff6032f02e0d293f5809c52fb70aeef541c7ea88f23e02",
           "source": {
             "provider": "tmdb",
             "id": "202555",
@@ -1421,7 +1421,7 @@
           "id": "eyes-of-wakanda-241388",
           "name": "Eyes of Wakanda",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/yuOfb1MgnaGPa4guzV0n1IFYVGN.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/0251d106c93338d553ef36d6508720e447ee422353f5ef45b22ca54932897b0b",
           "source": {
             "provider": "tmdb",
             "id": "241388",
@@ -1432,7 +1432,7 @@
           "id": "ironheart-114471",
           "name": "Ironheart",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/dOh6MJpdlQhYpLBhzhNQeYGKTZ5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a721b3598b13839cf70feeda4cbedb82fd5e5b27a31c2f10e0cab35828e31e32",
           "source": {
             "provider": "tmdb",
             "id": "114471",
@@ -1443,7 +1443,7 @@
           "id": "marvel-zombies-138505",
           "name": "Marvel Zombies",
           "subtitle": "2025–",
-          "image": "https://image.tmdb.org/t/p/w500/mwKj9ERGFXsWot0nXgQ5yMQf9I7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/fc9dcd150219b3116c6203a54826383d8cde81b58538d1246cf3605917260e84",
           "source": {
             "provider": "tmdb",
             "id": "138505",
@@ -1454,7 +1454,7 @@
           "id": "the-fantastic-4-first-steps-617126",
           "name": "The Fantastic 4: First Steps",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/nf5qaSEvyYSNeFH0YhSs5EsBLX9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3f6b7dfeb5de6f1f44a873c302b1215ddf0af0adc1493074a71c227ba7af796c",
           "source": {
             "provider": "tmdb",
             "id": "617126",
@@ -1465,7 +1465,7 @@
           "id": "thunderbolts-986056",
           "name": "Thunderbolts*",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/hqcexYHbiTBfDIdDWxrxPtVndBX.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/17b33ce05b5449deb5da5f75e062380223cdef14f270b9704908ddc9b80f43a5",
           "source": {
             "provider": "tmdb",
             "id": "986056",
@@ -1476,7 +1476,7 @@
           "id": "spider-man-brand-new-day-969681",
           "name": "Spider-Man: Brand New Day",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/bjiS5ipwxb9JFy3XRRN4OAilSeX.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3e0410fcef55e771c2cd12b93d9a671e6ddb273badf4b2b71ba9656af61ea318",
           "source": {
             "provider": "tmdb",
             "id": "969681",
@@ -1487,7 +1487,7 @@
           "id": "the-punisher-one-last-kill-1439930",
           "name": "The Punisher: One Last Kill",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/qQclTgLMDvGBuUBFGHRipxkEwWR.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/8aa1dc550b089fdeaa1d739cd1de601568d4df75655853930df05e481788c577",
           "source": {
             "provider": "tmdb",
             "id": "1439930",
@@ -1498,7 +1498,7 @@
           "id": "wonder-man-198178",
           "name": "Wonder Man",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/6yy9nQlFt2l6UVWzrfhszFCaZ5C.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4fa961dcc931e87c9d219da0bcd36b6d8cfbd4c192ed08d86e53e96c524825db",
           "source": {
             "provider": "tmdb",
             "id": "198178",
@@ -1518,7 +1518,7 @@
           "id": "following-11660",
           "name": "Following",
           "subtitle": "1999",
-          "image": "https://image.tmdb.org/t/p/w500/3bX6VVSMf0dvzk5pMT4ALG5A92d.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/51743cd8cbf036556eb26818875074059c0b9e15c340d9cfe68fcbb53c05ceb4",
           "source": {
             "provider": "tmdb",
             "id": "11660",
@@ -1529,7 +1529,7 @@
           "id": "memento-77",
           "name": "Memento",
           "subtitle": "2000",
-          "image": "https://image.tmdb.org/t/p/w500/nzlv62aC0octS5AklAiWpXLX9Z0.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/bd4087d2bf13a5e7167cac9558a9e177b567525e3c0d154c24a0e2ec4a152b8b",
           "source": {
             "provider": "tmdb",
             "id": "77",
@@ -1540,7 +1540,7 @@
           "id": "insomnia-320",
           "name": "Insomnia",
           "subtitle": "2002",
-          "image": "https://image.tmdb.org/t/p/w500/riVXh3EimGO0y5dgQxEWPRy5Itg.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7bdc378ed09dcb8366e9f6acea9cb782b1f26c4a82e98dc28058f69e9bac6798",
           "source": {
             "provider": "tmdb",
             "id": "320",
@@ -1551,7 +1551,7 @@
           "id": "batman-begins-272",
           "name": "Batman Begins",
           "subtitle": "2005",
-          "image": "https://image.tmdb.org/t/p/w500/sPX89Td70IDDjVr85jdSBb4rWGr.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/bc864cffadaac67af50a784cc3c2361911ad8e16b2b4c1454dac7a8a77802bf2",
           "source": {
             "provider": "tmdb",
             "id": "272",
@@ -1562,7 +1562,7 @@
           "id": "the-prestige-1124",
           "name": "The Prestige",
           "subtitle": "2006",
-          "image": "https://image.tmdb.org/t/p/w500/Ag2B2KHKQPukjH7WutmgnnSNurZ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/6ae486744001e4609864db7bcebf9fe46d5db191874bdde37dc7e6f613cbe854",
           "source": {
             "provider": "tmdb",
             "id": "1124",
@@ -1573,7 +1573,7 @@
           "id": "the-dark-knight-155",
           "name": "The Dark Knight",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c359708e8df30fac5f67f08b406462278ce69dba2d9d8b4fa0185064d353e275",
           "source": {
             "provider": "tmdb",
             "id": "155",
@@ -1584,7 +1584,7 @@
           "id": "inception-27205",
           "name": "Inception",
           "subtitle": "2010",
-          "image": "https://image.tmdb.org/t/p/w500/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b4bcd3b8fe83f45ea9b5208027625848e3a9c4ac346c7c775522506898a6330e",
           "source": {
             "provider": "tmdb",
             "id": "27205",
@@ -1595,7 +1595,7 @@
           "id": "the-dark-knight-rises-49026",
           "name": "The Dark Knight Rises",
           "subtitle": "2012",
-          "image": "https://image.tmdb.org/t/p/w500/hr0L2aueqlP2BYUblTTjmtn0hw4.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ac19f6b9f708a4426121a903feb4b7dba85d5d9a50a9bb1ae6f69506755ea0f6",
           "source": {
             "provider": "tmdb",
             "id": "49026",
@@ -1606,7 +1606,7 @@
           "id": "interstellar-157336",
           "name": "Interstellar",
           "subtitle": "2014",
-          "image": "https://image.tmdb.org/t/p/w500/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ce8752dc51425b9379ae8ae72d201022b6f1590a3e91e6e3d1df5e36a3837b62",
           "source": {
             "provider": "tmdb",
             "id": "157336",
@@ -1617,7 +1617,7 @@
           "id": "dunkirk-374720",
           "name": "Dunkirk",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/b4Oe15CGLL61Ped0RAS9JpqdmCt.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e0c9aad23592616392ce6822e131308c880ca4b5ba438f5d37f2f3dab8d9a5f4",
           "source": {
             "provider": "tmdb",
             "id": "374720",
@@ -1628,7 +1628,7 @@
           "id": "tenet-577922",
           "name": "Tenet",
           "subtitle": "2020",
-          "image": "https://image.tmdb.org/t/p/w500/aCIFMriQh8rvhxpN1IWGgvH0Tlg.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ba021454ba374cf1bb166868636b84069023b6fbc03e3a3bd721ad36cb48cf3a",
           "source": {
             "provider": "tmdb",
             "id": "577922",
@@ -1639,7 +1639,7 @@
           "id": "oppenheimer-872585",
           "name": "Oppenheimer",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/37c54e9ecb3ff120034b188e79961db40174941087e8fcb8768a5a82cfafb9c7",
           "source": {
             "provider": "tmdb",
             "id": "872585",
@@ -1650,7 +1650,7 @@
           "id": "the-odyssey-1368337",
           "name": "The Odyssey",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c7f17aa2351f883aa58dd3488a04d52024ec9cdf355abe128877e3c715fbd65d",
           "source": {
             "provider": "tmdb",
             "id": "1368337",
@@ -1670,7 +1670,7 @@
           "id": "toy-story-862",
           "name": "Toy Story",
           "subtitle": "1995",
-          "image": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/97f90baf0e89211a39b2f70e40ea17858cb56c646c50b4fa92758d7831ec34eb",
           "source": {
             "provider": "tmdb",
             "id": "862",
@@ -1681,7 +1681,7 @@
           "id": "a-bug-s-life-9487",
           "name": "A Bug's Life",
           "subtitle": "1998",
-          "image": "https://image.tmdb.org/t/p/w500/Ah3J9OJVc2CNCuH2zMydXy9fmIC.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/516f303c08722694076b85178e499e655c386993a9c3a79109379acbfe3e3fb0",
           "source": {
             "provider": "tmdb",
             "id": "9487",
@@ -1692,7 +1692,7 @@
           "id": "toy-story-2-863",
           "name": "Toy Story 2",
           "subtitle": "1999",
-          "image": "https://image.tmdb.org/t/p/w500/4rbcp3ng8n1MKHjpeqW0L7Fnpzz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/01effe08051314068bb1e7fd1ae810b5e97202e32789846d976ccc5838f55454",
           "source": {
             "provider": "tmdb",
             "id": "863",
@@ -1703,7 +1703,7 @@
           "id": "monsters-inc-585",
           "name": "Monsters, Inc.",
           "subtitle": "2001",
-          "image": "https://image.tmdb.org/t/p/w500/wFSpyMsp7H0ttERbxY7Trlv8xry.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c0a4bc26a3b87911ff446a8d4611fbc7206a63ec86cacdef03cef3027c47b234",
           "source": {
             "provider": "tmdb",
             "id": "585",
@@ -1714,7 +1714,7 @@
           "id": "finding-nemo-12",
           "name": "Finding Nemo",
           "subtitle": "2003",
-          "image": "https://image.tmdb.org/t/p/w500/eHuGQ10FUzK1mdOY69wF5pGgEf5.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/320b14a62111f047bcc6696777c7d1db5c4164d8d46d774e9a90bd2c78cca01d",
           "source": {
             "provider": "tmdb",
             "id": "12",
@@ -1725,7 +1725,7 @@
           "id": "the-incredibles-9806",
           "name": "The Incredibles",
           "subtitle": "2004",
-          "image": "https://image.tmdb.org/t/p/w500/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c8f42163c564aec0f552fffa5b164d4591f9b1db20074447930b3c7a5ed5b70f",
           "source": {
             "provider": "tmdb",
             "id": "9806",
@@ -1736,7 +1736,7 @@
           "id": "cars-920",
           "name": "Cars",
           "subtitle": "2006",
-          "image": "https://image.tmdb.org/t/p/w500/2Touk3m5gzsqr1VsvxypdyHY5ci.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/93c4c6ce5f480f38af29668b9e0bad72c6d135f1109d1db02b833146c2fb31e4",
           "source": {
             "provider": "tmdb",
             "id": "920",
@@ -1747,7 +1747,7 @@
           "id": "ratatouille-2062",
           "name": "Ratatouille",
           "subtitle": "2007",
-          "image": "https://image.tmdb.org/t/p/w500/t3vaWRPSf6WjDSamIkKDs1iQWna.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/429c74ab7e735175bdd24feceab753ece1fbf3530846e54ce986c719bff2a22e",
           "source": {
             "provider": "tmdb",
             "id": "2062",
@@ -1758,7 +1758,7 @@
           "id": "wall-e-10681",
           "name": "WALL·E",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/hbhFnRzzg6ZDmm8YAmxBnQpQIPh.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/65688466deba4464892162fc8a00ae145e93b9fc706df020430a274469d2db9f",
           "source": {
             "provider": "tmdb",
             "id": "10681",
@@ -1769,7 +1769,7 @@
           "id": "up-14160",
           "name": "Up",
           "subtitle": "2009",
-          "image": "https://image.tmdb.org/t/p/w500/mFvoEwSfLqbcWwFsDjQebn9bzFe.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/86e4f5bde7ae0b927c95bff10da0be9a670be2d01a215eadb2e62fb24f26b69f",
           "source": {
             "provider": "tmdb",
             "id": "14160",
@@ -1780,7 +1780,7 @@
           "id": "toy-story-3-10193",
           "name": "Toy Story 3",
           "subtitle": "2010",
-          "image": "https://image.tmdb.org/t/p/w500/AbbXspMOwdvwWZgVN0nabZq03Ec.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/03d80955c7022e87bdac8a57fd1433f7f87ba4bfabe2c1cd38d34f47bd7c2b92",
           "source": {
             "provider": "tmdb",
             "id": "10193",
@@ -1791,7 +1791,7 @@
           "id": "cars-2-49013",
           "name": "Cars 2",
           "subtitle": "2011",
-          "image": "https://image.tmdb.org/t/p/w500/okIz1HyxeVOMzYwwHUjH2pHi74I.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/43a9b66f8f412120ec962534034213811fd2f065d28d54da6c0e153a6de92db3",
           "source": {
             "provider": "tmdb",
             "id": "49013",
@@ -1802,7 +1802,7 @@
           "id": "brave-62177",
           "name": "Brave",
           "subtitle": "2012",
-          "image": "https://image.tmdb.org/t/p/w500/1XAuDtMWpL0sYSFK0R6EZate2Ux.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/92854cf98b530317f78516b14d41fabb044ce735c2b23dfe88fa9799c0251531",
           "source": {
             "provider": "tmdb",
             "id": "62177",
@@ -1813,7 +1813,7 @@
           "id": "monsters-university-62211",
           "name": "Monsters University",
           "subtitle": "2013",
-          "image": "https://image.tmdb.org/t/p/w500/y7thwJ7z5Bplv6vwl6RI0yteaDD.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1ac65dbd0eba7f493b17f2217ca301bd1a71646e8a4c90033f29b007742f7fa7",
           "source": {
             "provider": "tmdb",
             "id": "62211",
@@ -1824,7 +1824,7 @@
           "id": "inside-out-150540",
           "name": "Inside Out",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3860ec619d1b9c9a98cc0c561637cfcb77916ca7ae654fb8537f1708f608d151",
           "source": {
             "provider": "tmdb",
             "id": "150540",
@@ -1835,7 +1835,7 @@
           "id": "the-good-dinosaur-105864",
           "name": "The Good Dinosaur",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/8RSkxOO80btfKjyiC5ZiTaCHIT8.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b6cd9f7049d6d408246780db2e198d6ce0e9bc3b5c92e3a28fed04319da5dd93",
           "source": {
             "provider": "tmdb",
             "id": "105864",
@@ -1846,7 +1846,7 @@
           "id": "finding-dory-127380",
           "name": "Finding Dory",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/3UVe8NL1E2ZdUZ9EDlKGJY5UzE.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f0b11b4fccf62d22d4623c5e85b2949f448ca6a25f8fbc78b06261fedaa11fee",
           "source": {
             "provider": "tmdb",
             "id": "127380",
@@ -1857,7 +1857,7 @@
           "id": "cars-3-260514",
           "name": "Cars 3",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/zg5RDxvIIAKsucjuU2EZJIHEIvz.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1b3b94c3679c38d61707c39fc0d0539f449e9a85695edd9677286a800cb1c748",
           "source": {
             "provider": "tmdb",
             "id": "260514",
@@ -1868,7 +1868,7 @@
           "id": "coco-354912",
           "name": "Coco",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/6Ryitt95xrO8KXuqRGm1fUuNwqF.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ebc506491a818e32e914b07ddce6963ea031ed431ff56617d4726d40e20124dc",
           "source": {
             "provider": "tmdb",
             "id": "354912",
@@ -1879,7 +1879,7 @@
           "id": "incredibles-2-260513",
           "name": "Incredibles 2",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/9lFKBtaVIhP7E2Pk0IY1CwTKTMZ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a372609bcf77dffd972425109c1d808537a268a5efbd2314144c3ad47be33555",
           "source": {
             "provider": "tmdb",
             "id": "260513",
@@ -1890,7 +1890,7 @@
           "id": "toy-story-4-301528",
           "name": "Toy Story 4",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/w9kR8qbmQ01HwnvK4alvnQ2ca0L.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/351f3e8674ef5235f496a566cbfc831bcc1486b3b6642b61ea10db4ae184d066",
           "source": {
             "provider": "tmdb",
             "id": "301528",
@@ -1901,7 +1901,7 @@
           "id": "onward-508439",
           "name": "Onward",
           "subtitle": "2020",
-          "image": "https://image.tmdb.org/t/p/w500/f4aul3FyD3jv3v4bul1IrkWZvzq.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c6bd3e51e24179e911859bcf0952c649924d1ac3b4deec318a26083f53f2726a",
           "source": {
             "provider": "tmdb",
             "id": "508439",
@@ -1912,7 +1912,7 @@
           "id": "soul-508442",
           "name": "Soul",
           "subtitle": "2020",
-          "image": "https://image.tmdb.org/t/p/w500/hm58Jw4Lw8OIeECIq5qyPYhAeRJ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/21bdad694d47ba7c948226f0acba813b5a741eda50fa50f62a2097ac909aea71",
           "source": {
             "provider": "tmdb",
             "id": "508442",
@@ -1923,7 +1923,7 @@
           "id": "luca-508943",
           "name": "Luca",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/9x4i9uKGXt8IiiIF5Ey0DIoY738.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e6c31c6ff505459bcc0e6f939b61452d4862c7263dad5c8809f5288e348df5b0",
           "source": {
             "provider": "tmdb",
             "id": "508943",
@@ -1934,7 +1934,7 @@
           "id": "turning-red-508947",
           "name": "Turning Red",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/qsdjk9oAKSQMWs0Vt5Pyfh6O4GZ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/318b0d6573c08f99c93a30dd0418fd4fcb15c9e83c6120e22b29eba779b7ed37",
           "source": {
             "provider": "tmdb",
             "id": "508947",
@@ -1945,7 +1945,7 @@
           "id": "lightyear-718789",
           "name": "Lightyear",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/ox4goZd956BxqJH6iLwhWPL9ct4.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f59d8fd11a9af47d8ed8e13b062116fdf29641677256c1c3f9ff1e73b44d6149",
           "source": {
             "provider": "tmdb",
             "id": "718789",
@@ -1956,7 +1956,7 @@
           "id": "elemental-976573",
           "name": "Elemental",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/4Y1WNkd88JXmGfhtWR7dmDAo1T2.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/41580cb8bdfee8cd88555ef7040d8f5ff9be2e5b07bf6f88659ea2825e3e783d",
           "source": {
             "provider": "tmdb",
             "id": "976573",
@@ -1967,7 +1967,7 @@
           "id": "inside-out-2-1022789",
           "name": "Inside Out 2",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4a5ea68ebcd743dfc8470dd9bc884688d064d7db1dd5e3cbeab23e395878744f",
           "source": {
             "provider": "tmdb",
             "id": "1022789",
@@ -1978,7 +1978,7 @@
           "id": "elio-1022787",
           "name": "Elio",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/7z8jDiTZZco9moIKpTUImFtTy7o.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/889f011d484c4d8d0835d36125ff6d8e173bef0e8dafe2e3f8fcfee6a61b60f6",
           "source": {
             "provider": "tmdb",
             "id": "1022787",
@@ -1989,7 +1989,7 @@
           "id": "hoppers-1327819",
           "name": "Hoppers",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/xjtWQ2CL1mpmMNwuU5HeS4Iuwuu.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/d48101c04ce2d7e49faa5a755ddc1bed0ddd5ab6a0f015d71a8c5960cb3a465c",
           "source": {
             "provider": "tmdb",
             "id": "1327819",
@@ -2000,7 +2000,7 @@
           "id": "toy-story-5-1084244",
           "name": "Toy Story 5",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/sfQtVlIHljToOwYjhe21KPGzZWK.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/93cce962babf8d141dffa676fb99745eaa095f9b1a956780906e063e33d2531f",
           "source": {
             "provider": "tmdb",
             "id": "1084244",
@@ -2020,7 +2020,7 @@
           "id": "star-wars-11",
           "name": "Star Wars",
           "subtitle": "1977",
-          "image": "https://image.tmdb.org/t/p/w500/fai0rspsNeJCS69wHNjOdWxcI7P.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7d3e240bc1cd008265a927d0cd453ad8e255a71cb94255a2f05dc97d3052a872",
           "source": {
             "provider": "tmdb",
             "id": "11",
@@ -2031,7 +2031,7 @@
           "id": "the-empire-strikes-back-1891",
           "name": "The Empire Strikes Back",
           "subtitle": "1980",
-          "image": "https://image.tmdb.org/t/p/w500/nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/12b48e084593e17bf177cdcecdf4a2d316dff61cdfde3d538e405615491f8222",
           "source": {
             "provider": "tmdb",
             "id": "1891",
@@ -2042,7 +2042,7 @@
           "id": "return-of-the-jedi-1892",
           "name": "Return of the Jedi",
           "subtitle": "1983",
-          "image": "https://image.tmdb.org/t/p/w500/jQYlydvHm3kUix1f8prMucrplhm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/9486fe66da93b6146ec41901750d577c0dff7e1ea0c6d24d86804594dc7ae4de",
           "source": {
             "provider": "tmdb",
             "id": "1892",
@@ -2053,7 +2053,7 @@
           "id": "star-wars-episode-i-the-phantom-menace-1893",
           "name": "Star Wars: Episode I - The Phantom Menace",
           "subtitle": "1999",
-          "image": "https://image.tmdb.org/t/p/w500/6wkfovpn7Eq8dYNKaG5PY3q2oq6.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/af1fe6accc50d42f9ec5708ae5280f068ac2f7ede5daeda58e945d51d8ab8188",
           "source": {
             "provider": "tmdb",
             "id": "1893",
@@ -2064,7 +2064,7 @@
           "id": "star-wars-episode-ii-attack-of-the-clones-1894",
           "name": "Star Wars: Episode II - Attack of the Clones",
           "subtitle": "2002",
-          "image": "https://image.tmdb.org/t/p/w500/oZNPzxqM2s5DyVWab09NTQScDQt.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f52070615d3b9a55f1c37c648eec8f4fb989c3a9e4c2ef7761d935bfe02985fc",
           "source": {
             "provider": "tmdb",
             "id": "1894",
@@ -2075,7 +2075,7 @@
           "id": "star-wars-episode-iii-revenge-of-the-sith-1895",
           "name": "Star Wars: Episode III - Revenge of the Sith",
           "subtitle": "2005",
-          "image": "https://image.tmdb.org/t/p/w500/xfSAoBEm9MNBjmlNcDYLvLSMlnq.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/0adb6a1986de24013c6226b76dbd45468225725dbab1c3fbeec48e5c1fac87b9",
           "source": {
             "provider": "tmdb",
             "id": "1895",
@@ -2086,7 +2086,7 @@
           "id": "star-wars-the-clone-wars-12180",
           "name": "Star Wars: The Clone Wars",
           "subtitle": "2008",
-          "image": "https://image.tmdb.org/t/p/w500/iJQfixW818LUdSXlCDL3JZm0S0g.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/dad1f0090ab53621f32d2e1a3ce8cdcaee643b5ded9a4a9bcbfa363f1e0bcb7a",
           "source": {
             "provider": "tmdb",
             "id": "12180",
@@ -2097,7 +2097,7 @@
           "id": "star-wars-the-clone-wars-4194",
           "name": "Star Wars: The Clone Wars",
           "subtitle": "2008–2020",
-          "image": "https://image.tmdb.org/t/p/w500/e1nWfnnCVqxS2LeTO3dwGyAsG2V.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e74fc6268227714dd05f789ba9a7f0a9a4c62a8a4e253e508c03b94cb904c9c2",
           "source": {
             "provider": "tmdb",
             "id": "4194",
@@ -2108,7 +2108,7 @@
           "id": "star-wars-rebels-60554",
           "name": "Star Wars Rebels",
           "subtitle": "2014–2018",
-          "image": "https://image.tmdb.org/t/p/w500/eLrScs6Bs26JMcS8hiZhf7YRROr.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/15c7fd07b2fafc9643df54149a194418a7b232de2d584a8aab68d4cc1a029194",
           "source": {
             "provider": "tmdb",
             "id": "60554",
@@ -2119,7 +2119,7 @@
           "id": "star-wars-the-force-awakens-140607",
           "name": "Star Wars: The Force Awakens",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/wqnLdwVXoBjKibFRR5U3y0aDUhs.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/cd0c8e8a9cba913ba8c0043eec21001a2e99549ed1f4c5cc4841b0a2a1b9dc26",
           "source": {
             "provider": "tmdb",
             "id": "140607",
@@ -2130,7 +2130,7 @@
           "id": "rogue-one-a-star-wars-story-330459",
           "name": "Rogue One: A Star Wars Story",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/i0yw1mFbB7sNGHCs7EXZPzFkdA1.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/8d6c6d93565895b2c513ce49ffa29f86765302fd4f980fb696edb6e5871f21e9",
           "source": {
             "provider": "tmdb",
             "id": "330459",
@@ -2141,7 +2141,7 @@
           "id": "star-wars-the-last-jedi-181808",
           "name": "Star Wars: The Last Jedi",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/855d40f63de54abdc7521a7117dd6308d6087ff47d13500e34caf58af22a8c1f",
           "source": {
             "provider": "tmdb",
             "id": "181808",
@@ -2152,7 +2152,7 @@
           "id": "solo-a-star-wars-story-348350",
           "name": "Solo: A Star Wars Story",
           "subtitle": "2018",
-          "image": "https://image.tmdb.org/t/p/w500/4oD6VEccFkorEBTEDXtpLAaz0Rl.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/784992287a4bc34a6056ee3fac24bf640217525ef63f5b6330aa392ed536560b",
           "source": {
             "provider": "tmdb",
             "id": "348350",
@@ -2163,7 +2163,7 @@
           "id": "star-wars-resistance-79093",
           "name": "Star Wars Resistance",
           "subtitle": "2018–2020",
-          "image": "https://image.tmdb.org/t/p/w500/xul6SG8rar3wkHPY8YusUtxcdlZ.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/558e737445ea3ee6a9880fc36a5f73541a80bf8482e5c1e5c9485587965141bf",
           "source": {
             "provider": "tmdb",
             "id": "79093",
@@ -2174,7 +2174,7 @@
           "id": "star-wars-the-rise-of-skywalker-181812",
           "name": "Star Wars: The Rise of Skywalker",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/db32LaOibwEliAmSL2jjDF6oDdj.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/280d3fceaa0d0c44afcf1b7fb8c369531666a64d7b9df6540101a88b22d4b987",
           "source": {
             "provider": "tmdb",
             "id": "181812",
@@ -2185,7 +2185,7 @@
           "id": "the-mandalorian-82856",
           "name": "The Mandalorian",
           "subtitle": "2019–2023",
-          "image": "https://image.tmdb.org/t/p/w500/sWgBv7LV2PRoQgkxwlibdGXKz1S.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b35c8841b4cfa5e6894dcdae95deb3e30b08b20267db03b880d866437cdeeec7",
           "source": {
             "provider": "tmdb",
             "id": "82856",
@@ -2196,7 +2196,7 @@
           "id": "star-wars-the-bad-batch-105971",
           "name": "Star Wars: The Bad Batch",
           "subtitle": "2021–2024",
-          "image": "https://image.tmdb.org/t/p/w500/5mHus672nuinyaE0FtqvD0AddcY.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f4e612e1d649cb07fd9c4cb1c6ab9d48166a3cb6df0bb9274140687a657e6ed2",
           "source": {
             "provider": "tmdb",
             "id": "105971",
@@ -2207,7 +2207,7 @@
           "id": "the-book-of-boba-fett-115036",
           "name": "The Book of Boba Fett",
           "subtitle": "2021–2022",
-          "image": "https://image.tmdb.org/t/p/w500/gNbdjDi1HamTCrfvM9JeA94bNi2.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/6ea2a22d799d2e149f49aad1f81c4034624dc987d16015f431687b33b93598d7",
           "source": {
             "provider": "tmdb",
             "id": "115036",
@@ -2218,7 +2218,7 @@
           "id": "andor-83867",
           "name": "Andor",
           "subtitle": "2022–2025",
-          "image": "https://image.tmdb.org/t/p/w500/khZqmwHQicTYoS7Flreb9EddFZC.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2674f6d174e6cbb3f02a29716fe275568107e366d4cc4f8c90a94750afa58084",
           "source": {
             "provider": "tmdb",
             "id": "83867",
@@ -2229,7 +2229,7 @@
           "id": "obi-wan-kenobi-92830",
           "name": "Obi-Wan Kenobi",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/qJRB789ceLryrLvOKrZqLKr2CGf.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/62d36195b5e4791028c2c70bc141e6f22fc0591e50de9ae534348b3fce18fa90",
           "source": {
             "provider": "tmdb",
             "id": "92830",
@@ -2240,7 +2240,7 @@
           "id": "star-wars-tales-of-the-jedi-203085",
           "name": "Star Wars: Tales of the Jedi",
           "subtitle": "2022",
-          "image": "https://image.tmdb.org/t/p/w500/k3nWQb0E8mLSR8acSkJP78VRVMv.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c482e48d146d938a46988c7cbec4c429648f9a01edd993a14261cedbe2e3883a",
           "source": {
             "provider": "tmdb",
             "id": "203085",
@@ -2251,7 +2251,7 @@
           "id": "ahsoka-114461",
           "name": "Ahsoka",
           "subtitle": "2023–",
-          "image": "https://image.tmdb.org/t/p/w500/eiJeWeCAEZAmRppnXHiTWDcCd3Q.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b44726457cc58b1e65919b71af8442bbe3b0da8ede269c69f232469f53d4f25e",
           "source": {
             "provider": "tmdb",
             "id": "114461",
@@ -2262,7 +2262,7 @@
           "id": "star-wars-young-jedi-adventures-202998",
           "name": "Star Wars: Young Jedi Adventures",
           "subtitle": "2023–2025",
-          "image": "https://image.tmdb.org/t/p/w500/bC2Mix1WPUiY6pldh77oiFl1MvI.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/d81b860256c2766f7709822a4fb55642fec4de788e9984939a2f6097cd50cf6f",
           "source": {
             "provider": "tmdb",
             "id": "202998",
@@ -2273,7 +2273,7 @@
           "id": "star-wars-skeleton-crew-202879",
           "name": "Star Wars: Skeleton Crew",
           "subtitle": "2024–2025",
-          "image": "https://image.tmdb.org/t/p/w500/srQbJhLRKoAwRrNN5ga7webPHbC.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f61786b6f9a59347eac442cd211ffcd9120f13c01a0137830752a51229859ae5",
           "source": {
             "provider": "tmdb",
             "id": "202879",
@@ -2284,7 +2284,7 @@
           "id": "star-wars-tales-of-the-empire-251091",
           "name": "Star Wars: Tales of the Empire",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/qA28nLteurVboSSzltuyYt1lvlC.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f39aaa3915677487b3a67ca7f54b780387e2e72867fdd406d3c1c0a4b7a7d2c1",
           "source": {
             "provider": "tmdb",
             "id": "251091",
@@ -2295,7 +2295,7 @@
           "id": "the-acolyte-114479",
           "name": "The Acolyte",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/mztdt3y6GBsJR69zHtszFezTCLT.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2a645f974a455f0764248627d625ed624fc4095b0e0225960df73f6922ecb3bb",
           "source": {
             "provider": "tmdb",
             "id": "114479",
@@ -2306,7 +2306,7 @@
           "id": "star-wars-tales-of-the-underworld-288055",
           "name": "Star Wars: Tales of the Underworld",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/qv1hagzp08cDJF6C04LyJVhcI1x.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e38ec49e13161a8313e247208c0b4aee92ed3139710c009bca8d27db562a81cf",
           "source": {
             "provider": "tmdb",
             "id": "288055",
@@ -2317,7 +2317,7 @@
           "id": "star-wars-maul-shadow-lord-289219",
           "name": "Star Wars: Maul - Shadow Lord",
           "subtitle": "2026–",
-          "image": "https://image.tmdb.org/t/p/w500/fTfLd3s9yBNOzbFHD2aXvwEs93H.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f5ee223112cee7f3a8e145db047e11427644fbf7b2a01bbaa165a4cffaec3048",
           "source": {
             "provider": "tmdb",
             "id": "289219",
@@ -2337,7 +2337,7 @@
           "id": "snow-white-and-the-seven-dwarfs-408",
           "name": "Snow White and the Seven Dwarfs",
           "subtitle": "1938",
-          "image": "https://image.tmdb.org/t/p/w500/3VAHfuNb6Z7UiW12iYKANSPBl8m.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/a95d05141457966bf1e5fe2b268cb079e02b8cebe6cc0080cb61beb1e428ae37",
           "source": {
             "provider": "tmdb",
             "id": "408",
@@ -2348,7 +2348,7 @@
           "id": "cinderella-11224",
           "name": "Cinderella",
           "subtitle": "1950",
-          "image": "https://image.tmdb.org/t/p/w500/4nssBcQUBadCTBjrAkX46mVEKts.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/9e5bc91f8e698fd16fb15d27652a071763fff375b6cd874b94b2ca4b7bc46669",
           "source": {
             "provider": "tmdb",
             "id": "11224",
@@ -2359,7 +2359,7 @@
           "id": "sleeping-beauty-10882",
           "name": "Sleeping Beauty",
           "subtitle": "1959",
-          "image": "https://image.tmdb.org/t/p/w500/pO9YMLSmj3essVSWSGygjGxX6Kw.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b633af90827d0fe5e5039a75683d192e4079fb69ec86281033b7b209bd8ac33f",
           "source": {
             "provider": "tmdb",
             "id": "10882",
@@ -2370,7 +2370,7 @@
           "id": "the-little-mermaid-10144",
           "name": "The Little Mermaid",
           "subtitle": "1989",
-          "image": "https://image.tmdb.org/t/p/w500/plcZXvI310FkbwIptvd6rqk63LP.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/4bb2671e06fb39411ac0935523f5a3247f095b9b21aede4ff37bb2f32795fea3",
           "source": {
             "provider": "tmdb",
             "id": "10144",
@@ -2381,7 +2381,7 @@
           "id": "beauty-and-the-beast-10020",
           "name": "Beauty and the Beast",
           "subtitle": "1991",
-          "image": "https://image.tmdb.org/t/p/w500/hUJ0UvQ5tgE2Z9WpfuduVSdiCiU.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/236371ca14228b6c34660c1d039f9f2f8b397fdc989a227cb5403262b8395695",
           "source": {
             "provider": "tmdb",
             "id": "10020",
@@ -2392,7 +2392,7 @@
           "id": "aladdin-812",
           "name": "Aladdin",
           "subtitle": "1992",
-          "image": "https://image.tmdb.org/t/p/w500/eLFfl7vS8dkeG1hKp5mwbm37V83.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7143bed0fc5ff3f0944781eefeae3a85f389304921c3ee97ce974f4773ef25e9",
           "source": {
             "provider": "tmdb",
             "id": "812",
@@ -2403,7 +2403,7 @@
           "id": "pocahontas-10530",
           "name": "Pocahontas",
           "subtitle": "1995",
-          "image": "https://image.tmdb.org/t/p/w500/kZ1ft0QZ4e3zDUPMBftEkwI9ftd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/e46539ece662cdecacc431bd2f5c562f99f28674f6e4842652304a4f8eed4874",
           "source": {
             "provider": "tmdb",
             "id": "10530",
@@ -2414,7 +2414,7 @@
           "id": "mulan-10674",
           "name": "Mulan",
           "subtitle": "1998",
-          "image": "https://image.tmdb.org/t/p/w500/jAbexAtB0aSfP5Ay4TpWHARyVnG.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/284b387eb3e74da7315b3c0a0801993afe8793ff57b54b2140f4482578d04227",
           "source": {
             "provider": "tmdb",
             "id": "10674",
@@ -2425,7 +2425,7 @@
           "id": "the-princess-and-the-frog-10198",
           "name": "The Princess and the Frog",
           "subtitle": "2009",
-          "image": "https://image.tmdb.org/t/p/w500/yprv5PbnEksoVj2v6XEnDBg9joR.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/d8b0f4d7aae0cbdc4a8fa0e0ea6814b584f8c4d137488748e01b1271b914fa2b",
           "source": {
             "provider": "tmdb",
             "id": "10198",
@@ -2436,7 +2436,7 @@
           "id": "tangled-38757",
           "name": "Tangled",
           "subtitle": "2010",
-          "image": "https://image.tmdb.org/t/p/w500/ym7Kst6a4uodryxqbGOxmewF235.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1210f6eec6067185bbfa7c41d7ef4dfa7d47fa115f8ec1d6e7ee9e789357f147",
           "source": {
             "provider": "tmdb",
             "id": "38757",
@@ -2447,7 +2447,7 @@
           "id": "brave-62177",
           "name": "Brave",
           "subtitle": "2012",
-          "image": "https://image.tmdb.org/t/p/w500/1XAuDtMWpL0sYSFK0R6EZate2Ux.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/92854cf98b530317f78516b14d41fabb044ce735c2b23dfe88fa9799c0251531",
           "source": {
             "provider": "tmdb",
             "id": "62177",
@@ -2458,7 +2458,7 @@
           "id": "frozen-109445",
           "name": "Frozen",
           "subtitle": "2013",
-          "image": "https://image.tmdb.org/t/p/w500/itAKcobTYGpYT8Phwjd8c9hleTo.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/1771a3a526d23b50d8696c19f1e0f6b160a2aed0f59b31929fa8807127da7d22",
           "source": {
             "provider": "tmdb",
             "id": "109445",
@@ -2469,7 +2469,7 @@
           "id": "cinderella-150689",
           "name": "Cinderella",
           "subtitle": "2015",
-          "image": "https://image.tmdb.org/t/p/w500/j91LJmcWo16CArFOoapsz84bwxb.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2d1d237ad53559c7a675c2b9524fddb50a191ff8c9607062ae94c85dd8cd929f",
           "source": {
             "provider": "tmdb",
             "id": "150689",
@@ -2480,7 +2480,7 @@
           "id": "moana-277834",
           "name": "Moana",
           "subtitle": "2016",
-          "image": "https://image.tmdb.org/t/p/w500/4JeejGugONWpJkbnvL12hVoYEDa.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/7fd089d31404a5c3259ac4ff79954399f298d01e1132ca2e5fd6ac19aed041ca",
           "source": {
             "provider": "tmdb",
             "id": "277834",
@@ -2491,7 +2491,7 @@
           "id": "beauty-and-the-beast-321612",
           "name": "Beauty and the Beast",
           "subtitle": "2017",
-          "image": "https://image.tmdb.org/t/p/w500/hKegSKIDep2ewJWPUQD7u0KqFIp.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/031e84529f430779441c19f6bbb1a957a5509c31908a0cc1708966578fd46bbd",
           "source": {
             "provider": "tmdb",
             "id": "321612",
@@ -2502,7 +2502,7 @@
           "id": "aladdin-420817",
           "name": "Aladdin",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/ykUEbfpkf8d0w49pHh0AD2KrT52.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/88689cf0ab8c7c0e238d051ca5fe8ccac9b54991b7a2860ebe2305deb2a75e13",
           "source": {
             "provider": "tmdb",
             "id": "420817",
@@ -2513,7 +2513,7 @@
           "id": "frozen-ii-330457",
           "name": "Frozen II",
           "subtitle": "2019",
-          "image": "https://image.tmdb.org/t/p/w500/mINJaa34MtknCYl5AjtNJzWj8cD.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/f55c10dbde8973ef46234fd6c7968e58284b74127ad7ddea83d2a869da62aa50",
           "source": {
             "provider": "tmdb",
             "id": "330457",
@@ -2524,7 +2524,7 @@
           "id": "mulan-337401",
           "name": "Mulan",
           "subtitle": "2020",
-          "image": "https://image.tmdb.org/t/p/w500/aKx1ARwG55zZ0GpRvU2WrGrCG9o.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/89fe96da891bf8305a9447751d13b60b24a03f30d51d6b8237c4130201d83d55",
           "source": {
             "provider": "tmdb",
             "id": "337401",
@@ -2535,7 +2535,7 @@
           "id": "raya-and-the-last-dragon-527774",
           "name": "Raya and the Last Dragon",
           "subtitle": "2021",
-          "image": "https://image.tmdb.org/t/p/w500/5nVhgCzxKbK47OLIKxCR1syulOn.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/b2082b65d7795b6f9337795b947c1dbbe3b2bf74367c3207d0f0e1c23ad4b3ac",
           "source": {
             "provider": "tmdb",
             "id": "527774",
@@ -2546,7 +2546,7 @@
           "id": "the-little-mermaid-447277",
           "name": "The Little Mermaid",
           "subtitle": "2023",
-          "image": "https://image.tmdb.org/t/p/w500/ym1dxyOk4jFcSl4Q2zmRrA5BEEN.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/2cd0d2be01d5ade9d052ed35400662003500db33007df6e4c42fdae09ac7fc76",
           "source": {
             "provider": "tmdb",
             "id": "447277",
@@ -2557,7 +2557,7 @@
           "id": "moana-2-1241982",
           "name": "Moana 2",
           "subtitle": "2024",
-          "image": "https://image.tmdb.org/t/p/w500/aLVkiINlIeCkcZIzb7XHzPYgO6L.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/509adaed0cba63ed0dd1ff6bd0f01caae3df161a283a2a7f89ebd7e398d07f3e",
           "source": {
             "provider": "tmdb",
             "id": "1241982",
@@ -2568,7 +2568,7 @@
           "id": "snow-white-447273",
           "name": "Snow White",
           "subtitle": "2025",
-          "image": "https://image.tmdb.org/t/p/w500/oLxWocqheC8XbXbxqJ3x422j9PW.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/321b287e7f578540927ab491d25d4c0cb0137905d1c95e89b79006b6c4a1c1fd",
           "source": {
             "provider": "tmdb",
             "id": "447273",
@@ -2579,7 +2579,7 @@
           "id": "moana-1108427",
           "name": "Moana",
           "subtitle": "2026",
-          "image": "https://image.tmdb.org/t/p/w500/gaet1xQ2nxrG0V1Ep9T20ZMNEIC.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c76a0cf35625908997c2130d1f4995b20263435e7d86440a3169edcd2ea42465",
           "source": {
             "provider": "tmdb",
             "id": "1108427",
@@ -2599,7 +2599,7 @@
           "id": "best-selling-tetris",
           "name": "Tetris",
           "subtitle": "520M sold • 1988",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co25k4.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/89db08e1cf020f093ade29384ff5c3e81173f3bd0d30820db69b7bf3c8522c2c",
           "source": {
             "provider": "reported-sales",
             "id": "tetris",
@@ -2610,7 +2610,7 @@
           "id": "best-selling-minecraft",
           "name": "Minecraft",
           "subtitle": "425M sold • 2011",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coa6qm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/61b447f0b17806a36968cbbc4b6242d032037fdc1bb72089e6da471b7e236d72",
           "source": {
             "provider": "reported-sales",
             "id": "minecraft",
@@ -2621,7 +2621,7 @@
           "id": "best-selling-grand-theft-auto-v",
           "name": "Grand Theft Auto V",
           "subtitle": "230M sold • 2013",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2lbd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/548bd9ad1a5da252ab1155e4fe16ad6f1c22a91b2ff880181f3922bc2b5fa583",
           "source": {
             "provider": "reported-sales",
             "id": "grand-theft-auto-v",
@@ -2632,7 +2632,7 @@
           "id": "best-selling-red-dead-redemption-2",
           "name": "Red Dead Redemption 2",
           "subtitle": "87M sold • 2018",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1q1f.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/4b10b627dc2986eeb4b612fd8abba5a9a3cd0e0a11629494f94c7679b756f2bb",
           "source": {
             "provider": "reported-sales",
             "id": "red-dead-redemption-2",
@@ -2643,7 +2643,7 @@
           "id": "best-selling-wii-sports",
           "name": "Wii Sports",
           "subtitle": "82.9M sold • 2006",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3vge.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/67f0772142ac5847b763958ff32c9f0d51fd796d0c065be648b353a0b935fbb2",
           "source": {
             "provider": "reported-sales",
             "id": "wii-sports",
@@ -2654,7 +2654,7 @@
           "id": "best-selling-mario-kart-8-deluxe",
           "name": "Mario Kart 8 / Deluxe",
           "subtitle": "79.99M sold • 2014",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co213q.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/dc908566eb2122ddef38538ba8a00468cba8da2613d6c501a87d4f7d025f4607",
           "source": {
             "provider": "reported-sales",
             "id": "mario-kart-8-deluxe",
@@ -2665,7 +2665,7 @@
           "id": "best-selling-pubg-battlegrounds",
           "name": "PUBG: Battlegrounds",
           "subtitle": "75M sold • 2017",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaam4.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/54dd5e2ec6314d3769e1b9fcf355e5a20144e6822419cf3eb67625b3e0edea6f",
           "source": {
             "provider": "reported-sales",
             "id": "pubg-battlegrounds",
@@ -2676,7 +2676,7 @@
           "id": "best-selling-terraria",
           "name": "Terraria",
           "subtitle": "70M sold • 2011",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaamg.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/6ef22459dcbd4c7c4498cc7d87912d0de22384d6ecf3f0742b97b19cc53961c6",
           "source": {
             "provider": "reported-sales",
             "id": "terraria",
@@ -2687,7 +2687,7 @@
           "id": "best-selling-the-elder-scrolls-v-skyrim",
           "name": "The Elder Scrolls V: Skyrim",
           "subtitle": "65M sold • 2011",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocs1l.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/f2d9506439a7737b3d4764e7e2718203d938b245cfce03c8ebd87ce7b3960dc3",
           "source": {
             "provider": "reported-sales",
             "id": "the-elder-scrolls-v-skyrim",
@@ -2698,7 +2698,7 @@
           "id": "best-selling-the-witcher-3-wild-hunt",
           "name": "The Witcher 3: Wild Hunt",
           "subtitle": "65M sold • 2015",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaarl.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/3f1efbfcd55e35e9ead52b240a070e10867b1b957622e2d62d3256c35ec80c26",
           "source": {
             "provider": "reported-sales",
             "id": "the-witcher-3-wild-hunt",
@@ -2709,7 +2709,7 @@
           "id": "best-selling-super-mario-bros",
           "name": "Super Mario Bros.",
           "subtitle": "58M sold • 1985",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5k7b.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/5281fb4455fb4130b59276a14c1d48b2fa3a376bd3ed18208e5bb54f7c161433",
           "source": {
             "provider": "reported-sales",
             "id": "super-mario-bros",
@@ -2720,7 +2720,7 @@
           "id": "best-selling-human-fall-flat",
           "name": "Human: Fall Flat",
           "subtitle": "58M sold • 2016",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coctbu.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/ab00dffd457d44eb580517225c24e89473014fe5aff5670a864b1659b838b97b",
           "source": {
             "provider": "reported-sales",
             "id": "human-fall-flat",
@@ -2731,7 +2731,7 @@
           "id": "best-selling-animal-crossing-new-horizons",
           "name": "Animal Crossing: New Horizons",
           "subtitle": "50.29M sold • 2020",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3wls.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/15a21a4f8327570a69ffbe8438f093426015c2e15daad483053b82a6f4339fef",
           "source": {
             "provider": "reported-sales",
             "id": "animal-crossing-new-horizons",
@@ -2742,7 +2742,7 @@
           "id": "best-selling-the-sims",
           "name": "The Sims",
           "subtitle": "50M sold • 2000",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8j9a.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/285129543978728dd00308adb3c91cd0cca70a320107fb4a8451b862587bd5a4",
           "source": {
             "provider": "reported-sales",
             "id": "the-sims",
@@ -2753,7 +2753,7 @@
           "id": "best-selling-stardew-valley",
           "name": "Stardew Valley",
           "subtitle": "50M sold • 2016",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coa93h.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/6caa8766077d76f759b62e2406f9935a96c6ca04b65f2295e0f5f3c670d43f24",
           "source": {
             "provider": "reported-sales",
             "id": "stardew-valley",
@@ -2764,7 +2764,7 @@
           "id": "best-selling-overwatch",
           "name": "Overwatch",
           "subtitle": "50M sold • 2016",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocqgt.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/86ad42d150e0ddbb022534323204a05827c7be0f07e8dd02eae5aba275f618f8",
           "source": {
             "provider": "reported-sales",
             "id": "overwatch",
@@ -2775,7 +2775,7 @@
           "id": "best-selling-pokemon-red-blue-yellow",
           "name": "Pokémon Red / Blue / Yellow",
           "subtitle": "47.44M sold • 1996",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5pi4.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/df41b5f82886de281e3807abd3931d6c25fedb5a11632c53daec02c8e1852d34",
           "source": {
             "provider": "reported-sales",
             "id": "pokemon-red-blue-yellow",
@@ -2786,7 +2786,7 @@
           "id": "best-selling-wii-fit-plus",
           "name": "Wii Fit / Plus",
           "subtitle": "43.8M sold • 2007",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co86ml.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/c27f7b08e47d4bbd46befb2dbf5519a899d7a9d1b6ad0b405502324709f0141a",
           "source": {
             "provider": "reported-sales",
             "id": "wii-fit-plus",
@@ -2797,7 +2797,7 @@
           "id": "best-selling-call-of-duty-black-ops-iii",
           "name": "Call of Duty: Black Ops III",
           "subtitle": "43M sold • 2015",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co20yw.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/4d2667d99e425a180e5c0ba9036f23772126a8b1cc41ccc01ed76fb4b17f6035",
           "source": {
             "provider": "reported-sales",
             "id": "call-of-duty-black-ops-iii",
@@ -2808,7 +2808,7 @@
           "id": "best-selling-call-of-duty-modern-warfare",
           "name": "Call of Duty: Modern Warfare",
           "subtitle": "41M sold • 2019",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1rsg.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/04b44740846aa8b71b530fd6b7900a10e6ebb3693cb85978e3b00195358b71c9",
           "source": {
             "provider": "reported-sales",
             "id": "call-of-duty-modern-warfare",
@@ -2819,7 +2819,7 @@
           "id": "best-selling-sonic-the-hedgehog",
           "name": "Sonic the Hedgehog",
           "subtitle": "40M sold • 1991",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8ubt.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/8694550d4224e136dd83096c2e4a58724872378e3f6d7a01f48a2b1fa5e46205",
           "source": {
             "provider": "reported-sales",
             "id": "sonic-the-hedgehog",
@@ -2830,7 +2830,7 @@
           "id": "best-selling-payday-2",
           "name": "Payday 2",
           "subtitle": "40M sold • 2013",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaaqu.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/11f9f361539ae61458710321ad58d68cbaad280b39c6f79b76abb97007a425d9",
           "source": {
             "provider": "reported-sales",
             "id": "payday-2",
@@ -2841,7 +2841,7 @@
           "id": "best-selling-cyberpunk-2077",
           "name": "Cyberpunk 2077",
           "subtitle": "40M sold • 2020",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaih8.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/fb285cde0161b30b561eaf7aee86a11e4a0362024ceaa7395a09c8d0efb92e07",
           "source": {
             "provider": "reported-sales",
             "id": "cyberpunk-2077",
@@ -2852,7 +2852,7 @@
           "id": "best-selling-hogwarts-legacy",
           "name": "Hogwarts Legacy",
           "subtitle": "40M sold • 2023",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coaav6.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/2327836d06d4a77a912a8eb7119c77f02bfd7cfa3e959a3c8a81b7ba5757dba6",
           "source": {
             "provider": "reported-sales",
             "id": "hogwarts-legacy",
@@ -2863,7 +2863,7 @@
           "id": "best-selling-super-smash-bros-ultimate",
           "name": "Super Smash Bros. Ultimate",
           "subtitle": "38.14M sold • 2018",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2255.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/0ea616e894be893aaa1798d1603882939a09d6274d539920cda5357e91a63ddf",
           "source": {
             "provider": "reported-sales",
             "id": "super-smash-bros-ultimate",
@@ -2874,7 +2874,7 @@
           "id": "best-selling-mario-kart-wii",
           "name": "Mario Kart Wii",
           "subtitle": "37.38M sold • 2008",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co214e.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/899a85fab765810cc598d033c9771d709450ab46a5dcba57eead251a94cb0b34",
           "source": {
             "provider": "reported-sales",
             "id": "mario-kart-wii",
@@ -2885,7 +2885,7 @@
           "id": "best-selling-the-legend-of-zelda-breath-of-the-wild",
           "name": "The Legend of Zelda: Breath of the Wild",
           "subtitle": "35.76M sold • 2017",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3p2d.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/d99fe60cb52a9d1713e66c1619a5b73d94f37ba8bde25f8f15af6c6c9eacca43",
           "source": {
             "provider": "reported-sales",
             "id": "the-legend-of-zelda-breath-of-the-wild",
@@ -2896,7 +2896,7 @@
           "id": "best-selling-fallout-4",
           "name": "Fallout 4",
           "subtitle": "35M sold • 2015",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1yc6.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/b0b5de331297a321ce66259b22f94a6effaa69f98e6f64ee907709c91bca58ae",
           "source": {
             "provider": "reported-sales",
             "id": "fallout-4",
@@ -2907,7 +2907,7 @@
           "id": "best-selling-wii-sports-resort",
           "name": "Wii Sports Resort",
           "subtitle": "33.14M sold • 2009",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocdbp.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/cddeb40d4e088b15c2c46397d7a167cd006a1f4547bfd2d13ba9d537555dee3a",
           "source": {
             "provider": "reported-sales",
             "id": "wii-sports-resort",
@@ -2918,7 +2918,7 @@
           "id": "best-selling-borderlands-2",
           "name": "Borderlands 2",
           "subtitle": "31M sold • 2012",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co9ba3.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/5f2b48347b4ed56522700fe2cd0480716b52a2f334ffd420a71e13cb7399466d",
           "source": {
             "provider": "reported-sales",
             "id": "borderlands-2",
@@ -2929,7 +2929,7 @@
           "id": "best-selling-new-super-mario-bros",
           "name": "New Super Mario Bros.",
           "subtitle": "30.8M sold • 2006",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co21rm.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/edc17a822b47fe1edb489332e150db7c8e9a05ab13901ea25d2b2da5c9248b5e",
           "source": {
             "provider": "reported-sales",
             "id": "new-super-mario-bros",
@@ -2940,7 +2940,7 @@
           "id": "best-selling-super-mario-odyssey",
           "name": "Super Mario Odyssey",
           "subtitle": "30.8M sold • 2017",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1mxf.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/e08810192286032e5b09dae4701b65eb9eae305c7f9908d938efdef5e9a9c16e",
           "source": {
             "provider": "reported-sales",
             "id": "super-mario-odyssey",
@@ -2951,7 +2951,7 @@
           "id": "best-selling-monster-hunter-world",
           "name": "Monster Hunter: World",
           "subtitle": "30.4M sold • 2018",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1rst.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/0706cc513f4dcec7fd4464eae80a0bea463b64c982fec6c7f43a8e940d788bf8",
           "source": {
             "provider": "reported-sales",
             "id": "monster-hunter-world",
@@ -2962,7 +2962,7 @@
           "id": "best-selling-new-super-mario-bros-wii",
           "name": "New Super Mario Bros. Wii",
           "subtitle": "30.32M sold • 2009",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co21tj.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/fb0658d3cd07b43c930fad014e670e262bd86174e10703bfb8bee25bc3133d58",
           "source": {
             "provider": "reported-sales",
             "id": "new-super-mario-bros-wii",
@@ -2973,7 +2973,7 @@
           "id": "best-selling-pokemon-gold-silver-crystal",
           "name": "Pokémon Gold / Silver / Crystal",
           "subtitle": "30.12M sold • 1999",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5pia.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/94bee729833f3b84231452756e06a7025338c60b62002a792b2459a47e3eb4df",
           "source": {
             "provider": "reported-sales",
             "id": "pokemon-gold-silver-crystal",
@@ -2984,7 +2984,7 @@
           "id": "best-selling-call-of-duty-black-ops-cold-war",
           "name": "Call of Duty: Black Ops Cold War",
           "subtitle": "30M sold • 2020",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2n6j.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/2958eb997c46e7f42af3492e0f15cfbf070eff89866cca543aef3a494ba8d29f",
           "source": {
             "provider": "reported-sales",
             "id": "call-of-duty-black-ops-cold-war",
@@ -2995,7 +2995,7 @@
           "id": "best-selling-it-takes-two",
           "name": "It Takes Two",
           "subtitle": "30M sold • 2021",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cob22v.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/0d7836703d15ea4433f34feab37964487799653df0733a95303ff7faa952677a",
           "source": {
             "provider": "reported-sales",
             "id": "it-takes-two",
@@ -3006,7 +3006,7 @@
           "id": "best-selling-elden-ring",
           "name": "Elden Ring",
           "subtitle": "30M sold • 2022",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co4jni.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/d38e0ad325da113231ec0356d6b2570c35af09d9e7187f322275bed120ff0f7d",
           "source": {
             "provider": "reported-sales",
             "id": "elden-ring",
@@ -3017,7 +3017,7 @@
           "id": "best-selling-pokemon-scarlet-violet",
           "name": "Pokémon Scarlet / Violet",
           "subtitle": "28.46M sold • 2022",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co5sfi.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/f11b1ce6a267f25de4aac56cab920fc48614c6cd0008ab3b5372b78e57d4a3af",
           "source": {
             "provider": "reported-sales",
             "id": "pokemon-scarlet-violet",
@@ -3028,7 +3028,7 @@
           "id": "best-selling-duck-hunt",
           "name": "Duck Hunt",
           "subtitle": "28.3M sold • 1984",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co42pf.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/0986f3c3ce77d8ae06bfe17249aa9fc8d4955b930cf5b51a07d1171ffd11e087",
           "source": {
             "provider": "reported-sales",
             "id": "duck-hunt",
@@ -3039,7 +3039,7 @@
           "id": "best-selling-wii-play",
           "name": "Wii Play",
           "subtitle": "28.02M sold • 2006",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cobwcx.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/160b1c8b05776593fa31d97dc353a391bd5f0f644a1d657747688bb4c281c5c3",
           "source": {
             "provider": "reported-sales",
             "id": "wii-play",
@@ -3050,7 +3050,7 @@
           "id": "best-selling-black-myth-wukong",
           "name": "Black Myth: Wukong",
           "subtitle": "28M sold • 2024",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8h3y.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/1c5349caf21186769b0cb1ed29927f60f0ba6e86c2ce3e887649323b0abf0aba",
           "source": {
             "provider": "reported-sales",
             "id": "black-myth-wukong",
@@ -3061,7 +3061,7 @@
           "id": "best-selling-grand-theft-auto-san-andreas",
           "name": "Grand Theft Auto: San Andreas",
           "subtitle": "27.5M sold • 2004",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2lb9.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/f2d3c4ec6ba1820308706afd982ed76091bc414005f6edc33a678377b40f92e9",
           "source": {
             "provider": "reported-sales",
             "id": "grand-theft-auto-san-andreas",
@@ -3072,7 +3072,7 @@
           "id": "best-selling-pokemon-sword-shield",
           "name": "Pokémon Sword / Shield",
           "subtitle": "27.26M sold • 2019",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1zk2.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/1de085e0c41cfb5e0d2595ba5f7e5869706e4a234d9ef85dae75768be52e2d40",
           "source": {
             "provider": "reported-sales",
             "id": "pokemon-sword-shield",
@@ -3083,7 +3083,7 @@
           "id": "best-selling-call-of-duty-modern-warfare-3",
           "name": "Call of Duty: Modern Warfare 3",
           "subtitle": "26.5M sold • 2011",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1wkn.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/34354c2ad4539a3ffe5a2194a3aa3148170f573a856bf691f0ae55a9a8f0ef5f",
           "source": {
             "provider": "reported-sales",
             "id": "call-of-duty-modern-warfare-3",
@@ -3094,7 +3094,7 @@
           "id": "best-selling-call-of-duty-black-ops",
           "name": "Call of Duty: Black Ops",
           "subtitle": "26.2M sold • 2010",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1wkl.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/488e03c6f99e7b3f5e01bc7dd691a21215ef4b1dcd9cc09d2e567df91110adbe",
           "source": {
             "provider": "reported-sales",
             "id": "call-of-duty-black-ops",
@@ -3105,7 +3105,7 @@
           "id": "best-selling-pokemon-sun-moon-ultra-sun-ultra-moon",
           "name": "Pokémon Sun / Moon / Ultra Sun / Ultra Moon",
           "subtitle": "25.62M sold • 2016",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co3co7.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/f6ea7434776368c0491f6fb52f5e32edfe5d1846c46133a513775ff7402b0f80",
           "source": {
             "provider": "reported-sales",
             "id": "pokemon-sun-moon-ultra-sun-ultra-moon",
@@ -3116,7 +3116,7 @@
           "id": "best-selling-garrys-mod",
           "name": "Garry's Mod",
           "subtitle": "25.56M sold • 2006",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co8pgw.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/4995ec90445810aff0e9c2fce99ddb9dc4ff6320d43aa36b58b55515a03366e8",
           "source": {
             "provider": "reported-sales",
             "id": "garrys-mod",
@@ -3127,7 +3127,7 @@
           "id": "best-selling-pokemon-diamond-pearl-platinum",
           "name": "Pokémon Diamond / Pearl / Platinum",
           "subtitle": "25.5M sold • 2006",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1zht.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/1321d99bf2f2f0e2c405795b7e1fb58dce7aa97db028c7521a00f5295f074720",
           "source": {
             "provider": "reported-sales",
             "id": "pokemon-diamond-pearl-platinum",
@@ -3138,7 +3138,7 @@
           "id": "best-selling-grand-theft-auto-iv",
           "name": "Grand Theft Auto IV",
           "subtitle": "25M sold • 2008",
-          "image": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2lbv.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/igdb/d4752284e28d1eb7f8839ac3600906bcd11f274e38b6996789f1f4bc82d6d3ab",
           "source": {
             "provider": "reported-sales",
             "id": "grand-theft-auto-iv",
@@ -3158,7 +3158,7 @@
           "id": "stephen-king-carrie-novel-april-5th-1974",
           "name": "Carrie",
           "subtitle": "1974",
-          "image": "https://stephenking.com/images/books/carrie/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/4775fbb9da02a9a654bf02ce2cb3eeb1c655b8ea0ce43fb4ba11157b40918aaa",
           "source": {
             "provider": "stephenking.com",
             "id": "carrie-novel-april-5th-1974",
@@ -3169,7 +3169,7 @@
           "id": "stephen-king-salems-lot-novel-october-17th-1975",
           "name": "'Salem's Lot",
           "subtitle": "1975",
-          "image": "https://stephenking.com/images/books/salems_lot/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/895201286e0156d0a47e2e5bb008a16254c62eb81bf328205787fae8fd5b6e17",
           "source": {
             "provider": "stephenking.com",
             "id": "salems-lot-novel-october-17th-1975",
@@ -3180,7 +3180,7 @@
           "id": "stephen-king-rage-bachman-novel-december-1976",
           "name": "Rage",
           "subtitle": "1976",
-          "image": "https://stephenking.com/images/books/rage/paperback_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/4b5414672fa5f182abb027cf07f3f2dc76887d9ffcbbffa72d6599f2da22b8d1",
           "source": {
             "provider": "stephenking.com",
             "id": "rage-bachman-novel-december-1976",
@@ -3191,7 +3191,7 @@
           "id": "stephen-king-the-shining-novel-january-1977",
           "name": "The Shining",
           "subtitle": "1977",
-          "image": "https://stephenking.com/images/books/shining/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/de2ebaffa4068e001339c7a997ceb88cfa820b081e9685bac941efee7985cb10",
           "source": {
             "provider": "stephenking.com",
             "id": "the-shining-novel-january-1977",
@@ -3202,7 +3202,7 @@
           "id": "stephen-king-night-shift-collection-february-1978",
           "name": "Night Shift",
           "subtitle": "1978",
-          "image": "https://stephenking.com/images/books/nightshift/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/867405cdacadc6dbc1633dbd0a03f2af72abcf1d3d33695e2284f0ff4c9eab3a",
           "source": {
             "provider": "stephenking.com",
             "id": "night-shift-collection-february-1978",
@@ -3213,7 +3213,7 @@
           "id": "stephen-king-the-long-walk-bachman-novel-december-1978",
           "name": "The Long Walk",
           "subtitle": "1978",
-          "image": "https://stephenking.com/images/books/long_walk/paperback_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/8dc91a67b44529ec6cc95d6ac4de6bac83f700e9e76d6bea118f9562a4bf6e66",
           "source": {
             "provider": "stephenking.com",
             "id": "the-long-walk-bachman-novel-december-1978",
@@ -3224,7 +3224,7 @@
           "id": "stephen-king-the-stand-novel-october-1978",
           "name": "The Stand",
           "subtitle": "1978",
-          "image": "https://stephenking.com/images/books/78_stand/prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/b7c4a1ab77d82a8350b688c8b13eccd750765c93736dd3205be1fab58e1643fe",
           "source": {
             "provider": "stephenking.com",
             "id": "the-stand-novel-october-1978",
@@ -3235,7 +3235,7 @@
           "id": "stephen-king-the-dead-zone-novel-august-1979",
           "name": "The Dead Zone",
           "subtitle": "1979",
-          "image": "https://stephenking.com/images/books/dead_zone/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/a22d7d0098d9c2524b7579744b52ea86746aa131427169e78992618dc93c18ab",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dead-zone-novel-august-1979",
@@ -3246,7 +3246,7 @@
           "id": "stephen-king-firestarter-novel-september-29th-1980",
           "name": "Firestarter",
           "subtitle": "1980",
-          "image": "https://stephenking.com/images/books/firestarter/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/99242ae02c06ca82ae19665359f7c9b815027b67635957ca74c5d1dc08adbefb",
           "source": {
             "provider": "stephenking.com",
             "id": "firestarter-novel-september-29th-1980",
@@ -3257,7 +3257,7 @@
           "id": "stephen-king-roadwork-bachman-novel-december-1980",
           "name": "Roadwork",
           "subtitle": "1980",
-          "image": "https://stephenking.com/images/books/roadwork/paperback_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/d49a4d82869d874bcf85ec2fddb639aaf8e27f13f76841e86e5b7a977e376a10",
           "source": {
             "provider": "stephenking.com",
             "id": "roadwork-bachman-novel-december-1980",
@@ -3268,7 +3268,7 @@
           "id": "stephen-king-cujo-novel-september-8th-1981",
           "name": "Cujo",
           "subtitle": "1981",
-          "image": "https://stephenking.com/images/books/cujo/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/9536a3fec4a20957437c99a14b4c3c34be2b36aab6507d4441f308b648761077",
           "source": {
             "provider": "stephenking.com",
             "id": "cujo-novel-september-8th-1981",
@@ -3279,7 +3279,7 @@
           "id": "stephen-king-danse-macabre-nonfiction-work-1981",
           "name": "Danse Macabre",
           "subtitle": "1981",
-          "image": "https://stephenking.com/images/books/danse_macabre/danse_macabre_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/46563ea4a18d221e3d4a5d9650926034b1b9e81cd9cf3b8f13ee3795716812fc",
           "source": {
             "provider": "stephenking.com",
             "id": "danse-macabre-nonfiction-work-1981",
@@ -3290,7 +3290,7 @@
           "id": "stephen-king-the-running-man-bachman-novel-december-1981",
           "name": "The Running Man",
           "subtitle": "1981",
-          "image": "https://stephenking.com/images/books/running_man/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/c53ebdabcfb237a34cb17b2642f0cee0235ddd7f1167a5600fe1a4cf91bc35f0",
           "source": {
             "provider": "stephenking.com",
             "id": "the-running-man-bachman-novel-december-1981",
@@ -3301,7 +3301,7 @@
           "id": "stephen-king-different-seasons-collection-august-1982",
           "name": "Different Seasons",
           "subtitle": "1982",
-          "image": "https://stephenking.com/images/books/different_seasons/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/47f00002c9b26fb1b6cf6bba01330f301f3596f24660b69a5f66b1097504c399",
           "source": {
             "provider": "stephenking.com",
             "id": "different-seasons-collection-august-1982",
@@ -3312,7 +3312,7 @@
           "id": "stephen-king-the-dark-tower-the-gunslinger-novel-june-1982",
           "name": "The Dark Tower: The Gunslinger",
           "subtitle": "1982",
-          "image": "https://stephenking.com/images/novel/70/the_gunslinger.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/e5a211886310d63f74e80688325f63ae968ec2758e3b5f1c790c808778379a52",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-the-gunslinger-novel-june-1982",
@@ -3323,7 +3323,7 @@
           "id": "stephen-king-christine-novel-april-29th-1983",
           "name": "Christine",
           "subtitle": "1983",
-          "image": "https://stephenking.com/images/books/christine/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/d3df67dd6da49ff0e0a6e44bdc2aa081df3151d3402f0fae3d1a1cc30bc14c87",
           "source": {
             "provider": "stephenking.com",
             "id": "christine-novel-april-29th-1983",
@@ -3334,7 +3334,7 @@
           "id": "stephen-king-pet-sematary-novel-november-1983",
           "name": "Pet Sematary",
           "subtitle": "1983",
-          "image": "https://stephenking.com/images/books/pet_sematary/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/29c20bf8dcec5bd3af6216b8d00cfc912861d7d24d20b841ba516dc7f876a5b4",
           "source": {
             "provider": "stephenking.com",
             "id": "pet-sematary-novel-november-1983",
@@ -3345,7 +3345,7 @@
           "id": "stephen-king-the-talisman-novel-november-1984",
           "name": "The Talisman",
           "subtitle": "1984",
-          "image": "https://stephenking.com/images/books/talisman/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/8d6e348f689b29822c62e235971c8e87fc69c418861eca4df0aed8feed2e5c96",
           "source": {
             "provider": "stephenking.com",
             "id": "the-talisman-novel-november-1984",
@@ -3356,7 +3356,7 @@
           "id": "stephen-king-thinner-bachman-novel-november-1984",
           "name": "Thinner",
           "subtitle": "1984",
-          "image": "https://stephenking.com/images/books/thinner/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/13e192959113346bb63091c917dd8fa53b8d71b7e70c8abbe16520456e48d335",
           "source": {
             "provider": "stephenking.com",
             "id": "thinner-bachman-novel-november-1984",
@@ -3367,7 +3367,7 @@
           "id": "stephen-king-cycle-of-the-werewolf-novel-april-1985",
           "name": "Cycle of the Werewolf",
           "subtitle": "1985",
-          "image": "https://stephenking.com/images/books/cycle_of_the_werewolf/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/8342fb9ef6f20449fad3d27b2d1493ada8b057e9a50ee7d776ac812b4142dd99",
           "source": {
             "provider": "stephenking.com",
             "id": "cycle-of-the-werewolf-novel-april-1985",
@@ -3378,7 +3378,7 @@
           "id": "stephen-king-skeleton-crew-collection-june-1985",
           "name": "Skeleton Crew",
           "subtitle": "1985",
-          "image": "https://stephenking.com/images/books/skeleton_crew/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/846cc4fe49537c74e8fe17b65d9705f7e94e76b9c1b050366ad62001bd5e78d1",
           "source": {
             "provider": "stephenking.com",
             "id": "skeleton-crew-collection-june-1985",
@@ -3389,7 +3389,7 @@
           "id": "stephen-king-the-bachman-books-bachman-novel-october-1985",
           "name": "The Bachman Books",
           "subtitle": "1985",
-          "image": "https://stephenking.com/images/bachman_novel/7/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/19207bb8bfd392e472ab05d125e7057782cbb1be9ab5f982322eeee1313e1642",
           "source": {
             "provider": "stephenking.com",
             "id": "the-bachman-books-bachman-novel-october-1985",
@@ -3400,7 +3400,7 @@
           "id": "stephen-king-it-novel-september-1986",
           "name": "IT",
           "subtitle": "1986",
-          "image": "https://stephenking.com/images/books/it/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/0c746f910b54cfabe986f7b04bdfa4a214cbe6e2967a4ade90259a1bb74e224c",
           "source": {
             "provider": "stephenking.com",
             "id": "it-novel-september-1986",
@@ -3411,7 +3411,7 @@
           "id": "stephen-king-misery-novel-june-1987",
           "name": "Misery",
           "subtitle": "1987",
-          "image": "https://stephenking.com/images/books/misery/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/1192bbf63556d5fd4be2f2d51344fed0ad85ba6054981299100b58685311ea52",
           "source": {
             "provider": "stephenking.com",
             "id": "misery-novel-june-1987",
@@ -3422,7 +3422,7 @@
           "id": "stephen-king-the-dark-tower-the-drawing-of-the-three-novel-may-1987",
           "name": "The Dark Tower: The Drawing of the Three",
           "subtitle": "1987",
-          "image": "https://stephenking.com/images/novel/12/the_drawing_of_the_three.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/2dab572a50a8e539906770a020e9fc50ede9c381d193d59c24cb0992e321d6cb",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-the-drawing-of-the-three-novel-may-1987",
@@ -3433,7 +3433,7 @@
           "id": "stephen-king-the-eyes-of-the-dragon-novel-february-1987",
           "name": "The Eyes of the Dragon",
           "subtitle": "1987",
-          "image": "https://stephenking.com/images/books/eyes_of_the_dragon/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/1f4eb81ca36870dddb78d8c12927ddd2ed09c1356912243e3dc43ac21be4f087",
           "source": {
             "provider": "stephenking.com",
             "id": "the-eyes-of-the-dragon-novel-february-1987",
@@ -3444,7 +3444,7 @@
           "id": "stephen-king-the-tommyknockers-novel-november-1987",
           "name": "The Tommyknockers",
           "subtitle": "1987",
-          "image": "https://stephenking.com/images/books/tommyknockers/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/41b469c295de04080795efe2853556aa0cd9312c7e25e8c8d11094420a729c09",
           "source": {
             "provider": "stephenking.com",
             "id": "the-tommyknockers-novel-november-1987",
@@ -3455,7 +3455,7 @@
           "id": "stephen-king-nightmares-in-the-sky-nonfiction-work-with-f-stop-fitzgerald-1988",
           "name": "Nightmares in the Sky",
           "subtitle": "1988",
-          "image": "https://stephenking.com/images/nonfiction/6/nightmaresinthesky.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/c6a6e158a4a2858e37f4c5598f18c2983e9f97fa33e15e9ee4829c35d28f5f8d",
           "source": {
             "provider": "stephenking.com",
             "id": "nightmares-in-the-sky-nonfiction-work-with-f-stop-fitzgerald-1988",
@@ -3466,7 +3466,7 @@
           "id": "stephen-king-the-dark-half-novel-november-1989",
           "name": "The Dark Half",
           "subtitle": "1989",
-          "image": "https://stephenking.com/images/novel/1/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/4a9b513f43d9e2eee9752680bad7fcd57eff6589d8ca87254358322a08c67332",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-half-novel-november-1989",
@@ -3477,7 +3477,7 @@
           "id": "stephen-king-four-past-midnight-collection-september-1990",
           "name": "Four Past Midnight",
           "subtitle": "1990",
-          "image": "https://stephenking.com/images/books/four_past_midnight/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/3312e08f3c238bef611916c9395a551ae05689a8239e5aeb3bcf1d7294c871f8",
           "source": {
             "provider": "stephenking.com",
             "id": "four-past-midnight-collection-september-1990",
@@ -3488,7 +3488,7 @@
           "id": "stephen-king-the-stand-the-complete-uncut-edition-novel-may-1990",
           "name": "The Stand: The Complete & Uncut Edition",
           "subtitle": "1990",
-          "image": "https://stephenking.com/images/books/stand/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/7183730e93c50590cd7cab8263f650f728334e5a1da908543702a7a31a9a6740",
           "source": {
             "provider": "stephenking.com",
             "id": "the-stand-the-complete-uncut-edition-novel-may-1990",
@@ -3499,7 +3499,7 @@
           "id": "stephen-king-needful-things-novel-october-1991",
           "name": "Needful Things",
           "subtitle": "1991",
-          "image": "https://stephenking.com/images/books/needfull_things/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/2095c0bd5c9d8e078aa73a2825014d320d60c7ada112684fe519ec41becf3cae",
           "source": {
             "provider": "stephenking.com",
             "id": "needful-things-novel-october-1991",
@@ -3510,7 +3510,7 @@
           "id": "stephen-king-the-dark-tower-the-waste-lands-novel-august-1991",
           "name": "The Dark Tower: The Waste Lands",
           "subtitle": "1991",
-          "image": "https://stephenking.com/images/novel/13/the_waste_lands.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/3a7446b511e13e8a5e2ceb03fafcfb0e436a42700ed1f1b6f99566f128c71908",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-the-waste-lands-novel-august-1991",
@@ -3521,7 +3521,7 @@
           "id": "stephen-king-geralds-game-novel-may-1992",
           "name": "Gerald's Game",
           "subtitle": "1992",
-          "image": "https://stephenking.com/images/books/geralds_game/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/756214180dadf8990e260188899917cbaf7a1bbea9e7635f6c9b2b0eb7858e93",
           "source": {
             "provider": "stephenking.com",
             "id": "geralds-game-novel-may-1992",
@@ -3532,7 +3532,7 @@
           "id": "stephen-king-dolores-claiborne-novel-november-1993",
           "name": "Dolores Claiborne",
           "subtitle": "1993",
-          "image": "https://stephenking.com/images/books/dolores_claiborne/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/dc4d39628386e20e1e0092c2d35cbe08b2aece284041806d73d18ae1f5015493",
           "source": {
             "provider": "stephenking.com",
             "id": "dolores-claiborne-novel-november-1993",
@@ -3543,7 +3543,7 @@
           "id": "stephen-king-nightmares-dreamscapes-collection-october-1993",
           "name": "Nightmares & Dreamscapes",
           "subtitle": "1993",
-          "image": "https://stephenking.com/images/books/nightmares_and_dreamscapes/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/25863a05c20fc6f91433b0a3d7a5cc3a26f3fa3b50ba855bae1464bc8faf2cf0",
           "source": {
             "provider": "stephenking.com",
             "id": "nightmares-dreamscapes-collection-october-1993",
@@ -3554,7 +3554,7 @@
           "id": "stephen-king-insomnia-novel-september-1994",
           "name": "Insomnia",
           "subtitle": "1994",
-          "image": "https://stephenking.com/images/books/insomnia/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/89955475fef4ea49b475fd28f9c8e5131b7172746c5455d6f56161369bed431c",
           "source": {
             "provider": "stephenking.com",
             "id": "insomnia-novel-september-1994",
@@ -3565,7 +3565,7 @@
           "id": "stephen-king-mid-life-confidential-the-rock-bottom-remainders-tour-america-with-three-chords-and-an-attitude-nonfiction-work-with-dave-barry-amy-tan-et-al-1994",
           "name": "Mid-Life Confidential: The Rock Bottom Remainders Tour America With Three Chords and an Attitude",
           "subtitle": "1994",
-          "image": "https://stephenking.com/images/nonfiction/5/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/7613e6ebb546f26da06b888add0917b179af29ef603093508db97fb5f4ea09a2",
           "source": {
             "provider": "stephenking.com",
             "id": "mid-life-confidential-the-rock-bottom-remainders-tour-america-with-three-chords-and-an-attitude-nonfiction-work-with-dave-barry-amy-tan-et-al-1994",
@@ -3576,7 +3576,7 @@
           "id": "stephen-king-rose-madder-novel-june-1995",
           "name": "Rose Madder",
           "subtitle": "1995",
-          "image": "https://stephenking.com/images/books/rose_madder/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/f841384e7af793b40431e35758cea705399529f74e8cec01b4edd7ccce5e1fea",
           "source": {
             "provider": "stephenking.com",
             "id": "rose-madder-novel-june-1995",
@@ -3587,7 +3587,7 @@
           "id": "stephen-king-the-regulators-bachman-novel-december-1995",
           "name": "The Regulators",
           "subtitle": "1995",
-          "image": "https://stephenking.com/images/books/regulators/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/df0498fd3a4c3ab8f65ff373d3fca55e7fc545071c5bdd2551902e6d45002ba7",
           "source": {
             "provider": "stephenking.com",
             "id": "the-regulators-bachman-novel-december-1995",
@@ -3598,7 +3598,7 @@
           "id": "stephen-king-desperation-novel-september-24th-1996",
           "name": "Desperation",
           "subtitle": "1996",
-          "image": "https://stephenking.com/images/books/desperation/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/b2f4bb8ef0f013db9ac34bcb07f9e5f1d9a72970eb8463ff9aa904d87da7a51f",
           "source": {
             "provider": "stephenking.com",
             "id": "desperation-novel-september-24th-1996",
@@ -3609,7 +3609,7 @@
           "id": "stephen-king-the-green-mile",
           "name": "The Green Mile",
           "subtitle": "1996",
-          "image": "https://stephenking.com/images/novel/43/paperback_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/0ee622618adb22195779b9c5fbfeeec121bcbb59db225ccc37ba075ae6965f25",
           "source": {
             "provider": "stephenking.com",
             "id": "the-green-mile",
@@ -3620,7 +3620,7 @@
           "id": "stephen-king-the-dark-tower-wizard-and-glass-novel-november-1997",
           "name": "The Dark Tower: Wizard and Glass",
           "subtitle": "1997",
-          "image": "https://stephenking.com/images/novel/14/wizard_and_glass.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/a2b989ddff5e15316e02161a6e2faf94f05a7d837ff974c1f8bb54a68b23cf60",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-wizard-and-glass-novel-november-1997",
@@ -3631,7 +3631,7 @@
           "id": "stephen-king-bag-of-bones-novel-september-22nd-1998",
           "name": "Bag of Bones",
           "subtitle": "1998",
-          "image": "https://stephenking.com/images/books/bag_of_bones/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/01a8a486520b6c2b10fa8dc32bb636e406aebb8b037bf1808169ef3607041c61",
           "source": {
             "provider": "stephenking.com",
             "id": "bag-of-bones-novel-september-22nd-1998",
@@ -3642,7 +3642,7 @@
           "id": "stephen-king-hearts-in-atlantis-collection-september-1999",
           "name": "Hearts in Atlantis",
           "subtitle": "1999",
-          "image": "https://stephenking.com/images/books/hearts_in_atlantis/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/56ff75aaa69381f1a6a4b109498210d52dbf27d00a3b2fef6978391a392c92d8",
           "source": {
             "provider": "stephenking.com",
             "id": "hearts-in-atlantis-collection-september-1999",
@@ -3653,7 +3653,7 @@
           "id": "stephen-king-the-girl-who-loved-tom-gordon-novel-april-1999",
           "name": "The Girl Who Loved Tom Gordon",
           "subtitle": "1999",
-          "image": "https://stephenking.com/images/books/girl_who_loved_tom_gordon/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/0063a262e1ffcc5bb6e68899dc326c595a863e3de52fcab0b9b5580b449a1001",
           "source": {
             "provider": "stephenking.com",
             "id": "the-girl-who-loved-tom-gordon-novel-april-1999",
@@ -3664,7 +3664,7 @@
           "id": "stephen-king-on-writing-a-memoir-of-the-craft-nonfiction-work-2000",
           "name": "On Writing: A Memoir of the Craft",
           "subtitle": "2000",
-          "image": "https://stephenking.com/images/books/on_writing/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/4acee550a45029d497507d903ea7aeb2f442efb5af954c472dc20d676c9d9ac6",
           "source": {
             "provider": "stephenking.com",
             "id": "on-writing-a-memoir-of-the-craft-nonfiction-work-2000",
@@ -3675,7 +3675,7 @@
           "id": "stephen-king-secret-windows-essays-and-fiction-on-the-craft-of-writing-nonfiction-work-2000",
           "name": "Secret Windows: Essays and Fiction on the Craft of Writing",
           "subtitle": "2000",
-          "image": "https://stephenking.com/images/books/secret_windows/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/0b7c59d2f0bf2985ac76972970e9b12f4a45d249dde46888f5e476fa4fb73f3f",
           "source": {
             "provider": "stephenking.com",
             "id": "secret-windows-essays-and-fiction-on-the-craft-of-writing-nonfiction-work-2000",
@@ -3686,7 +3686,7 @@
           "id": "stephen-king-black-house-novel-september-15th-2001",
           "name": "Black House",
           "subtitle": "2001",
-          "image": "https://stephenking.com/images/books/black_house/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/048592d124faa6568d8c90e2b07120ade2907aa3a81506913bbce7cec2a7e77e",
           "source": {
             "provider": "stephenking.com",
             "id": "black-house-novel-september-15th-2001",
@@ -3697,7 +3697,7 @@
           "id": "stephen-king-dreamcatcher-novel-february-20th-2001",
           "name": "Dreamcatcher",
           "subtitle": "2001",
-          "image": "https://stephenking.com/images/books/dreamcatcher/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/9fc2729fd077ea3f7c0ecc52dca34eb133ab4428967c00dfb403b65cd37a58c0",
           "source": {
             "provider": "stephenking.com",
             "id": "dreamcatcher-novel-february-20th-2001",
@@ -3708,7 +3708,7 @@
           "id": "stephen-king-everythings-eventual-collection-march-2002",
           "name": "Everything's Eventual",
           "subtitle": "2002",
-          "image": "https://stephenking.com/images/books/everythings_eventual/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/cab6fdff24b541bf1f09bc0dafcfd14e1e659f2dedca2385fd4117dbc6eada3e",
           "source": {
             "provider": "stephenking.com",
             "id": "everythings-eventual-collection-march-2002",
@@ -3719,7 +3719,7 @@
           "id": "stephen-king-from-a-buick-8-novel-september-24th-2002",
           "name": "From A Buick 8",
           "subtitle": "2002",
-          "image": "https://stephenking.com/images/books/from_a_buick_8/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/96ea4129f098d28e296434e902a7917bbbfe894c397a8f31a4014319f0dfa178",
           "source": {
             "provider": "stephenking.com",
             "id": "from-a-buick-8-novel-september-24th-2002",
@@ -3730,7 +3730,7 @@
           "id": "stephen-king-the-dark-tower-wolves-of-the-calla-novel-november-2003",
           "name": "The Dark Tower: Wolves of the Calla",
           "subtitle": "2003",
-          "image": "https://stephenking.com/images/novel/16/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/a448d6e2355f2f00fa68611912201154b13f6038dda17c118362de02cef2d0a2",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-wolves-of-the-calla-novel-november-2003",
@@ -3741,7 +3741,7 @@
           "id": "stephen-king-the-dark-tower-novel-september-2004",
           "name": "The Dark Tower",
           "subtitle": "2004",
-          "image": "https://stephenking.com/images/books/dark_tower/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/8934f1c60b510459b2a2de9cf934feef9464be6c610a84aee7300e753eb44a63",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-novel-september-2004",
@@ -3752,7 +3752,7 @@
           "id": "stephen-king-the-dark-tower-song-of-susannah-novel-june-2004",
           "name": "The Dark Tower: Song of Susannah",
           "subtitle": "2004",
-          "image": "https://stephenking.com/images/books/song_of_sussanah/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/c36516225838372e811a5c4751a4d7d3461a91735c4f717747928556a51cb1a4",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-song-of-susannah-novel-june-2004",
@@ -3763,7 +3763,7 @@
           "id": "stephen-king-faithful-nonfiction-work-with-stewart-onan-september-2005",
           "name": "Faithful",
           "subtitle": "2005",
-          "image": "https://stephenking.com/images/books/faithful/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/44dfdf39c1378a8469b26ef18ba2847fec47556b2b37843d222c8d83845a483f",
           "source": {
             "provider": "stephenking.com",
             "id": "faithful-nonfiction-work-with-stewart-onan-september-2005",
@@ -3774,7 +3774,7 @@
           "id": "stephen-king-the-colorado-kid-novel-october-2005",
           "name": "The Colorado Kid",
           "subtitle": "2005",
-          "image": "https://stephenking.com/images/books/colorado_kid/paperback_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/f8ddab01c3846262ecc2ca8e54d5418a590a804d33e5d024fe434602b8a1a881",
           "source": {
             "provider": "stephenking.com",
             "id": "the-colorado-kid-novel-october-2005",
@@ -3785,7 +3785,7 @@
           "id": "stephen-king-blaze-bachman-novel-december-2006",
           "name": "Blaze",
           "subtitle": "2006",
-          "image": "https://stephenking.com/images/books/blaze/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/6a17559d4aa09a6444dc94383e5404c4d38f6dbefa23f9c194f78db3f31e648f",
           "source": {
             "provider": "stephenking.com",
             "id": "blaze-bachman-novel-december-2006",
@@ -3796,7 +3796,7 @@
           "id": "stephen-king-cell-novel-january-24th-2006",
           "name": "Cell",
           "subtitle": "2006",
-          "image": "https://stephenking.com/images/books/cell/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/2257590c9821fe717577d028c21d0b97bc8bdb3f74bb9965a4e40da0ff798aa1",
           "source": {
             "provider": "stephenking.com",
             "id": "cell-novel-january-24th-2006",
@@ -3807,7 +3807,7 @@
           "id": "stephen-king-liseys-story-novel-october-2006",
           "name": "Lisey's Story",
           "subtitle": "2006",
-          "image": "https://stephenking.com/images/books/liseys_story/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/dbee12a03701381a34117d7fd91fd4952aaffee9ec6969991fe5e050a48d8ac4",
           "source": {
             "provider": "stephenking.com",
             "id": "liseys-story-novel-october-2006",
@@ -3818,7 +3818,7 @@
           "id": "stephen-king-duma-key-novel-january-22nd-2008",
           "name": "Duma Key",
           "subtitle": "2008",
-          "image": "https://stephenking.com/images/books/duma_key/hardcover_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/1f6cd8feb3ca1c8bcf79111ff0911a5802f47e20f9dfd24b438cb44473a330fc",
           "source": {
             "provider": "stephenking.com",
             "id": "duma-key-novel-january-22nd-2008",
@@ -3829,7 +3829,7 @@
           "id": "stephen-king-just-after-sunset-collection-november-2008",
           "name": "Just After Sunset",
           "subtitle": "2008",
-          "image": "https://stephenking.com/images/story_collection/8/just_after_sunset.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/3411fbf00a122357c612a95e470b104399e6cd64649211eaeaaedddfc90bde63",
           "source": {
             "provider": "stephenking.com",
             "id": "just-after-sunset-collection-november-2008",
@@ -3840,7 +3840,7 @@
           "id": "stephen-king-stephen-king-goes-to-the-movies-collection-january-2009",
           "name": "Stephen King Goes to the Movies",
           "subtitle": "2009",
-          "image": "https://stephenking.com/images/new_in_stores/skgttm/skgttm_full.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/bcd45d8789ea856b8a50a664439561caee989112441adfa185aa870305147be7",
           "source": {
             "provider": "stephenking.com",
             "id": "stephen-king-goes-to-the-movies-collection-january-2009",
@@ -3851,7 +3851,7 @@
           "id": "stephen-king-under-the-dome-novel-november-2009",
           "name": "Under the Dome",
           "subtitle": "2009",
-          "image": "https://stephenking.com/images/novel/56/utd.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/eb57aa760640d7796a66efb3899b593721e2532cff532839304f84d6746411e9",
           "source": {
             "provider": "stephenking.com",
             "id": "under-the-dome-novel-november-2009",
@@ -3862,7 +3862,7 @@
           "id": "stephen-king-full-dark-no-stars-collection-november-2010",
           "name": "Full Dark, No Stars",
           "subtitle": "2010",
-          "image": "https://stephenking.com/images/books/full_dark_no_stars/full_dark_no_stars_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/3512cd4b3f727bd52c99bc6fe5287227a2832fbc041084d92cbdfbe70422c343",
           "source": {
             "provider": "stephenking.com",
             "id": "full-dark-no-stars-collection-november-2010",
@@ -3873,7 +3873,7 @@
           "id": "stephen-king-11-22-63-novel-november-8th-2011",
           "name": "11/22/63",
           "subtitle": "2011",
-          "image": "https://stephenking.com/images/books/11-22-63/11-22-63_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/2e73f0311656c5a75d7ca657ca7f996d27aac073fe83c807e47b70a3e5365163",
           "source": {
             "provider": "stephenking.com",
             "id": "11-22-63-novel-november-8th-2011",
@@ -3884,7 +3884,7 @@
           "id": "stephen-king-the-dark-tower-the-wind-through-the-keyhole-novel-april-2012",
           "name": "The Dark Tower: The Wind Through the Keyhole",
           "subtitle": "2012",
-          "image": "https://stephenking.com/images/books/wind_through_the_keyhole/wind_through_the_keyhole_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/ae0f693d67e4aba2437f24125534bb57b0e27c7a91a37ad5e747985e807e368a",
           "source": {
             "provider": "stephenking.com",
             "id": "the-dark-tower-the-wind-through-the-keyhole-novel-april-2012",
@@ -3895,7 +3895,7 @@
           "id": "stephen-king-doctor-sleep-novel-september-24th-2013",
           "name": "Doctor Sleep",
           "subtitle": "2013",
-          "image": "https://stephenking.com/images/books/doctor_sleep/doctor_sleep_property_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/9d608d657d17c5ea89f40a8d9aa3c46b8e36a556fc7f57f6f2dbbd81f84c5d7e",
           "source": {
             "provider": "stephenking.com",
             "id": "doctor-sleep-novel-september-24th-2013",
@@ -3906,7 +3906,7 @@
           "id": "stephen-king-guns-nonfiction-work-january-2013",
           "name": "GUNS",
           "subtitle": "2013",
-          "image": "https://stephenking.com/images/nonfiction/guns/guns_property_emebed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/e040a4201cee239afb79c884d7bf4e73510bf39626f5164c5ff1b08407fa6ea1",
           "source": {
             "provider": "stephenking.com",
             "id": "guns-nonfiction-work-january-2013",
@@ -3917,7 +3917,7 @@
           "id": "stephen-king-joyland-novel-june-2013",
           "name": "Joyland",
           "subtitle": "2013",
-          "image": "https://stephenking.com/images/books/joyland/joyland_property_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/d9f9e48965e9a2ee18271bae133d5761c8c303e830c7302a4977ef7a21db2ccc",
           "source": {
             "provider": "stephenking.com",
             "id": "joyland-novel-june-2013",
@@ -3928,7 +3928,7 @@
           "id": "stephen-king-mr-mercedes-novel-june-2014",
           "name": "Mr. Mercedes",
           "subtitle": "2014",
-          "image": "https://stephenking.com/images/books/mr_mercedes/mr_mecedes_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/8cb8be460575646e6d3e9a58e53af17736ebf0660f02ff68126606e290fa6b25",
           "source": {
             "provider": "stephenking.com",
             "id": "mr-mercedes-novel-june-2014",
@@ -3939,7 +3939,7 @@
           "id": "stephen-king-revival-novel-november-2014",
           "name": "Revival",
           "subtitle": "2014",
-          "image": "https://stephenking.com/images/books/revival/revival_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/f2eb1862cdf012772919a8621a7f7d2f0d839aec86709d4b6493e837247f1f08",
           "source": {
             "provider": "stephenking.com",
             "id": "revival-novel-november-2014",
@@ -3950,7 +3950,7 @@
           "id": "stephen-king-finders-keepers-novel-june-2nd-2015",
           "name": "Finders Keepers",
           "subtitle": "2015",
-          "image": "https://stephenking.com/images/books/finders-keepers/finders_keepers_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/ea1208d5dd7e38674bc1ba298e0f616ebc8590af2dc6b1cfc44a8043ae2eb1a0",
           "source": {
             "provider": "stephenking.com",
             "id": "finders-keepers-novel-june-2nd-2015",
@@ -3961,7 +3961,7 @@
           "id": "stephen-king-the-bazaar-of-bad-dreams-collection-november-2015",
           "name": "The Bazaar of Bad Dreams",
           "subtitle": "2015",
-          "image": "https://stephenking.com/images/books/bazaar-of-bad-dreams/bobd_cover_1_prop_embed.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/896a9799d77c08e135ac291886b39922fbd3e089286d634b52fa9161e810baf2",
           "source": {
             "provider": "stephenking.com",
             "id": "the-bazaar-of-bad-dreams-collection-november-2015",
@@ -3972,7 +3972,7 @@
           "id": "stephen-king-charlie-the-choo-choo",
           "name": "Charlie the Choo-Choo",
           "subtitle": "2016",
-          "image": "https://stephenking.com/images/other_project/54/charliereduced.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/b705247dca17264ca935de605fd2d79921c90f75d9cc6708dc4e6d1a913e4004",
           "source": {
             "provider": "stephenking.com",
             "id": "charlie-the-choo-choo",
@@ -3983,7 +3983,7 @@
           "id": "stephen-king-end-of-watch-novel-june-7th-2016",
           "name": "End of Watch",
           "subtitle": "2016",
-          "image": "https://stephenking.com/images/novel/68/end_of_watch_rev_lr.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/f2730247a63e18e0887ace00febf06d29fec5a6355a8b9467ce1950ce39e2125",
           "source": {
             "provider": "stephenking.com",
             "id": "end-of-watch-novel-june-7th-2016",
@@ -3994,7 +3994,7 @@
           "id": "stephen-king-sleeping-beauties-novel-september-26th-2017",
           "name": "Sleeping Beauties",
           "subtitle": "2017",
-          "image": "https://stephenking.com/images/books/sleeping_beauties/sleeping_beauties_prop_embed.png",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/6415f1c922be4d0587e1de86e2cdeb4fca96e7354186e8a1f85d650cdec0bb5e",
           "source": {
             "provider": "stephenking.com",
             "id": "sleeping-beauties-novel-september-26th-2017",
@@ -4005,7 +4005,7 @@
           "id": "stephen-king-the-outsider-novel-may-2018",
           "name": "The Outsider",
           "subtitle": "2018",
-          "image": "https://stephenking.com/images/novel/71/outsider.png",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/a7ef907b1d53ba933486dd8fab19b632b1bf079a9710caa9022bbbb5777322ca",
           "source": {
             "provider": "stephenking.com",
             "id": "the-outsider-novel-may-2018",
@@ -4016,7 +4016,7 @@
           "id": "stephen-king-the-institute-novel-september-2019",
           "name": "The Institute",
           "subtitle": "2019",
-          "image": "https://stephenking.com/images/novel/72/institutem.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/17797dfd242dceb2463c2299d0a5f1113d9e1e7e7f6017d2c2a631258aaec8b3",
           "source": {
             "provider": "stephenking.com",
             "id": "the-institute-novel-september-2019",
@@ -4027,7 +4027,7 @@
           "id": "stephen-king-if-it-bleeds-collection-april-2020",
           "name": "If It Bleeds",
           "subtitle": "2020",
-          "image": "https://stephenking.com/images/story_collection/12/bleeds.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/3a35d60fc19c16d762bd15f9c54254be5108878bbbf20321fee91b6d94fc3621",
           "source": {
             "provider": "stephenking.com",
             "id": "if-it-bleeds-collection-april-2020",
@@ -4038,7 +4038,7 @@
           "id": "stephen-king-billy-summers-novel-august-3rd-2021",
           "name": "Billy Summers",
           "subtitle": "2021",
-          "image": "https://stephenking.com/images/novel/billy-summers.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/d84719dacb7cec19ae675dc32cec1ab6132c9e4d55a5d3001c5e84a87a56c622",
           "source": {
             "provider": "stephenking.com",
             "id": "billy-summers-novel-august-3rd-2021",
@@ -4049,7 +4049,7 @@
           "id": "stephen-king-later-novel-march-2nd-2021",
           "name": "Later",
           "subtitle": "2021",
-          "image": "https://stephenking.com/images/novel/74/later.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/78e409ec6ac956ef4c6896530aef98aed69c6ef750e7fa8480c0309b7d5d6f22",
           "source": {
             "provider": "stephenking.com",
             "id": "later-novel-march-2nd-2021",
@@ -4060,7 +4060,7 @@
           "id": "stephen-king-fairy-tale-novel-september-6th-2022",
           "name": "Fairy Tale",
           "subtitle": "2022",
-          "image": "https://stephenking.com/images/novel/fairy-tale.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/6f09760119550ae2fb8f48c6387c5d88dcec192761d5ab072d01ff99ea115890",
           "source": {
             "provider": "stephenking.com",
             "id": "fairy-tale-novel-september-6th-2022",
@@ -4071,7 +4071,7 @@
           "id": "stephen-king-gwendys-final-task-novel-february-15th-2022",
           "name": "Gwendy's Final Task",
           "subtitle": "2022",
-          "image": "https://stephenking.com/images/novel/gwendy-ft.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/e97007cf31a36980ce7f14cb2f82cf9c60037da225cff2160b565b82c1c5d3b5",
           "source": {
             "provider": "stephenking.com",
             "id": "gwendys-final-task-novel-february-15th-2022",
@@ -4082,7 +4082,7 @@
           "id": "stephen-king-holly-novel-september-5th-2023",
           "name": "Holly",
           "subtitle": "2023",
-          "image": "https://stephenking.com/images/novel/holly.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/f5cff3d277bcfdf6cbeea1b69e88454557f0974a991f8fa1a8c4c4d55d7f59a0",
           "source": {
             "provider": "stephenking.com",
             "id": "holly-novel-september-5th-2023",
@@ -4093,7 +4093,7 @@
           "id": "stephen-king-you-like-it-darker-collection-may-2024",
           "name": "You Like It Darker",
           "subtitle": "2024",
-          "image": "https://stephenking.com/images/novel/like-it-darker.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/3d13976520211def28321b219b05de7595a25a5cd6381397a365bd1064da6a8f",
           "source": {
             "provider": "stephenking.com",
             "id": "you-like-it-darker-collection-may-2024",
@@ -4104,7 +4104,7 @@
           "id": "stephen-king-hansel-and-gretel",
           "name": "Hansel and Gretel",
           "subtitle": "2025",
-          "image": "https://stephenking.com/images/other_project/hansel/hansel-cover-lg.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/15f89eb2e5f95fcd557ebbc1c13d8e3239d63e5c8a31a665830ab8a963e554bf",
           "source": {
             "provider": "stephenking.com",
             "id": "hansel-and-gretel",
@@ -4115,7 +4115,7 @@
           "id": "stephen-king-never-flinch-novel-may-27th-2025",
           "name": "Never Flinch",
           "subtitle": "2025",
-          "image": "https://stephenking.com/images/novel/never-flinch.jpg",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/5ae80dbd45b50c8831d0f3f7e0ad13a46066f88db2745cc84f927d8590fe51d9",
           "source": {
             "provider": "stephenking.com",
             "id": "never-flinch-novel-may-27th-2025",
@@ -4126,7 +4126,7 @@
           "id": "stephen-king-other-worlds-than-these",
           "name": "Other Worlds Than These",
           "subtitle": "2026",
-          "image": "https://stephenking.com/images/novel/other-worlds-cover.png",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/stephenking/c09a7e7a8ff8e76ff7486c48ef9a24f23be197d087b1c473f254efc7e1cd5a47",
           "source": {
             "provider": "stephenking.com",
             "id": "other-worlds-than-these",

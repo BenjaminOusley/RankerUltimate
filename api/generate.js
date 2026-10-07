@@ -1,5 +1,6 @@
 import process from 'node:process';
 
+import { cacheCollectionImages } from '../scripts/assets/image-cache.mjs';
 import {
   generateIgdbCollection,
   validateIgdbGenerationRequest,
@@ -141,8 +142,10 @@ export default {
         );
       }
 
+      const collection = await cacheCollectionImages(generation.result.collection);
+
       return json({
-        collection: generation.result.collection,
+        collection,
         meta: {
           candidateCount: generation.result.candidateCount,
           validatedCount: generation.result.validatedCount,
