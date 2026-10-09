@@ -1,52 +1,52 @@
 {
   "schemaVersion": 1,
   "policyVersion": 3,
-  "generatedAt": "2026-10-07T04:32:48.757Z",
+  "generatedAt": "2026-10-09T16:16:28.757Z",
   "sources": [
     {
       "id": "tmdb",
       "url": "https://www.themoviedb.org/",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "star-wars-guide",
       "url": "https://www.starwars.com/news/star-wars-movies-and-series-guide",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "disney-princess",
       "url": "https://princess.disney.com/",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "best-selling-games",
       "url": "https://en.wikipedia.org/wiki/List_of_best-selling_video_games",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "stephen-king-novel",
       "url": "https://stephenking.com/works/novel/grid.html",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "stephen-king-collection",
       "url": "https://stephenking.com/works/collection/grid.html",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "stephen-king-nonfiction",
       "url": "https://stephenking.com/works/nonfiction/grid.html",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "stephen-king-other-project",
       "url": "https://stephenking.com/works/other-project/grid.html",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.757Z"
     },
     {
       "id": "igdb",
       "url": "https://www.igdb.com/",
-      "checkedAt": "2026-10-07T04:32:48.757Z"
+      "checkedAt": "2026-10-09T16:16:28.758Z"
     }
   ],
   "collections": [
@@ -340,6 +340,17 @@
           "source": {
             "provider": "tmdb",
             "id": "566525",
+            "type": "movie"
+          }
+        },
+        {
+          "id": "spider-man-no-way-home-1791559",
+          "name": "Spider-Man: No Way Home",
+          "subtitle": "2021",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/31711b3c629a81ba033d0da56baffbec4b269a1e6869d1e7fd41d52bddcfa42a",
+          "source": {
+            "provider": "tmdb",
+            "id": "1791559",
             "type": "movie"
           }
         },
@@ -762,7 +773,7 @@
         {
           "id": "marvel-zombies-138505",
           "name": "Marvel Zombies",
-          "subtitle": "2025–",
+          "subtitle": "2025",
           "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/fc9dcd150219b3116c6203a54826383d8cde81b58538d1246cf3605917260e84",
           "source": {
             "provider": "tmdb",
@@ -1198,6 +1209,17 @@
           }
         },
         {
+          "id": "spider-man-no-way-home-1791559",
+          "name": "Spider-Man: No Way Home",
+          "subtitle": "2021",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/31711b3c629a81ba033d0da56baffbec4b269a1e6869d1e7fd41d52bddcfa42a",
+          "source": {
+            "provider": "tmdb",
+            "id": "1791559",
+            "type": "movie"
+          }
+        },
+        {
           "id": "spider-man-no-way-home-634649",
           "name": "Spider-Man: No Way Home",
           "subtitle": "2021",
@@ -1442,7 +1464,7 @@
         {
           "id": "marvel-zombies-138505",
           "name": "Marvel Zombies",
-          "subtitle": "2025–",
+          "subtitle": "2025",
           "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/fc9dcd150219b3116c6203a54826383d8cde81b58538d1246cf3605917260e84",
           "source": {
             "provider": "tmdb",
@@ -1628,7 +1650,7 @@
           "id": "tenet-577922",
           "name": "Tenet",
           "subtitle": "2020",
-          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/ba021454ba374cf1bb166868636b84069023b6fbc03e3a3bd721ad36cb48cf3a",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/3f3aa763c73cc9d87037c2f926ba1287c617f9be03c875a60d2204b836c097d8",
           "source": {
             "provider": "tmdb",
             "id": "577922",
