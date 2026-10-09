@@ -10,6 +10,7 @@ type RankedListProps = {
   items: RankItem[];
   preferenceScores: Record<string, number>;
   personalRatings: PersonalRatingMap;
+  ratingLabel?: string;
 };
 
 function getRowClass(rankStyle: ReturnType<typeof getRankStyle>) {
@@ -18,23 +19,28 @@ function getRowClass(rankStyle: ReturnType<typeof getRankStyle>) {
   return styles[rankStyle];
 }
 
-export function RankedList({ items, preferenceScores, personalRatings }: RankedListProps) {
+export function RankedList({
+  items,
+  preferenceScores,
+  personalRatings,
+  ratingLabel = 'Personal Rating',
+}: RankedListProps) {
   return (
     <ScrollPanel className={styles.tableWrap}>
       <div className={`${styles.table} ${styles.tableHeader}`}>
         <span>Rank</span>
         <span>Item</span>
         <span className={styles.numericHeader}>
-          Preference
+          Ranking Score
           <button
             className={styles.infoTooltip}
             title="Shows how strongly this item performed relative to the others based on your choices."
-            aria-label="About Preference Score"
+            aria-label="About Ranking Score"
           >
             ?
           </button>
         </span>
-        <span className={styles.numericHeader}>Your Rating</span>
+        <span className={styles.numericHeader}>{ratingLabel}</span>
       </div>
 
       {items.map((item, index) => {
@@ -90,3 +96,5 @@ export function RankedList({ items, preferenceScores, personalRatings }: RankedL
     </ScrollPanel>
   );
 }
+
+

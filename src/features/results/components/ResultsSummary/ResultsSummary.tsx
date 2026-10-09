@@ -10,7 +10,8 @@ import styles from './ResultsSummary.module.css';
 type ResultsSummaryProps = {
   items: RankItem[];
   comparisons: number;
-  outcomes: ComparisonOutcome[];
+  outcomes?: ComparisonOutcome[];
+  refinementCount?: number;
   preferenceScores: Record<string, number>;
   personalRatings: PersonalRatingMap;
 };
@@ -19,6 +20,7 @@ export function ResultsSummary({
   items,
   comparisons,
   outcomes,
+  refinementCount,
   preferenceScores,
   personalRatings,
 }: ResultsSummaryProps) {
@@ -31,6 +33,8 @@ export function ResultsSummary({
     ratedItems.map((item) => getPersonalRating(personalRatings, item) ?? 0),
   );
   const maxDistribution = Math.max(0.01, ...preferenceDistribution, ...ratingDistribution);
+  const resolvedRefinementCount =
+    refinementCount ?? outcomes?.filter((outcome) => outcome.phase === 'refinement').length ?? 0;
 
   const surprises = ratedItems
     .map((item) => ({
@@ -51,11 +55,11 @@ export function ResultsSummary({
         <div className={styles.sectionHeading}>
           <div>
             <h2>Score Distribution</h2>
-            <p>Preference and Personal Rating are normalized separately.</p>
+            <p>Ranking Score and Personal Rating are normalized separately.</p>
           </div>
           <div className={styles.legend}>
             <span>
-              <i className={styles.legendPreference} /> Preference
+              <i className={styles.legendPreference} /> Ranking Score
             </span>
             <span>
               <i className={styles.legendRating} /> Personal Rating ({ratedItems.length})
@@ -75,7 +79,7 @@ export function ResultsSummary({
                   style={{
                     height: `${(preferenceDistribution[index] / maxDistribution) * 100}%`,
                   }}
-                  title={`Preference: ${(preferenceDistribution[index] * 100).toFixed(0)}%`}
+                  title={`Ranking Score: ${(preferenceDistribution[index] * 100).toFixed(0)}%`}
                 />
                 <div
                   className={`${styles.distributionBar} ${styles.barRating}`}
@@ -109,7 +113,7 @@ export function ResultsSummary({
             <span>Personally Rated</span>
           </div>
           <div className={styles.statCard}>
-            <strong>{outcomes.filter((outcome) => outcome.phase === 'refinement').length}</strong>
+            <strong>{resolvedRefinementCount}</strong>
             <span>Refine Choices</span>
           </div>
         </div>
@@ -132,7 +136,7 @@ export function ResultsSummary({
                   <strong>{item.name}</strong>
                   <span>
                     You rated it {formatPersonalRating(rating)}, but it landed #{rank} with a{' '}
-                    {formatPreferenceScore(preference)} Preference Score.
+                    {formatPreferenceScore(preference)} Ranking Score.
                   </span>
                 </div>
               </div>
@@ -143,3 +147,5 @@ export function ResultsSummary({
     </ScrollPanel>
   );
 }
+
+

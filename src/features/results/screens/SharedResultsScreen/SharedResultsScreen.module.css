@@ -1,0 +1,69 @@
+.scene {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.heading {
+  align-items: center;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: #a78cff;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tabs button {
+  padding: 10px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #8f97aa;
+  cursor: pointer;
+}
+
+.tabs button.activeTab {
+  border-bottom-color: var(--purple-bright);
+  color: #f8f6ff;
+}
+
+.messagePanel {
+  width: min(680px, 100%);
+  align-self: center;
+  justify-self: center;
+  place-items: center;
+  text-align: center;
+}
+
+.messagePanel > div {
+  max-width: 520px;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.messagePanel h1,
+.messagePanel p {
+  margin: 0;
+}
+
+.messagePanel p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -13,12 +13,13 @@ import { RefinementScreen } from '@/features/ranking/screens/RefinementScreen/Re
 import { ResumeRankingScreen } from '@/features/ranking/screens/ResumeRankingScreen/ResumeRankingScreen';
 import { PersonalRatingsScreen } from '@/features/ratings/screens/PersonalRatingsScreen/PersonalRatingsScreen';
 import { ResultsScreen } from '@/features/results/screens/ResultsScreen/ResultsScreen';
+import { SharedResultsScreen } from '@/features/results/screens/SharedResultsScreen/SharedResultsScreen';
 import { ExitConfirmModal } from './components/ExitConfirmModal/ExitConfirmModal';
 import { useAppController } from './hooks/useAppController';
 import { AppNavigationProvider } from './navigation/AppNavigation';
 import { AppShell } from './AppShell';
 
-function App() {
+function RankerApp() {
   const app = useAppController();
   const { session } = app;
   let content: ReactNode = null;
@@ -237,6 +238,32 @@ function App() {
       {content}
     </AppNavigationProvider>
   );
+}
+
+function getSharedResultId() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const shareId = new URLSearchParams(window.location.search).get('share')?.trim();
+  return shareId || null;
+}
+
+function App() {
+  const sharedResultId = getSharedResultId();
+
+  if (sharedResultId) {
+    return (
+      <AppShell>
+        <SharedResultsScreen
+          key={sharedResultId}
+          shareId={sharedResultId}
+        />
+      </AppShell>
+    );
+  }
+
+  return <RankerApp />;
 }
 
 export default App;
