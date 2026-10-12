@@ -1,52 +1,52 @@
 {
   "schemaVersion": 1,
   "policyVersion": 3,
-  "generatedAt": "2026-10-10T15:25:09.204Z",
+  "generatedAt": "2026-10-12T19:06:09.387Z",
   "sources": [
     {
       "id": "tmdb",
       "url": "https://www.themoviedb.org/",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "star-wars-guide",
       "url": "https://www.starwars.com/news/star-wars-movies-and-series-guide",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "disney-princess",
       "url": "https://princess.disney.com/",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "best-selling-games",
       "url": "https://en.wikipedia.org/wiki/List_of_best-selling_video_games",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "stephen-king-novel",
       "url": "https://stephenking.com/works/novel/grid.html",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "stephen-king-collection",
       "url": "https://stephenking.com/works/collection/grid.html",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "stephen-king-nonfiction",
       "url": "https://stephenking.com/works/nonfiction/grid.html",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "stephen-king-other-project",
       "url": "https://stephenking.com/works/other-project/grid.html",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     },
     {
       "id": "igdb",
       "url": "https://www.igdb.com/",
-      "checkedAt": "2026-10-10T15:25:09.204Z"
+      "checkedAt": "2026-10-12T19:06:09.387Z"
     }
   ],
   "collections": [
@@ -281,7 +281,7 @@
           "id": "avengers-endgame-299534",
           "name": "Avengers: Endgame",
           "subtitle": "2019",
-          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c1859ca5667e2294c744ba29255c9f4bf6a145e50ff53a8b95d582bc3e990651",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/9abccf67efb302b53557eb3b59039915e2862b6ed447b00dca4fcdcbba38266d",
           "source": {
             "provider": "tmdb",
             "id": "299534",
@@ -1113,7 +1113,7 @@
           "id": "avengers-endgame-299534",
           "name": "Avengers: Endgame",
           "subtitle": "2019",
-          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/c1859ca5667e2294c744ba29255c9f4bf6a145e50ff53a8b95d582bc3e990651",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/9abccf67efb302b53557eb3b59039915e2862b6ed447b00dca4fcdcbba38266d",
           "source": {
             "provider": "tmdb",
             "id": "299534",
