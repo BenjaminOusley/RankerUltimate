@@ -1,0 +1,93 @@
+.section {
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(17, 23, 35, 0.76);
+}
+
+.heading h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.heading p,
+.legacyNote {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.tableScroll {
+  margin-top: 14px;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgba(154, 107, 255, 0.18);
+  border-radius: 11px;
+}
+
+.row {
+  min-width: 760px;
+  display: grid;
+  grid-template-columns: minmax(160px, 1.8fr) minmax(116px, 0.8fr) minmax(128px, 1fr) minmax(146px, 1.1fr) minmax(74px, 0.6fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row:nth-child(odd):not(.tableHead) {
+  background: rgba(30, 36, 52, 0.26);
+}
+
+.tableHead {
+  color: #abb3c7;
+  background: rgba(10, 14, 26, 0.72);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #f3f1fa;
+  font-weight: 650;
+}
+
+.rank {
+  color: #aa93e6;
+}
+
+.rankingScore {
+  color: #c6a9ff;
+  font-weight: 750;
+}
+
+.personalRating {
+  color: #e9d082;
+  font-weight: 700;
+}
+
+.unavailable {
+  color: #8b93a5;
+}
+
+.change {
+  color: #aeb8c9;
+  font-weight: 700;
+}
+
+.up {
+  color: #6cdeb0;
+}
+
+.down {
+  color: #ff9aa9;
+}

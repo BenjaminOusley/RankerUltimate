@@ -1,5 +1,7 @@
 export type AppScreen =
   | 'home'
+  | 'myRankings'
+  | 'storedResults'
   | 'collections'
   | 'manageCollections'
   | 'generateCollection'
@@ -12,3 +14,4 @@ export type AppScreen =
   | 'results';
 
 export type RatingBackScreen = 'rankingComplete' | 'refinementComplete';
+

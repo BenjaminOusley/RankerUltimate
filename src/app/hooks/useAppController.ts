@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { AppScreen, RatingBackScreen } from '@/app/appTypes';
 import { collections } from '@/data/collections';
@@ -12,6 +12,8 @@ import {
   type RankingRecoveryPayload,
 } from '@/features/ranking/recovery/rankingRecovery';
 import { usePersonalRatings } from '@/features/ratings/hooks/usePersonalRatings';
+import { useMyRankings } from '@/features/myRankings/hooks/useMyRankings';
+import { makeRecentRanking } from '@/features/myRankings/model/savedRankings';
 
 const recoverableScreens = new Set<AppScreen>([
   'ranking',
@@ -32,6 +34,12 @@ export function useAppController() {
   const collectionLibrary = useCollectionLibrary(collections);
   const ratings = usePersonalRatings(collectionLibrary.itemLibrary);
   const session = useRankingSession();
+  const myRankings = useMyRankings();
+  const [currentResultId, setCurrentResultId] = useState<string | null>(null);
+  const [currentResultSaved, setCurrentResultSaved] = useState(false);
+  const [openedRankingId, setOpenedRankingId] = useState<string | null>(null);
+  const [recentSaveError, setRecentSaveError] = useState<string | null>(null);
+  const pendingRecentWrite = useRef<Promise<void>>(Promise.resolve());
 
   const activeRecoveryScreen = recoverableScreens.has(screen);
 
@@ -89,6 +97,7 @@ export function useAppController() {
   }
 
   function requestNavigation(target: AppScreen) {
+    if (target === 'myRankings') void myRankings.refresh();
     if (target === screen) {
       return;
     }
@@ -144,7 +153,40 @@ export function useAppController() {
 
   function showResults() {
     clearRankingRecovery();
+    if (session.collection && session.rankingState && !session.rankingState.current) {
+      const record = makeRecentRanking(
+        session.collection,
+        session.rankingState,
+        session.preferenceScores,
+        ratings.personalRatings,
+      );
+      setCurrentResultId(record.id);
+      setCurrentResultSaved(false);
+      setRecentSaveError(null);
+      const pending = myRankings.addRecent(record);
+      pendingRecentWrite.current = pending;
+      void pending.catch((reason: unknown) => {
+        setRecentSaveError(reason instanceof Error ? reason.message : 'Could not keep this result temporarily.');
+      });
+    }
     setScreen('results');
+  }
+
+  async function saveCurrentRanking(overwriteId?: string) {
+    if (!currentResultId) throw new Error('No completed ranking is available to save.');
+    await pendingRecentWrite.current;
+    await myRankings.save(currentResultId, overwriteId);
+    setCurrentResultSaved(true);
+  }
+
+  function openStoredRanking(id: string) {
+    setOpenedRankingId(id);
+    setScreen('storedResults');
+  }
+
+  async function saveStoredRanking(id: string, overwriteId?: string) {
+    await myRankings.save(id, overwriteId);
+    setOpenedRankingId(overwriteId ?? id);
   }
 
   function resumeInterruptedRanking() {
@@ -213,6 +255,14 @@ export function useAppController() {
     collectionLibrary,
     ratings,
     session,
+    myRankings,
+    currentResultId,
+    currentResultSaved,
+    recentSaveError,
+    openedRankingId,
+    saveCurrentRanking,
+    openStoredRanking,
+    saveStoredRanking,
     requestNavigation,
     requestMainMenu,
     cancelNavigation,
@@ -230,3 +280,4 @@ export function useAppController() {
     startNewRanking,
   };
 }
+

@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { SaveRankingModal } from '@/features/myRankings/components/SaveRankingModal';
+import type { StoredRanking } from '@/features/myRankings/model/savedRankings';
 import type { RankCollection } from '@/domain/models';
 import type { RankingState } from '@/features/ranking/engine';
 import type { PersonalRatingMap } from '@/features/ratings/personalRatings';
@@ -18,6 +20,10 @@ type ResultsScreenProps = {
   preferenceScores: Record<string, number>;
   personalRatings: PersonalRatingMap;
   onNewRanking: () => void;
+  savedRankings: readonly StoredRanking[];
+  onSaveRanking: (overwriteId?: string) => Promise<void>;
+  isSaved: boolean;
+  saveError: string | null;
 };
 
 export function ResultsScreen({
@@ -26,9 +32,14 @@ export function ResultsScreen({
   preferenceScores,
   personalRatings,
   onNewRanking,
+  savedRankings,
+  onSaveRanking,
+  isSaved,
+  saveError,
 }: ResultsScreenProps) {
   const [tab, setTab] = useState<ResultsTab>('ranking');
   const [shareOpen, setShareOpen] = useState(false);
+  const [saveOpen, setSaveOpen] = useState(false);
   const snapshot = useMemo(
     () =>
       createResultsSnapshot({
@@ -52,6 +63,9 @@ export function ResultsScreen({
           </div>
 
           <div className={styles.actions}>
+            <Button size="small" variant="primary" disabled={isSaved} onClick={() => setSaveOpen(true)}>
+              {isSaved ? 'Saved' : 'Save Ranking'}
+            </Button>
             <Button
               variant="primary"
               size="small"
@@ -100,6 +114,13 @@ export function ResultsScreen({
         )}
       </ScenePanel>
 
+      {saveError && <p role="alert" className={styles.saveError}>Automatic 30-day backup failed: {saveError}</p>}
+      {saveOpen && <SaveRankingModal
+        collectionId={collection.id}
+        savedRankings={savedRankings}
+        onSave={onSaveRanking}
+        onClose={() => setSaveOpen(false)}
+      />}
       <ResultsShareExportModal
         open={shareOpen}
         snapshot={snapshot}

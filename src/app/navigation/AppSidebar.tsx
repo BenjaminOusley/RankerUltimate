@@ -3,12 +3,12 @@ import { Logo } from '@/shared/components/Logo/Logo';
 import { useAppNavigation } from './AppNavigationContext';
 import styles from './AppSidebar.module.css';
 
-type NavigationIcon = 'home' | 'rank' | 'collections' | 'generate';
+type NavigationIcon = 'home' | 'rank' | 'collections' | 'generate' | 'history';
 
 type NavigationItem = {
   label: string;
   icon: NavigationIcon;
-  target: 'home' | 'collections' | 'manageCollections' | 'generateCollection';
+  target: 'home' | 'collections' | 'manageCollections' | 'generateCollection' | 'myRankings';
   screens: readonly AppScreen[];
 };
 
@@ -40,6 +40,9 @@ const navigationItems: readonly NavigationItem[] = [
     ],
   },
   {
+    label: 'My Rankings', icon: 'history', target: 'myRankings', screens: ['myRankings', 'storedResults'],
+  },
+  {
     label: 'Collections',
     icon: 'collections',
     target: 'manageCollections',
@@ -54,6 +57,10 @@ const navigationItems: readonly NavigationItem[] = [
 ];
 
 function NavIcon({ icon }: { icon: NavigationIcon }) {
+  if (icon === 'history') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" />
+      <path d="M8 8h8M8 12h8M8 16h5" /></svg>
+  );
   if (icon === 'home') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -149,3 +156,4 @@ export function AppSidebar({ collapsed, onToggleCollapsed }: AppSidebarProps) {
     </aside>
   );
 }
+

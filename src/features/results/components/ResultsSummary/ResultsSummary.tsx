@@ -1,10 +1,12 @@
 import type { RankItem } from '@/domain/models';
 import type { ComparisonOutcome } from '@/features/ranking/engine';
 import { formatPersonalRating } from '@/features/ratings/personalRating';
+import { getBiggestSurprises } from '../../model/surprises';
 import { getPersonalRating, type PersonalRatingMap } from '@/features/ratings/personalRatings';
 import { Poster } from '@/shared/components/Poster/Poster';
 import { formatPreferenceScore, getDistribution } from '../../model/results';
 import { ScrollPanel } from '@/shared/components/Scene/Scene';
+import { RatingHistoryComparison } from '@/features/myRankings/components/RatingHistoryComparison';
 import styles from './ResultsSummary.module.css';
 
 type ResultsSummaryProps = {
@@ -12,6 +14,7 @@ type ResultsSummaryProps = {
   comparisons: number;
   outcomes?: ComparisonOutcome[];
   refinementCount?: number;
+  ratingsAtCompletion?: Readonly<Record<string, number | null | undefined>>;
   preferenceScores: Record<string, number>;
   personalRatings: PersonalRatingMap;
 };
@@ -21,6 +24,7 @@ export function ResultsSummary({
   comparisons,
   outcomes,
   refinementCount,
+  ratingsAtCompletion,
   preferenceScores,
   personalRatings,
 }: ResultsSummaryProps) {
@@ -36,18 +40,14 @@ export function ResultsSummary({
   const resolvedRefinementCount =
     refinementCount ?? outcomes?.filter((outcome) => outcome.phase === 'refinement').length ?? 0;
 
-  const surprises = ratedItems
-    .map((item) => ({
-      item,
-      rating: getPersonalRating(personalRatings, item) ?? 0,
-      preference: preferenceScores[item.id] ?? 0,
-      difference: Math.abs(
-        (getPersonalRating(personalRatings, item) ?? 0) - (preferenceScores[item.id] ?? 0),
-      ),
-      rank: items.findIndex((rankedItem) => rankedItem.id === item.id) + 1,
-    }))
-    .sort((left, right) => right.difference - left.difference)
-    .slice(0, 3);
+  // Saved rankings compare original Ranking Scores with the Personal Ratings recorded
+  // at completion. Do not reconstruct missing history from current global ratings.
+  const surprises = getBiggestSurprises(
+    items,
+    preferenceScores,
+    personalRatings,
+    ratingsAtCompletion,
+  );
 
   return (
     <ScrollPanel className={styles.panel}>
@@ -119,9 +119,18 @@ export function ResultsSummary({
         </div>
       </section>
 
+      {ratingsAtCompletion && (
+        <RatingHistoryComparison
+          items={items}
+          rankingScores={preferenceScores}
+          ratingsAtCompletion={ratingsAtCompletion}
+          personalRatings={personalRatings}
+        />
+      )}
+
       {surprises.length > 0 && (
         <section className={styles.section}>
-          <h2>Biggest Surprises</h2>
+          <h2>Biggest Surprises{ratingsAtCompletion ? ' at Completion' : ''}</h2>
           <div className={styles.surpriseList}>
             {surprises.map(({ item, rating, preference, rank }) => (
               <div
@@ -135,7 +144,8 @@ export function ResultsSummary({
                 <div>
                   <strong>{item.name}</strong>
                   <span>
-                    You rated it {formatPersonalRating(rating)}, but it landed #{rank} with a{' '}
+                    {ratingsAtCompletion ? 'At completion, you rated it ' : 'You rated it '}
+                    {formatPersonalRating(rating)}, but it landed #{rank} with a{' '}
                     {formatPreferenceScore(preference)} Ranking Score.
                   </span>
                 </div>
@@ -147,5 +157,3 @@ export function ResultsSummary({
     </ScrollPanel>
   );
 }
-
-

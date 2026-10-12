@@ -1,0 +1,13 @@
+.modal { width: min(520px, calc(100vw - 36px)); padding: 24px; display: grid; gap: 16px; }
+.modal h2 { margin: 0; }
+.modal p { margin: 0; color: var(--muted); line-height: 1.45; }
+.choice { min-height: 66px; padding: 13px; border: 1px solid var(--line); border-radius: 11px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.choice:has(input:checked) { border-color: rgba(139,91,255,.8); background: rgba(100,55,192,.14); }
+.choice input { accent-color: #8b5bff; }
+.choice span { display: grid; gap: 3px; }
+.choice small { color: var(--muted); }
+.field { display: grid; gap: 8px; }
+.field select { min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: #171d2c; color: #f4f0ff; }
+.warning { color: #f5b99a; font-size: .84rem; }
+.error { color: #ff8fa1 !important; }
+.actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }

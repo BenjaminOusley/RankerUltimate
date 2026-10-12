@@ -5,6 +5,8 @@ import { CollectionReviewScreen } from '@/features/collections/screens/Collectio
 import { CollectionsScreen } from '@/features/collections/screens/CollectionsScreen/CollectionsScreen';
 import { CollectionGeneratorScreen } from '@/features/generation/screens/CollectionGeneratorScreen/CollectionGeneratorScreen';
 import { MainMenuScreen } from '@/features/home/screens/MainMenuScreen/MainMenuScreen';
+import { MyRankingsScreen } from '@/features/myRankings/screens/MyRankingsScreen/MyRankingsScreen';
+import { StoredRankingResultsScreen } from '@/features/myRankings/screens/StoredRankingResultsScreen/StoredRankingResultsScreen';
 import { FinalChoiceCheckpoint } from '@/features/ranking/components/FinalChoiceCheckpoint/FinalChoiceCheckpoint';
 import { RankingCompleteScreen } from '@/features/ranking/screens/RankingCompleteScreen/RankingCompleteScreen';
 import { RankingScreen } from '@/features/ranking/screens/RankingScreen/RankingScreen';
@@ -43,6 +45,47 @@ function RankerApp() {
       <MainMenuScreen
         onStartRanking={() => app.setScreen('collections')}
         onCollections={() => app.setScreen('manageCollections')}
+        onMyRankings={() => app.requestNavigation('myRankings')}
+      />
+    );
+  } else if (app.screen === 'myRankings') {
+    content = (
+      <MyRankingsScreen
+        rankings={app.myRankings.rankings}
+        personalRatings={app.ratings.personalRatings}
+        loading={app.myRankings.loading}
+        error={app.myRankings.error}
+        onStartRanking={() => app.setScreen('collections')}
+        onOpen={app.openStoredRanking}
+        onSave={app.saveStoredRanking}
+        onRename={app.myRankings.rename}
+        onDelete={app.myRankings.remove}
+      />
+    );
+  } else if (app.screen === 'storedResults') {
+    const ranking = app.myRankings.rankings.find((item) => item.id === app.openedRankingId);
+    content = ranking ? (
+      <AppShell>
+        <StoredRankingResultsScreen
+          key={ranking.id}
+          ranking={ranking}
+          rankings={app.myRankings.rankings}
+          personalRatings={app.ratings.personalRatings}
+          onBack={() => app.requestNavigation('myRankings')}
+          onSave={(overwriteId) => app.saveStoredRanking(ranking.id, overwriteId)}
+        />
+      </AppShell>
+    ) : (
+      <MyRankingsScreen
+        rankings={app.myRankings.rankings}
+        personalRatings={app.ratings.personalRatings}
+        loading={app.myRankings.loading}
+        error={app.myRankings.error}
+        onStartRanking={() => app.setScreen('collections')}
+        onOpen={app.openStoredRanking}
+        onSave={app.saveStoredRanking}
+        onRename={app.myRankings.rename}
+        onDelete={app.myRankings.remove}
       />
     );
   } else if (app.screen === 'manageCollections') {
@@ -224,6 +267,10 @@ function RankerApp() {
             preferenceScores={session.preferenceScores}
             personalRatings={app.ratings.personalRatings}
             onNewRanking={app.startNewRanking}
+            savedRankings={app.myRankings.rankings}
+            onSaveRanking={app.saveCurrentRanking}
+            isSaved={app.currentResultSaved}
+            saveError={app.recentSaveError}
           />
         </AppShell>
       );
@@ -255,10 +302,7 @@ function App() {
   if (sharedResultId) {
     return (
       <AppShell>
-        <SharedResultsScreen
-          key={sharedResultId}
-          shareId={sharedResultId}
-        />
+        <SharedResultsScreen key={sharedResultId} shareId={sharedResultId} />
       </AppShell>
     );
   }
@@ -267,3 +311,5 @@ function App() {
 }
 
 export default App;
+
+

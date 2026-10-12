@@ -46,3 +46,6 @@
     flex: 1;
   }
 }
+
+
+.saveError { color: #ff9caf; padding: 7px 15px; }
