@@ -1,52 +1,52 @@
 {
   "schemaVersion": 1,
   "policyVersion": 3,
-  "generatedAt": "2026-10-15T14:12:19.921Z",
+  "generatedAt": "2026-10-16T13:59:52.814Z",
   "sources": [
     {
       "id": "tmdb",
       "url": "https://www.themoviedb.org/",
-      "checkedAt": "2026-10-15T14:12:19.921Z"
+      "checkedAt": "2026-10-16T13:59:52.814Z"
     },
     {
       "id": "star-wars-guide",
       "url": "https://www.starwars.com/news/star-wars-movies-and-series-guide",
-      "checkedAt": "2026-10-15T14:12:19.921Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "disney-princess",
       "url": "https://princess.disney.com/",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "best-selling-games",
       "url": "https://en.wikipedia.org/wiki/List_of_best-selling_video_games",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "stephen-king-novel",
       "url": "https://stephenking.com/works/novel/grid.html",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "stephen-king-collection",
       "url": "https://stephenking.com/works/collection/grid.html",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "stephen-king-nonfiction",
       "url": "https://stephenking.com/works/nonfiction/grid.html",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "stephen-king-other-project",
       "url": "https://stephenking.com/works/other-project/grid.html",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     },
     {
       "id": "igdb",
       "url": "https://www.igdb.com/",
-      "checkedAt": "2026-10-15T14:12:19.922Z"
+      "checkedAt": "2026-10-16T13:59:52.815Z"
     }
   ],
   "collections": [
@@ -2248,14 +2248,14 @@
           }
         },
         {
-          "id": "obi-wan-kenobi-a-jedi-s-return-1015606",
-          "name": "Obi-Wan Kenobi: A Jedi's Return",
+          "id": "obi-wan-kenobi-92830",
+          "name": "Obi-Wan Kenobi",
           "subtitle": "2022",
-          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/67232987c8c946347b44febc9e48de25dd8f13ad95f2da75c6a220054bf2f83e",
+          "image": "https://rnfrj6gn2fw1oay5.public.blob.vercel-storage.com/catalog-images/v1/tmdb/62d36195b5e4791028c2c70bc141e6f22fc0591e50de9ae534348b3fce18fa90",
           "source": {
             "provider": "tmdb",
-            "id": "1015606",
-            "type": "movie"
+            "id": "92830",
+            "type": "tv"
           }
         },
         {
