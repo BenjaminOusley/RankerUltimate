@@ -15,9 +15,10 @@ type MainMenuScreenProps = {
   onStartRanking: () => void;
   onCollections: () => void;
   onMyRankings: () => void;
+  onGlobalRatings: () => void;
 };
 
-export function MainMenuScreen({ onStartRanking, onCollections, onMyRankings }: MainMenuScreenProps) {
+export function MainMenuScreen({ onStartRanking, onCollections, onMyRankings, onGlobalRatings }: MainMenuScreenProps) {
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * menuQuotes.length));
 
   return (
@@ -47,13 +48,9 @@ export function MainMenuScreen({ onStartRanking, onCollections, onMyRankings }: 
             <span>▣</span>
             <strong>Collection Library</strong>
           </button>
-          <button
-            className={styles.menuButton}
-            disabled
-          >
+          <button className={styles.menuButton} onClick={onGlobalRatings}>
             <span>★</span>
             <strong>Global Ratings</strong>
-            <small>Later</small>
           </button>
           <button
             className={styles.menuButton}

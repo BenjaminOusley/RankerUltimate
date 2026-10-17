@@ -31,6 +31,7 @@ dist-ssr
 
 # Local project snapshots and provider diagnostics
 RankerUltimate-source*.txt
+RankerUltimate-source*.zip
 scripts/provider-spikes/
 **/*spike*-results.*
 .vercel

@@ -197,6 +197,10 @@ export function createHardcoverProvider({
     return searchEntities(query, 'Series', limit);
   }
 
+  async function searchBooks(query, limit = 10) {
+    return searchEntities(query, 'Book', limit);
+  }
+
   async function searchAuthors(query, limit = 10) {
     return searchEntities(query, 'Author', limit);
   }
@@ -985,6 +989,7 @@ export function createHardcoverProvider({
   }
 
   return {
+    searchBooks,
     searchSeries,
     searchAuthors,
     findTagsBySlugs,

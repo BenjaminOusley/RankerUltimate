@@ -449,10 +449,9 @@ export function CollectionsScreen({
     }
 
     const target = event.target as HTMLElement;
-    const actionButton = target.closest('button');
-    const artworkButton = target.closest(`.${styles.cardArtworkButton}`);
-
-    if (actionButton && !artworkButton) {
+    // Buttons must receive their own pointer/click events. Capturing their
+    // pointer on the parent card prevented generated collection previews from opening.
+    if (target.closest('button, a, input, select, textarea, label')) {
       return;
     }
 
@@ -773,6 +772,15 @@ export function CollectionsScreen({
                               event.preventDefault();
                               event.stopPropagation();
                               suppressNextCardClickRef.current = false;
+                            }}
+                            onClick={(event) => {
+                              // The artwork remains a keyboard-accessible preview button;
+                              // clicking the rest of a non-interactive card opens it too.
+                              if (!(event.target instanceof HTMLElement) ||
+                                  event.target.closest('button, a, input, select, textarea, label')) {
+                                return;
+                              }
+                              openCollectionPreview(collection);
                             }}
                             title={draggable ? 'Drag to another group, or to Delete.' : undefined}
                           >

@@ -3,7 +3,12 @@ import { createContext, useContext } from 'react';
 import type { AppScreen } from '@/app/appTypes';
 
 export type NavigationTarget =
-  'home' | 'myRankings' | 'collections' | 'manageCollections' | 'generateCollection';
+  | 'home'
+  | 'myRankings'
+  | 'globalRatings'
+  | 'collections'
+  | 'manageCollections'
+  | 'generateCollection';
 
 export type AppNavigationValue = {
   screen: AppScreen;

@@ -1,0 +1,36 @@
+.trigger {
+  min-width: 88px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgba(242, 201, 76, 0.3);
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(48, 42, 25, 0.45);
+  color: #ffe49a;
+  font-weight: 700;
+  cursor: pointer;
+}
+.chevron { flex: 0 0 12px; width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+.trigger:focus-visible, .option:focus-visible { outline: 2px solid #ad82ff; outline-offset: 1px; }
+.trigger:disabled { cursor: default; opacity: .5; }
+.popover {
+  z-index: 2000;
+  padding: 5px;
+  border: 1px solid rgba(174, 137, 255, .6);
+  border-radius: 11px;
+  display: grid;
+  align-content: start;
+  gap: 1px;
+  overflow-y: auto;
+  background: #161b2c;
+  box-shadow: 0 18px 48px rgba(0,0,0,.66);
+  scrollbar-width: thin;
+}
+.option { min-height: 33px; padding: 5px 10px; border: 0; border-radius: 7px; background: transparent; color: #ffe49a; text-align: left; cursor: pointer; }
+.option:hover, .option:focus-visible { background: #393052; }
+.option.selected { background: #46326f; color: #fff; }
+.clearOption { margin-top: 5px; padding-top: 8px; border-top: 1px solid rgba(174, 137, 255, .18); border-top-left-radius: 0; border-top-right-radius: 0; color: #d4ccde; }

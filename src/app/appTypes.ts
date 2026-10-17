@@ -1,6 +1,7 @@
 export type AppScreen =
   | 'home'
   | 'myRankings'
+  | 'globalRatings'
   | 'storedResults'
   | 'collections'
   | 'manageCollections'

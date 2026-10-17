@@ -14,6 +14,7 @@ import { RefinementCompleteScreen } from '@/features/ranking/screens/RefinementC
 import { RefinementScreen } from '@/features/ranking/screens/RefinementScreen/RefinementScreen';
 import { ResumeRankingScreen } from '@/features/ranking/screens/ResumeRankingScreen/ResumeRankingScreen';
 import { PersonalRatingsScreen } from '@/features/ratings/screens/PersonalRatingsScreen/PersonalRatingsScreen';
+import { GlobalRatingsScreen } from '@/features/ratings/screens/GlobalRatingsScreen/GlobalRatingsScreen';
 import { ResultsScreen } from '@/features/results/screens/ResultsScreen/ResultsScreen';
 import { SharedResultsScreen } from '@/features/results/screens/SharedResultsScreen/SharedResultsScreen';
 import { ExitConfirmModal } from './components/ExitConfirmModal/ExitConfirmModal';
@@ -46,8 +47,18 @@ function RankerApp() {
         onStartRanking={() => app.setScreen('collections')}
         onCollections={() => app.setScreen('manageCollections')}
         onMyRankings={() => app.requestNavigation('myRankings')}
+        onGlobalRatings={() => app.requestNavigation('globalRatings')}
       />
     );
+  } else if (app.screen === 'globalRatings') {
+    content = <GlobalRatingsScreen
+      collections={app.collectionLibrary.availableCollections}
+      knownItems={app.collectionLibrary.itemLibrary}
+      rankings={app.myRankings.rankings}
+      rememberedItems={app.ratings.ratedItemCatalog}
+      personalRatings={app.ratings.personalRatings}
+      onUpdateRating={app.ratings.updatePersonalRating}
+    />;
   } else if (app.screen === 'myRankings') {
     content = (
       <MyRankingsScreen
